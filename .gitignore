@@ -1,0 +1,62 @@
+# ==== Python ====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==== Ambientes virtuais ====
+.venv/
+venv/
+env/
+ENV/
+
+# ==== Jupyter ====
+.ipynb_checkpoints/
+*.ipynb_meta
+
+# ==== Datasets ====
+# Bases de dados baixadas automaticamente (ex.: CIFAR-10 via torchvision).
+# A pasta é criada automaticamente pelo download; não precisa existir no git.
+**/data/
+
+# ==== Checkpoints e artefatos de treino (skill model-saver) ====
+# Cada execução salva pesos + metadata.json em results/{model_id}/ — não deve
+# ir para o git, pois os arquivos de pesos podem ser grandes. Ver README de
+# cada fase para como recuperar um run.
+**/results/*/
+!**/results/.gitkeep
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.keras
+*.joblib
+
+# ==== Relatórios gerados ====
+**/reports/figures/*
+!**/reports/figures/.gitkeep
+
+# ==== SO / Editor ====
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# ==== Outras pastas de trabalho ====
+temp
