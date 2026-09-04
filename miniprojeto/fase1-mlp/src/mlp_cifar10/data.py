@@ -45,13 +45,19 @@ def get_dataloaders(
     batch_size: int = 64,
     val_fraction: float = 0.1,
     seed: int = 42,
-    num_workers: int = 2,
+    num_workers: int = 0,
 ) -> tuple[DataLoader, DataLoader, DataLoader]:
     """Retorna (train_loader, val_loader, test_loader).
 
     O conjunto de validação é separado do conjunto de treino original (o
     CIFAR-10 só tem treino/teste oficialmente) para permitir acompanhar o
     desempenho durante o treino sem "vazar" informação do teste.
+
+    `num_workers=0` (padrão) evita o custo de multiprocessing do PyTorch, que
+    no Windows exige rodar dentro de um bloco `if __name__ == "__main__":` em
+    scripts (não é um problema em notebooks/Colab). Se estiver em
+    Linux/macOS/Colab e quiser acelerar o carregamento de dados, pode chamar
+    com `num_workers=2` (ou mais) manualmente.
     """
     train_dataset, test_dataset = get_datasets(data_dir)
 
