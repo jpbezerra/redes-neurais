@@ -1,0 +1,72 @@
+{
+  "model_id": "mlp_activation_leaky_relu_20260903-224844",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-03T22:48:44.790933",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 25,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      64,
+      128,
+      64
+    ],
+    "activation": "leaky_relu",
+    "dropout": 0.0,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "patience": 4,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 11,
+    "train_loss": 1.0376864775604673,
+    "val_loss": 1.408554552078247,
+    "test_accuracy": 0.5141,
+    "test_balanced_accuracy": 0.5140999999999999,
+    "test_precision": 0.5124991797041346,
+    "test_recall": 0.5141,
+    "test_f1_score": 0.5088801817738374
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "LeakyReLU",
+      "Linear",
+      "LeakyReLU",
+      "Linear",
+      "LeakyReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.62,
+    "automobile": 0.632,
+    "bird": 0.309,
+    "cat": 0.251,
+    "deer": 0.467,
+    "dog": 0.471,
+    "frog": 0.646,
+    "horse": 0.545,
+    "ship": 0.653,
+    "truck": 0.547
+  },
+  "notes": "Troca de ReLU por LeakyReLU, mantendo o resto igual ao baseline.",
+  "tags": [],
+  "run_name": "activation_leaky_relu"
+}

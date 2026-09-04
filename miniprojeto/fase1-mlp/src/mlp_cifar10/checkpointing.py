@@ -178,3 +178,49 @@ def load_run(model_id: str, results_dir: str | Path = "../results") -> dict:
     with open(run_dir / "metadata.json", encoding="utf-8") as f:
         metadata = json.load(f)
     return {"metadata": metadata, "run_dir": run_dir}
+
+
+def find_existing_run(run_name: str, results_dir: str | Path = "../results") -> dict | None:
+    """Procura uma execução já salva para `run_name` (a mais recente, se houver mais de uma).
+
+    Usado por `train.fit_or_load` para tornar o notebook idempotente: reexecutar
+    uma célula não retreina um experimento cujo resultado já está em `results/`.
+    Retorna `None` se nada for encontrado.
+    """
+    results_dir = Path(results_dir)
+    if not results_dir.exists():
+        return None
+
+    matches = sorted(
+        d for d in results_dir.iterdir() if d.is_dir() and d.name.startswith(f"mlp_{run_name}_")
+    )
+    if not matches:
+        return None
+
+    run_dir = matches[-1]  # nome inclui timestamp ordenável -> pega a mais recente
+    with open(run_dir / "metadata.json", encoding="utf-8") as f:
+        metadata = json.load(f)
+
+    history = []
+    history_path = run_dir / "history.csv"
+    if history_path.exists():
+        with open(history_path, encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                history.append(
+                    {k: (float(v) if k != "epoch" else int(v)) for k, v in row.items()}
+                )
+
+    metrics = metadata.get("metrics", {})
+    test_scores = {
+        k[len("test_") :]: v for k, v in metrics.items() if k.startswith("test_")
+    }
+
+    return {
+        "model": None,  # pesos não são recarregados aqui (ver `model.pt` em run_dir se precisar)
+        "history": history,
+        "test_scores": test_scores,
+        "per_class_accuracy": metadata.get("per_class_accuracy", {}),
+        "run_dir": run_dir,
+        "loaded_from_disk": True,
+    }

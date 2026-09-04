@@ -1,0 +1,75 @@
+{
+  "model_id": "mlp_batch_norm_20260903-234059",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-03T23:40:59.675570",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 25,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      64,
+      128,
+      64
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "patience": 4,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 13,
+    "train_loss": 1.0658561722225612,
+    "val_loss": 1.348947190284729,
+    "test_accuracy": 0.5196,
+    "test_balanced_accuracy": 0.5196,
+    "test_precision": 0.5166392385913029,
+    "test_recall": 0.5196,
+    "test_f1_score": 0.5166934018612638
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.516,
+    "automobile": 0.654,
+    "bird": 0.38,
+    "cat": 0.308,
+    "deer": 0.443,
+    "dog": 0.435,
+    "frog": 0.62,
+    "horse": 0.614,
+    "ship": 0.691,
+    "truck": 0.535
+  },
+  "notes": "Adiciona BatchNorm1d após cada camada oculta, sobre o baseline.",
+  "tags": [],
+  "run_name": "batch_norm"
+}
