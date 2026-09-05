@@ -9,7 +9,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
-from .checkpointing import save_run
+from .checkpointing import find_existing_run, save_run
 from .config import ExperimentConfig
 from .metrics import get_per_class_accuracy, get_scores
 from .model import MLP
@@ -39,6 +39,15 @@ def build_optimizer(model: nn.Module, config: ExperimentConfig) -> torch.optim.O
     if config.optimizer == "sgd":
         kwargs["momentum"] = config.momentum
     return _OPTIMIZERS[config.optimizer](model.parameters(), **kwargs)
+
+
+def build_scheduler(optimizer: torch.optim.Optimizer, config: ExperimentConfig):
+    """Retorna um LR scheduler conforme `config.lr_schedule`, ou `None` (LR fixo)."""
+    if config.lr_schedule == "none":
+        return None
+    if config.lr_schedule == "cosine":
+        return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config.num_epochs)
+    raise ValueError(f"lr_schedule '{config.lr_schedule}' desconhecido. Opções: none, cosine")
 
 
 def build_loss(config: ExperimentConfig) -> nn.Module:
@@ -90,6 +99,7 @@ def fit(
     """
     model = build_model(config).to(device)
     optimizer = build_optimizer(model, config)
+    scheduler = build_scheduler(optimizer, config)
     loss_fn = build_loss(config)
 
     best_val_loss = float("inf")
@@ -112,6 +122,8 @@ def fit(
             train_loss += loss.item() * images.size(0)
 
         train_loss /= len(train_loader.dataset)
+        if scheduler is not None:
+            scheduler.step()
         val_loss, val_targets, val_preds = evaluate(model, val_loader, loss_fn, device, config.num_classes)
         val_accuracy = get_scores(val_targets, val_preds)["accuracy"]
 
@@ -168,4 +180,43 @@ def fit(
         "test_scores": test_scores,
         "per_class_accuracy": per_class_accuracy,
         "run_dir": run_dir,
+        "loaded_from_disk": False,
     }
+
+
+def fit_or_load(
+    config: ExperimentConfig,
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    test_loader: DataLoader,
+    device: torch.device,
+    class_names: list[str] | None = None,
+    results_dir: str | Path = "../results",
+    force_retrain: bool = False,
+):
+    """Como `fit()`, mas reaproveita um resultado já salvo em `results/` para `config.run_name`.
+
+    Torna o notebook idempotente: reexecutar uma célula de experimento não
+    retreina do zero um modelo cujo resultado já existe em disco — só chama
+    `fit()` de verdade se não houver run salvo (ou se `force_retrain=True`).
+    Quando reaproveitado, `result["model"]` vem `None` (os pesos não são
+    recarregados) e `result["loaded_from_disk"]` vem `True`.
+    """
+    if not force_retrain:
+        existing = find_existing_run(config.run_name, results_dir)
+        if existing is not None:
+            print(
+                f"[fit_or_load] Reaproveitando execução existente de "
+                f"'{config.run_name}' em {existing['run_dir']} (não retreinado)."
+            )
+            return existing
+
+    return fit(
+        config=config,
+        train_loader=train_loader,
+        val_loader=val_loader,
+        test_loader=test_loader,
+        device=device,
+        class_names=class_names,
+        results_dir=results_dir,
+    )

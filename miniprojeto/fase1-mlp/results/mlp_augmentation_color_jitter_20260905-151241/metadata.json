@@ -1,0 +1,92 @@
+{
+  "model_id": "mlp_augmentation_color_jitter_20260905-151241",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-05T15:12:41.518268",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 40,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      512,
+      256,
+      128,
+      64,
+      32
+    ],
+    "activation": "gelu",
+    "dropout": 0.2,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "strong",
+    "normalization": "default",
+    "patience": 40,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 40,
+    "train_loss": 1.3383087936613294,
+    "val_loss": 1.1739598285675048,
+    "test_accuracy": 0.5844,
+    "test_balanced_accuracy": 0.5844,
+    "test_precision": 0.5799826131104018,
+    "test_recall": 0.5844,
+    "test_f1_score": 0.5782669976228104
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.64,
+    "automobile": 0.705,
+    "bird": 0.386,
+    "cat": 0.384,
+    "deer": 0.438,
+    "dog": 0.438,
+    "frog": 0.739,
+    "horse": 0.736,
+    "ship": 0.697,
+    "truck": 0.681
+  },
+  "notes": "repete combo_aug_schedule adicionando ColorJitter (brightness/contrast/saturation leves) ao crop+flip, para ver se augmentation mais forte ajuda ainda mais.",
+  "tags": [],
+  "run_name": "augmentation_color_jitter"
+}

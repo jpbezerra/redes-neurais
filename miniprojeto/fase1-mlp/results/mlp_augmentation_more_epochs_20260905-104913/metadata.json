@@ -1,0 +1,92 @@
+{
+  "model_id": "mlp_augmentation_more_epochs_20260905-104913",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-05T10:49:13.954069",
+  "hyperparameters": {
+    "learning_rate": 0.0005,
+    "batch_size": 64,
+    "epochs": 55,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      512,
+      256,
+      128,
+      64,
+      32
+    ],
+    "activation": "gelu",
+    "dropout": 0.2,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 12,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 55,
+    "train_loss": 1.2798939171897041,
+    "val_loss": 1.126636294555664,
+    "test_accuracy": 0.5998,
+    "test_balanced_accuracy": 0.5997999999999999,
+    "test_precision": 0.5971283724600341,
+    "test_recall": 0.5998,
+    "test_f1_score": 0.5941816736357765
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.693,
+    "automobile": 0.702,
+    "bird": 0.353,
+    "cat": 0.386,
+    "deer": 0.457,
+    "dog": 0.525,
+    "frog": 0.762,
+    "horse": 0.692,
+    "ship": 0.706,
+    "truck": 0.722
+  },
+  "notes": "augmentation_flip_crop nao tinha convergido em 40 epocas (val_acc ainda subindo); da mais espaco (55 ep, patience 12).",
+  "tags": [],
+  "run_name": "augmentation_more_epochs"
+}

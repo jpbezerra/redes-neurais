@@ -1,0 +1,31 @@
+{
+  "model_id": "mlp_ensemble_final_softvote",
+  "framework": "PyTorch",
+  "model_type": "Ensemble (soft voting) de MLPs já treinados",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "members": [
+    "mlp_augmentation_more_epochs_20260905-104913",
+    "mlp_combo_aug_schedule_more_epochs_20260905-122325",
+    "mlp_deeper_wider_lr_lower_20260904-190116"
+  ],
+  "metrics": {
+    "test_accuracy": 0.6135,
+    "test_balanced_accuracy": 0.6135,
+    "test_precision": 0.6105595445699632,
+    "test_recall": 0.6135,
+    "test_f1_score": 0.6101901084516689
+  },
+  "per_class_accuracy": {
+    "airplane": 0.696,
+    "automobile": 0.707,
+    "bird": 0.429,
+    "cat": 0.421,
+    "deer": 0.5,
+    "dog": 0.495,
+    "frog": 0.738,
+    "horse": 0.701,
+    "ship": 0.738,
+    "truck": 0.71
+  },
+  "notes": "Média das probabilidades (softmax) de 3 modelos já treinados, sem retreinar nada."
+}

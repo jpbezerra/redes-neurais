@@ -36,17 +36,18 @@ ENV/
 **/data/
 
 # ==== Checkpoints e artefatos de treino (skill model-saver) ====
-# Cada execução salva pesos + metadata.json em results/{model_id}/ — não deve
-# ir para o git, pois os arquivos de pesos podem ser grandes. Ver README de
-# cada fase para como recuperar um run.
-**/results/*/
-!**/results/.gitkeep
+# results/{model_id}/ (pesos + metadata.json) É versionado de propósito — os
+# modelos deste projeto são pequenos (MLP/CNN em CIFAR-10) e manter o
+# histórico completo de execuções no git facilita comparar experimentos e
+# entregar os resultados. As regras abaixo ainda ignoram checkpoints soltos
+# fora de results/ (ex.: gerados por outras ferramentas).
 *.pt
 *.pth
 *.ckpt
 *.h5
 *.keras
 *.joblib
+!**/results/**
 
 # ==== Relatórios gerados ====
 **/reports/figures/*

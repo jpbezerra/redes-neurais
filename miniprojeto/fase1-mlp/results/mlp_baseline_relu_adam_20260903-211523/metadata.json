@@ -1,0 +1,72 @@
+{
+  "model_id": "mlp_baseline_relu_adam_20260903-211523",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-03T21:15:23.836354",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 100,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      64,
+      128,
+      64
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "patience": 5,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 12,
+    "train_loss": 1.0147351703643799,
+    "val_loss": 1.4862902490615846,
+    "test_accuracy": 0.5097,
+    "test_balanced_accuracy": 0.5096999999999999,
+    "test_precision": 0.5085962778255145,
+    "test_recall": 0.5097,
+    "test_f1_score": 0.5030084004386648
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.612,
+    "automobile": 0.628,
+    "bird": 0.339,
+    "cat": 0.241,
+    "deer": 0.396,
+    "dog": 0.437,
+    "frog": 0.729,
+    "horse": 0.525,
+    "ship": 0.629,
+    "truck": 0.561
+  },
+  "notes": "Baseline equivalente ao notebook de referência da disciplina.",
+  "tags": [],
+  "run_name": "baseline_relu_adam"
+}

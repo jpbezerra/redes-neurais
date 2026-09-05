@@ -1,0 +1,83 @@
+{
+  "model_id": "mlp_no_weight_decay_20260904-131708",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-04T13:17:08.444132",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 20,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      384,
+      192,
+      96,
+      48
+    ],
+    "activation": "relu",
+    "dropout": 0.3,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "patience": 5,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 20,
+    "train_loss": 1.208924640252855,
+    "val_loss": 1.250830783843994,
+    "test_accuracy": 0.5522,
+    "test_balanced_accuracy": 0.5521999999999999,
+    "test_precision": 0.553794824690513,
+    "test_recall": 0.5522,
+    "test_f1_score": 0.5498476694825781
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.621,
+    "automobile": 0.694,
+    "bird": 0.334,
+    "cat": 0.437,
+    "deer": 0.538,
+    "dog": 0.369,
+    "frog": 0.606,
+    "horse": 0.636,
+    "ship": 0.711,
+    "truck": 0.576
+  },
+  "notes": "testa se o weight_decay leve (1e-4) esta realmente ajudando nesta arquitetura maior ou se batch_norm+dropout ja bastam.",
+  "tags": [],
+  "run_name": "no_weight_decay"
+}

@@ -1,0 +1,93 @@
+{
+  "model_id": "mlp_six_layer_combo_20260904-182242",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-04T18:22:42.304376",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 25,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      512,
+      384,
+      256,
+      128,
+      64,
+      32
+    ],
+    "activation": "gelu",
+    "dropout": 0.2,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "patience": 6,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 19,
+    "train_loss": 0.9430833999209933,
+    "val_loss": 1.2762793104171752,
+    "test_accuracy": 0.5609,
+    "test_balanced_accuracy": 0.5609000000000001,
+    "test_precision": 0.5636423886625944,
+    "test_recall": 0.5609,
+    "test_f1_score": 0.5592178915905841
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.621,
+    "automobile": 0.668,
+    "bird": 0.401,
+    "cat": 0.444,
+    "deer": 0.498,
+    "dog": 0.36,
+    "frog": 0.666,
+    "horse": 0.683,
+    "ship": 0.683,
+    "truck": 0.585
+  },
+  "notes": "rede ainda mais profunda (6 camadas) com o combo vencedor, para ver se capacidade extra continua ajudando.",
+  "tags": [],
+  "run_name": "six_layer_combo"
+}

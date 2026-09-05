@@ -1,0 +1,72 @@
+{
+  "model_id": "mlp_activation_gelu_20260903-224303",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-03T22:43:03.799750",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 25,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      64,
+      128,
+      64
+    ],
+    "activation": "gelu",
+    "dropout": 0.0,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "patience": 4,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 11,
+    "train_loss": 1.0163868163956535,
+    "val_loss": 1.4465933685302734,
+    "test_accuracy": 0.5153,
+    "test_balanced_accuracy": 0.5153000000000001,
+    "test_precision": 0.5121031689926308,
+    "test_recall": 0.5153,
+    "test_f1_score": 0.5089100679810885
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "GELU",
+      "Linear",
+      "GELU",
+      "Linear",
+      "GELU",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.642,
+    "automobile": 0.611,
+    "bird": 0.303,
+    "cat": 0.264,
+    "deer": 0.484,
+    "dog": 0.426,
+    "frog": 0.671,
+    "horse": 0.571,
+    "ship": 0.64,
+    "truck": 0.541
+  },
+  "notes": "Troca de ReLU por GELU, mantendo o resto igual ao baseline.",
+  "tags": [],
+  "run_name": "activation_gelu"
+}
