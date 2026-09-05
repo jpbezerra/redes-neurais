@@ -1,0 +1,88 @@
+{
+  "model_id": "mlp_relu_deeper_wider_20260904-211507",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-04T21:15:07.100119",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 25,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      512,
+      256,
+      128,
+      64,
+      32
+    ],
+    "activation": "relu",
+    "dropout": 0.2,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "patience": 6,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 20,
+    "train_loss": 1.0728565063476563,
+    "val_loss": 1.2746954526901244,
+    "test_accuracy": 0.5571,
+    "test_balanced_accuracy": 0.5570999999999999,
+    "test_precision": 0.5595393243852709,
+    "test_recall": 0.5571,
+    "test_f1_score": 0.5539907860239776
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "ReLU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.666,
+    "automobile": 0.691,
+    "bird": 0.341,
+    "cat": 0.424,
+    "deer": 0.529,
+    "dog": 0.355,
+    "frog": 0.627,
+    "horse": 0.613,
+    "ship": 0.688,
+    "truck": 0.637
+  },
+  "notes": "confirma se gelu ainda vence relu nesta arquitetura mais profunda (nas rodadas anteriores a diferenca era pequena).",
+  "tags": [],
+  "run_name": "relu_deeper_wider"
+}

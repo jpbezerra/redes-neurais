@@ -1,0 +1,88 @@
+{
+  "model_id": "mlp_deeper_wider_lr_lower_20260904-190116",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-04T19:01:17.081257",
+  "hyperparameters": {
+    "learning_rate": 0.0005,
+    "batch_size": 64,
+    "epochs": 35,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      512,
+      256,
+      128,
+      64,
+      32
+    ],
+    "activation": "gelu",
+    "dropout": 0.2,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "patience": 8,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 27,
+    "train_loss": 0.8276200488832262,
+    "val_loss": 1.3131726104736328,
+    "test_accuracy": 0.577,
+    "test_balanced_accuracy": 0.577,
+    "test_precision": 0.5788327036662645,
+    "test_recall": 0.577,
+    "test_f1_score": 0.5767664832492061
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.67,
+    "automobile": 0.648,
+    "bird": 0.437,
+    "cat": 0.445,
+    "deer": 0.511,
+    "dog": 0.437,
+    "frog": 0.663,
+    "horse": 0.633,
+    "ship": 0.694,
+    "truck": 0.632
+  },
+  "notes": "combina a melhor arquitetura (deeper_wider) com lr menor, que tambem ajudou isoladamente.",
+  "tags": [],
+  "run_name": "deeper_wider_lr_lower"
+}
