@@ -118,6 +118,8 @@ def save_run(
         "momentum": config.momentum,
         "lr_schedule": config.lr_schedule,
         "augment": config.augment,
+        "augment_strength": config.augment_strength,
+        "normalization": config.normalization,
         "patience": config.patience,
         "seed": config.seed,
     }

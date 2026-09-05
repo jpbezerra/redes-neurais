@@ -49,6 +49,8 @@ class ExperimentConfig:
     patience: int = 5  # early stopping (nº de épocas sem melhora)
     val_fraction: float = 0.1  # fração do treino usada como validação
     augment: bool = False  # data augmentation (flip + crop) no treino, ver data.get_dataloaders
+    augment_strength: str = "light"  # light (crop+flip) | strong (+ color jitter), só usado se augment=True
+    normalization: str = "default"  # default ([-1,1] simples) | real (média/desvio-padrão reais do CIFAR-10)
 
     # Reprodutibilidade
     seed: int = 42

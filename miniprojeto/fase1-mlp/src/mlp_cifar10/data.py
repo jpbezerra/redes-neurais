@@ -16,6 +16,19 @@ from torch.utils.data import DataLoader, Subset, random_split
 DEFAULT_MEAN = (0.5, 0.5, 0.5)
 DEFAULT_STD = (0.5, 0.5, 0.5)
 
+# Média/desvio-padrão reais do CIFAR-10 (canal a canal), alternativa mais
+# "correta" estatisticamente à normalização simples para [-1, 1] acima.
+REAL_MEAN = (0.4914, 0.4822, 0.4465)
+REAL_STD = (0.2470, 0.2435, 0.2616)
+
+
+def get_normalization_stats(normalization: str = "default") -> tuple[tuple[float, ...], tuple[float, ...]]:
+    if normalization == "default":
+        return DEFAULT_MEAN, DEFAULT_STD
+    if normalization == "real":
+        return REAL_MEAN, REAL_STD
+    raise ValueError(f"normalization '{normalization}' desconhecida. Opções: default, real")
+
 CLASSES = (
     "airplane", "automobile", "bird", "cat", "deer",
     "dog", "frog", "horse", "ship", "truck",
@@ -28,21 +41,23 @@ def build_transform(mean=DEFAULT_MEAN, std=DEFAULT_STD) -> transforms.Compose:
     )
 
 
-def build_augmented_transform(mean=DEFAULT_MEAN, std=DEFAULT_STD) -> transforms.Compose:
-    """Transform de treino com data augmentation leve (flip horizontal + crop).
+def build_augmented_transform(mean=DEFAULT_MEAN, std=DEFAULT_STD, strength: str = "light") -> transforms.Compose:
+    """Transform de treino com data augmentation (flip horizontal + crop).
 
     Só deve ser usada no conjunto de treino — validação/teste usam sempre
     `build_transform` (sem augmentation), para que a métrica reportada meça o
     modelo em imagens "normais", não aumentadas.
+
+    `strength="strong"` adiciona `ColorJitter` (brightness/contrast/saturation
+    leves) sobre o crop+flip de `strength="light"` (padrão).
     """
-    return transforms.Compose(
-        [
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(mean, std),
-        ]
-    )
+    ops = [transforms.RandomCrop(32, padding=4), transforms.RandomHorizontalFlip()]
+    if strength == "strong":
+        ops.append(transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2))
+    elif strength != "light":
+        raise ValueError(f"strength '{strength}' desconhecida. Opções: light, strong")
+    ops += [transforms.ToTensor(), transforms.Normalize(mean, std)]
+    return transforms.Compose(ops)
 
 
 def get_datasets(data_dir: str | Path = "./data", transform: transforms.Compose | None = None):
@@ -64,6 +79,8 @@ def get_dataloaders(
     seed: int = 42,
     num_workers: int = 0,
     augment: bool = False,
+    normalization: str = "default",
+    augment_strength: str = "light",
 ) -> tuple[DataLoader, DataLoader, DataLoader]:
     """Retorna (train_loader, val_loader, test_loader).
 
@@ -85,8 +102,9 @@ def get_dataloaders(
     Linux/macOS/Colab e quiser acelerar o carregamento de dados, pode chamar
     com `num_workers=2` (ou mais) manualmente.
     """
-    plain_transform = build_transform()
-    train_transform = build_augmented_transform() if augment else plain_transform
+    mean, std = get_normalization_stats(normalization)
+    plain_transform = build_transform(mean, std)
+    train_transform = build_augmented_transform(mean, std, strength=augment_strength) if augment else plain_transform
 
     train_dataset = torchvision.datasets.CIFAR10(
         root=str(data_dir), train=True, download=True, transform=train_transform

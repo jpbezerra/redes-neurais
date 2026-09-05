@@ -286,6 +286,48 @@ ROUNDS: dict[str, list[ExperimentConfig]] = {
             notes="combina data augmentation + cosine annealing, para ver se os efeitos se somam como aconteceu com gelu+dropout+weight_decay na rodada 3.",
         ),
     ],
+    # Round 7: combo_aug_schedule (rodada 6) foi o melhor individual (0.5863)
+    # e ainda nao tinha convergido em 40 epocas; o ensemble top-3 chegou a
+    # 0.6058. Testa: mais epocas para deixar convergir de verdade,
+    # normalizacao real do CIFAR-10 (nunca testada), e augmentation mais forte
+    # (color jitter). O ensemble final (top-5) fica para depois desta rodada
+    # rodar, via `scripts/ensemble_eval.py top5 <ids...>`.
+    "round7": [
+        ExperimentConfig(
+            run_name="augmentation_more_epochs",
+            hidden_layers=(512, 256, 128, 64, 32),
+            activation="gelu", dropout=0.2, batch_norm=True,
+            weight_decay=0.0, learning_rate=5e-4, optimizer="adam",
+            num_epochs=55, patience=12, augment=True,
+            notes="augmentation_flip_crop nao tinha convergido em 40 epocas (val_acc ainda subindo); da mais espaco (55 ep, patience 12).",
+        ),
+        ExperimentConfig(
+            run_name="combo_aug_schedule_more_epochs",
+            hidden_layers=(512, 256, 128, 64, 32),
+            activation="gelu", dropout=0.2, batch_norm=True,
+            weight_decay=0.0, learning_rate=1e-3, optimizer="adam",
+            num_epochs=55, patience=55, augment=True, lr_schedule="cosine",
+            notes="combo_aug_schedule (melhor individual, 0.5863) tambem nao tinha convergido em 40 epocas; repete com 55 epocas e cosine T_max=55.",
+        ),
+        ExperimentConfig(
+            run_name="real_normalization",
+            hidden_layers=(512, 256, 128, 64, 32),
+            activation="gelu", dropout=0.2, batch_norm=True,
+            weight_decay=0.0, learning_rate=1e-3, optimizer="adam",
+            num_epochs=40, patience=40, augment=True, lr_schedule="cosine",
+            normalization="real",
+            notes="repete combo_aug_schedule trocando a normalizacao simples ([-1,1]) pela media/desvio-padrao reais do CIFAR-10 (nunca testado nas rodadas 1-6).",
+        ),
+        ExperimentConfig(
+            run_name="augmentation_color_jitter",
+            hidden_layers=(512, 256, 128, 64, 32),
+            activation="gelu", dropout=0.2, batch_norm=True,
+            weight_decay=0.0, learning_rate=1e-3, optimizer="adam",
+            num_epochs=40, patience=40, augment=True, lr_schedule="cosine",
+            augment_strength="strong",
+            notes="repete combo_aug_schedule adicionando ColorJitter (brightness/contrast/saturation leves) ao crop+flip, para ver se augmentation mais forte ajuda ainda mais.",
+        ),
+    ],
 }
 
 
@@ -300,21 +342,24 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
-    train_loader, val_loader, test_loader = get_dataloaders(
-        data_dir=DATA_DIR, batch_size=64, val_fraction=0.1, seed=42, num_workers=0,
-    )
-    train_loader_aug = None
-    if any(cfg.augment for cfg in configs):
-        train_loader_aug, _, _ = get_dataloaders(
-            data_dir=DATA_DIR, batch_size=64, val_fraction=0.1, seed=42, num_workers=0, augment=True,
-        )
+    loader_cache: dict[tuple, tuple] = {}
+
+    def loaders_for(cfg: ExperimentConfig):
+        key = (cfg.augment, cfg.normalization, cfg.augment_strength)
+        if key not in loader_cache:
+            loader_cache[key] = get_dataloaders(
+                data_dir=DATA_DIR, batch_size=64, val_fraction=0.1, seed=42, num_workers=0,
+                augment=cfg.augment, normalization=cfg.normalization, augment_strength=cfg.augment_strength,
+            )
+        return loader_cache[key]
 
     for cfg in configs:
         print(f"\n{'=' * 60}\n{round_name} :: {cfg.run_name}\n{'=' * 60}")
         t0 = time.time()
+        train_loader, val_loader, test_loader = loaders_for(cfg)
         result = fit_or_load(
             config=cfg,
-            train_loader=train_loader_aug if cfg.augment else train_loader,
+            train_loader=train_loader,
             val_loader=val_loader,
             test_loader=test_loader,
             device=device,

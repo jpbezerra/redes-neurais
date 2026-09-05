@@ -18,12 +18,14 @@ fase1-mlp/
 │   ├── train.py             # loop de treino/avaliação com early stopping
 │   └── checkpointing.py     # skill `model-saver`: salva model.pt + metadata.json de cada execução
 ├── notebooks/
-│   └── 01_train_mlp_cifar10.ipynb   # notebook principal: define e roda os experimentos originais
+│   ├── 01_train_mlp_cifar10.ipynb   # define e roda os experimentos (treino)
+│   └── 02_results_report.ipynb      # só leitura: gera os gráficos do relatório a partir de results/, sem treinar nada
 ├── scripts/
 │   ├── run_experiments.py  # baterias adicionais de experimentos (rounds de busca de hiperparâmetros), fora do notebook
 │   └── ensemble_eval.py    # ensemble (soft voting) dos melhores modelos já treinados, sem retreinar
 ├── data/                    # CIFAR-10 baixado automaticamente (não versionado)
-└── results/                 # results/{model_id}/ — uma pasta por execução de treino (não versionado)
+└── results/                 # results/{model_id}/ — uma pasta por execução de treino, versionado (pesos + metadados)
+    └── plots/report/        # gráficos gerados por 02_results_report.ipynb, usados neste README
 ```
 
 Essa separação entre `src/` (implementação) e `notebooks/` (orquestração de
@@ -119,6 +121,12 @@ sinal de que augmentation/schedule atacam uma fonte de erro diferente
 arquitetura já haviam esgotado. O ensemble, por sua vez, ataca ainda outra
 fonte (variância entre modelos individuais) e deu o maior salto de todos.
 
+![Evolução da acurácia por rodada](results/plots/report/evolucao_por_rodada.png)
+
+![Top 15 execuções por acurácia](results/plots/report/top15_accuracy.png)
+
+*(Gráficos gerados por `notebooks/02_results_report.ipynb`, que só lê `results/` — não retreina nada.)*
+
 ### Configuração vencedora final
 
 **Melhor modelo individual — `mlp_combo_aug_schedule`** — acurácia de teste
@@ -161,6 +169,31 @@ classes mais difíceis (`cat` +7,2 p.p., `bird` +4,3 p.p.) — consistente com a
 ideia de que modelos treinados com regimes distintos (com/sem augmentation,
 com/sem schedule) erram de formas parcialmente independentes nessas classes
 mais ambíguas, e a média das probabilidades corrige parte desses erros.
+
+![Curvas de treino do melhor modelo](results/plots/report/training_curves_melhor_modelo.png)
+
+![Acurácia por classe: melhor individual vs. ensemble](results/plots/report/per_class_comparison.png)
+
+![Matriz de confusão do ensemble](results/plots/report/confusion_matrix_ensemble.png)
+
+A matriz de confusão do ensemble (normalizada por linha) confirma exatamente
+os pares de classes que um MLP sem estrutura espacial mais confunde — e
+quantifica o quanto:
+
+- **`cat` ↔ `dog`**: 17% dos gatos são classificados como cachorro e 24% dos
+  cachorros como gato — de longe a maior confusão da matriz, e o motivo de
+  `cat` (0.417) ser a classe mais fraca do modelo.
+- **`automobile` ↔ `truck`**: 15% de confusão em ambas as direções — dois
+  veículos de rodas com silhueta retangular similar em baixa resolução (32×32).
+- **`airplane` ↔ `ship`**: 11% dos aviões viram navio e 10% dos navios viram
+  avião — ambos tendem a aparecer como uma forma alongada sobre um fundo
+  claro/uniforme (céu ou mar), o que um MLP sem noção de contexto/textura
+  espacial não distingue bem.
+- As classes com melhor acurácia (`ship` 0.73, `frog` 0.71, `automobile`
+  0.71, `airplane` 0.69, `horse` 0.69) são as que têm silhueta ou cor de
+  fundo mais consistente entre exemplos; as piores (`cat` 0.42, `bird` 0.47,
+  `deer` 0.49, `dog` 0.46) são todas classes de animais com pose e textura
+  variáveis — reforça o limite estrutural do MLP discutido a seguir.
 
 Padrão recorrente em **todos** os 45 experimentos, não só nos melhores:
 veículos e cenários com silhueta bem definida (`ship`, `frog`, `automobile`,

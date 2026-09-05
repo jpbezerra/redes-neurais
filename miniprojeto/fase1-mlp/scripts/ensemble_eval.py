@@ -5,8 +5,14 @@ reconstrói cada arquitetura a partir do `metadata.json`, faz a média das
 probabilidades (softmax) de cada um no conjunto de teste e reporta a acurácia
 do ensemble comparada à do melhor modelo individual.
 
+Cada membro é avaliado com a normalização (`default` ou `real`) com que foi
+treinado (lida do seu próprio `metadata.json`), então o ensemble funciona
+mesmo misturando membros treinados com normalizações diferentes.
+
 Uso:
-    .venv/Scripts/python.exe scripts/ensemble_eval.py
+    .venv/Scripts/python.exe scripts/ensemble_eval.py [ensemble_id member_id1 member_id2 ...]
+
+Sem argumentos, roda o ensemble padrão "top3" (ver ENSEMBLES abaixo).
 """
 from __future__ import annotations
 
@@ -27,13 +33,15 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 RESULTS_DIR = ROOT / "results"
 
-# Os N melhores modelos (arquiteturas distintas) dentre os 45 já treinados.
+# Ensembles pré-definidos: nome -> lista de model_ids membros.
 # Escolhidos por acurácia de teste em results/ (ver README.md para a tabela completa).
-MEMBER_MODEL_IDS = [
-    "mlp_combo_aug_schedule_20260905-090100",      # 0.5863 - melhor individual
-    "mlp_augmentation_flip_crop_20260904-225516",  # 0.5813
-    "mlp_deeper_wider_lr_lower_20260904-190116",   # 0.5770
-]
+ENSEMBLES: dict[str, list[str]] = {
+    "top3": [
+        "mlp_combo_aug_schedule_20260905-090100",      # 0.5863 - melhor individual
+        "mlp_augmentation_flip_crop_20260904-225516",  # 0.5813
+        "mlp_deeper_wider_lr_lower_20260904-190116",   # 0.5770
+    ],
+}
 
 
 def load_member(model_id: str, device: torch.device):
@@ -66,20 +74,24 @@ def collect_probs(model, loader, device):
     return torch.cat(all_probs), torch.cat(all_targets)
 
 
-def main():
+def run_ensemble(ensemble_id: str, member_model_ids: list[str]):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
-    _, _, test_loader = get_dataloaders(data_dir=DATA_DIR, batch_size=256, num_workers=0)
-
+    test_loader_cache: dict[str, torch.utils.data.DataLoader] = {}
     member_probs = []
     targets = None
-    print(f"\nMembros do ensemble ({len(MEMBER_MODEL_IDS)}):")
-    for model_id in MEMBER_MODEL_IDS:
+    print(f"\nMembros do ensemble '{ensemble_id}' ({len(member_model_ids)}):")
+    for model_id in member_model_ids:
         model, meta = load_member(model_id, device)
-        probs, t = collect_probs(model, test_loader, device)
+        normalization = meta["hyperparameters"].get("normalization", "default")
+        if normalization not in test_loader_cache:
+            _, _, test_loader_cache[normalization] = get_dataloaders(
+                data_dir=DATA_DIR, batch_size=256, num_workers=0, normalization=normalization
+            )
+        probs, t = collect_probs(model, test_loader_cache[normalization], device)
         acc_individual = meta["metrics"]["test_accuracy"]
-        print(f"  - {model_id} (acc individual salva: {acc_individual:.4f})")
+        print(f"  - {model_id} (acc individual salva: {acc_individual:.4f}, normalization={normalization})")
         member_probs.append(probs)
         targets = t
 
@@ -96,7 +108,7 @@ def main():
 
     best_individual = max(
         json.loads((RESULTS_DIR / mid / "metadata.json").read_text(encoding="utf-8"))["metrics"]["test_accuracy"]
-        for mid in MEMBER_MODEL_IDS
+        for mid in member_model_ids
     )
     print(f"\nMelhor individual entre os membros: {best_individual:.4f}")
     print(f"Ensemble: {scores['accuracy']:.4f}")
@@ -104,22 +116,36 @@ def main():
 
     # Registra o resultado do ensemble em results/ para rastreabilidade
     # (não é um "modelo" com pesos próprios, então sem model.pt — só metadata).
-    ensemble_dir = RESULTS_DIR / "mlp_ensemble_top3_softvote"
+    ensemble_dir = RESULTS_DIR / f"mlp_ensemble_{ensemble_id}_softvote"
     ensemble_dir.mkdir(parents=True, exist_ok=True)
     metadata = {
-        "model_id": "mlp_ensemble_top3_softvote",
+        "model_id": f"mlp_ensemble_{ensemble_id}_softvote",
         "framework": "PyTorch",
         "model_type": "Ensemble (soft voting) de MLPs já treinados",
         "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
-        "members": MEMBER_MODEL_IDS,
+        "members": member_model_ids,
         "metrics": {f"test_{k}": v for k, v in scores.items()},
         "per_class_accuracy": per_class,
-        "notes": "Média das probabilidades (softmax) dos 3 melhores modelos individuais já treinados, sem retreinar nada.",
+        "notes": f"Média das probabilidades (softmax) de {len(member_model_ids)} modelos já treinados, sem retreinar nada.",
     }
     (ensemble_dir / "metadata.json").write_text(
         json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8"
     )
     print(f"\n[ensemble] metadata salvo em {ensemble_dir}/")
+
+
+def main():
+    if len(sys.argv) == 1:
+        ensemble_id = "top3"
+        member_model_ids = ENSEMBLES["top3"]
+    elif len(sys.argv) >= 3:
+        ensemble_id = sys.argv[1]
+        member_model_ids = sys.argv[2:]
+    else:
+        print("Uso: ensemble_eval.py [ensemble_id member_id1 member_id2 ...]")
+        sys.exit(1)
+
+    run_ensemble(ensemble_id, member_model_ids)
 
 
 if __name__ == "__main__":
