@@ -1,5 +1,5 @@
 {
-  "model_id": "mlp_ensemble_top3_softvote",
+  "model_id": "mlp_ensemble_search_top3_round6_softvote",
   "framework": "PyTorch",
   "model_type": "Ensemble (soft voting) de MLPs já treinados",
   "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",

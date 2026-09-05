@@ -1,8 +1,8 @@
 {
   "model_id": "mlp_ensemble_final_softvote",
   "framework": "PyTorch",
-  "model_type": "Ensemble (soft voting) de MLPs jÃ¡ treinados",
-  "purpose": "ClassificaÃ§Ã£o de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "model_type": "Ensemble (soft voting) de MLPs já treinados",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
   "members": [
     "mlp_augmentation_more_epochs_20260905-104913",
     "mlp_combo_aug_schedule_more_epochs_20260905-122325",
@@ -27,5 +27,5 @@
     "ship": 0.738,
     "truck": 0.71
   },
-  "notes": "MÃ©dia das probabilidades (softmax) de 3 modelos jÃ¡ treinados, sem retreinar nada."
+  "notes": "Média das probabilidades (softmax) de 3 modelos já treinados, sem retreinar nada."
 }

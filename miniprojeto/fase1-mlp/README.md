@@ -158,15 +158,15 @@ melhorando):
 escolher a final — o resultado mais importante foi que **diversidade de
 regime de treino importa mais que acurácia individual bruta**:
 
-| Ensemble | Membros | Acurácia |
+| Ensemble (`scripts/ensemble_eval.py <nome>`) | Membros | Acurácia |
 |---|---|---|
-| `top3` (rodada 6) | `combo_aug_schedule`, `augmentation_flip_crop`, `deeper_wider_lr_lower` | 0.6058 |
-| `top5` | os 5 melhores por acurácia individual (incluindo `real_normalization` e `augmentation_color_jitter`, ambos mais fracos) | 0.6024 (pior que o `top3`!) |
-| `top4_v2` | os 2 melhores da rodada 7 + `combo_aug_schedule` + `deeper_wider_lr_lower` | 0.6105 |
+| `search_top3_round6` | `combo_aug_schedule`, `augmentation_flip_crop`, `deeper_wider_lr_lower` (os 3 melhores só até a rodada 6) | 0.6058 |
+| `search_top5_by_accuracy` | os 5 melhores por acurácia individual entre as 49 execuções (incluindo `real_normalization` e `augmentation_color_jitter`, ambos mais fracos) | 0.6024 (pior que o `search_top3_round6`!) |
+| `search_top4_mixed` | os 2 melhores da rodada 7 + `combo_aug_schedule` + `deeper_wider_lr_lower` | 0.6105 |
 | **`final`** | `augmentation_more_epochs`, `combo_aug_schedule_more_epochs`, `deeper_wider_lr_lower` | **0.6135** |
 
-Adicionar os modelos de maior acurácia individual (`top5`) piorou o
-resultado — dois membros mais fracos (0.584) diluíram a média sem
+Adicionar os modelos de maior acurácia individual (`search_top5_by_accuracy`)
+piorou o resultado — dois membros mais fracos (0.584) diluíram a média sem
 acrescentar diversidade real (erram de forma parecida aos outros). Já trocar
 um membro correlacionado (`combo_aug_schedule`, mesma receita que
 `combo_aug_schedule_more_epochs`) por um modelo de regime bem diferente
@@ -313,10 +313,11 @@ que dependem de padrões locais (pelo, textura).
   0.6135), e de graça computacionalmente (usa checkpoints já salvos). O
   achado mais interessante aqui não foi o ganho em si, mas **como compor o
   ensemble**: testamos 4 combinações (ver tabela acima) e a que só pegava os
-  5 modelos de maior acurácia individual (`top5`) foi *pior* que usar só 3
-  modelos bem escolhidos (`top3`/`final`) — membros correlacionados (mesma
-  receita de treino) ou fracos diluem a média em vez de ajudar; o que importa
-  é ter membros que erram de forma parcialmente independente.
+  5 modelos de maior acurácia individual (`search_top5_by_accuracy`) foi
+  *pior* que usar só 3 modelos bem escolhidos (`search_top3_round6`/`final`)
+  — membros correlacionados (mesma receita de treino) ou fracos diluem a
+  média em vez de ajudar; o que importa é ter membros que erram de forma
+  parcialmente independente.
 
 ### Dá para melhorar mais, ou já chegou no limite?
 

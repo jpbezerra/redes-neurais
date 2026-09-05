@@ -10,9 +10,13 @@ treinado (lida do seu próprio `metadata.json`), então o ensemble funciona
 mesmo misturando membros treinados com normalizações diferentes.
 
 Uso:
-    .venv/Scripts/python.exe scripts/ensemble_eval.py [ensemble_id member_id1 member_id2 ...]
+    .venv/Scripts/python.exe scripts/ensemble_eval.py                          # roda "final" (o vencedor)
+    .venv/Scripts/python.exe scripts/ensemble_eval.py <nome_pre_definido>       # roda uma das composições em ENSEMBLES
+    .venv/Scripts/python.exe scripts/ensemble_eval.py <nome_novo> <id1> <id2>...  # composição ad-hoc
 
-Sem argumentos, roda o ensemble padrão "top3" (ver ENSEMBLES abaixo).
+Sem argumentos, roda o ensemble "final" (ver ENSEMBLES abaixo). Os outros 3
+predefinidos (search_top3_round6, search_top5_by_accuracy, search_top4_mixed)
+documentam a busca por composição que levou ao "final" — ver README.md.
 """
 from __future__ import annotations
 
@@ -33,13 +37,40 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 RESULTS_DIR = ROOT / "results"
 
-# Ensembles pré-definidos: nome -> lista de model_ids membros.
-# Escolhidos por acurácia de teste em results/ (ver README.md para a tabela completa).
+# Ensembles pré-definidos: nome -> lista de model_ids membros. Nomeados pelo
+# critério usado para escolher os membros, não por acurácia deles (ver
+# README.md para a tabela completa e a discussão de cada um).
 ENSEMBLES: dict[str, list[str]] = {
-    "top3": [
-        "mlp_combo_aug_schedule_20260905-090100",      # 0.5863 - melhor individual
+    # Primeira tentativa: os 3 melhores da rodada 6 (antes da rodada 7 existir).
+    "search_top3_round6": [
+        "mlp_combo_aug_schedule_20260905-090100",      # 0.5863 - melhor individual da rodada 6
         "mlp_augmentation_flip_crop_20260904-225516",  # 0.5813
         "mlp_deeper_wider_lr_lower_20260904-190116",   # 0.5770
+    ],
+    # Os 5 modelos de maior acurácia individual entre todas as 49 execuções
+    # (inclui 2 modelos mais fracos da rodada 7) - ficou PIOR que o de 3
+    # membros acima, por isso não é o escolhido.
+    "search_top5_by_accuracy": [
+        "mlp_augmentation_more_epochs_20260905-104913",
+        "mlp_combo_aug_schedule_more_epochs_20260905-122325",
+        "mlp_combo_aug_schedule_20260905-090100",
+        "mlp_augmentation_color_jitter_20260905-151241",
+        "mlp_real_normalization_20260905-133159",
+    ],
+    # Tentativa intermediária: os 2 melhores da rodada 7 + 2 da rodada 6.
+    "search_top4_mixed": [
+        "mlp_augmentation_more_epochs_20260905-104913",
+        "mlp_combo_aug_schedule_more_epochs_20260905-122325",
+        "mlp_deeper_wider_lr_lower_20260904-190116",
+        "mlp_combo_aug_schedule_20260905-090100",
+    ],
+    # Vencedor: 3 membros escolhidos por diversidade de regime de treino
+    # (2 com augmentation + 1 sem), não só por acurácia individual - ver
+    # README.md, seção "Busca de composição do ensemble".
+    "final": [
+        "mlp_augmentation_more_epochs_20260905-104913",
+        "mlp_combo_aug_schedule_more_epochs_20260905-122325",
+        "mlp_deeper_wider_lr_lower_20260904-190116",
     ],
 }
 
@@ -136,13 +167,16 @@ def run_ensemble(ensemble_id: str, member_model_ids: list[str]):
 
 def main():
     if len(sys.argv) == 1:
-        ensemble_id = "top3"
-        member_model_ids = ENSEMBLES["top3"]
+        ensemble_id = "final"
+        member_model_ids = ENSEMBLES["final"]
+    elif len(sys.argv) == 2 and sys.argv[1] in ENSEMBLES:
+        ensemble_id = sys.argv[1]
+        member_model_ids = ENSEMBLES[ensemble_id]
     elif len(sys.argv) >= 3:
         ensemble_id = sys.argv[1]
         member_model_ids = sys.argv[2:]
     else:
-        print("Uso: ensemble_eval.py [ensemble_id member_id1 member_id2 ...]")
+        print(f"Uso: ensemble_eval.py [{'|'.join(ENSEMBLES)} | <novo_nome> <id1> <id2> ...]")
         sys.exit(1)
 
     run_ensemble(ensemble_id, member_model_ids)
