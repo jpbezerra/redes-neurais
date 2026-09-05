@@ -27,5 +27,5 @@
     "ship": 0.732,
     "truck": 0.676
   },
-  "notes": "Média das probabilidades (softmax) dos 3 melhores modelos individuais já treinados, sem retreinar nada."
+  "notes": "Média das probabilidades (softmax) de 3 modelos já treinados, sem retreinar nada."
 }

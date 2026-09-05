@@ -1,0 +1,92 @@
+{
+  "model_id": "mlp_combo_aug_schedule_more_epochs_20260905-122325",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-05T12:23:25.778219",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 55,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      512,
+      256,
+      128,
+      64,
+      32
+    ],
+    "activation": "gelu",
+    "dropout": 0.2,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 55,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 55,
+    "train_loss": 1.26128538163503,
+    "val_loss": 1.122327099609375,
+    "test_accuracy": 0.5984,
+    "test_balanced_accuracy": 0.5984,
+    "test_precision": 0.5935928911804752,
+    "test_recall": 0.5984,
+    "test_f1_score": 0.5945815373396509
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.67,
+    "automobile": 0.696,
+    "bird": 0.426,
+    "cat": 0.394,
+    "deer": 0.487,
+    "dog": 0.463,
+    "frog": 0.714,
+    "horse": 0.713,
+    "ship": 0.721,
+    "truck": 0.7
+  },
+  "notes": "combo_aug_schedule (melhor individual, 0.5863) tambem nao tinha convergido em 40 epocas; repete com 55 epocas e cosine T_max=55.",
+  "tags": [],
+  "run_name": "combo_aug_schedule_more_epochs"
+}

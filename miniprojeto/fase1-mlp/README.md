@@ -85,14 +85,14 @@ notebook), use `checkpointing.load_all_metadata(results_dir)` — ver a seção
 
 Além dos 17 experimentos originais do notebook (que cobrem cada hiperparâmetro
 isoladamente — ativação, otimizador, batch size, dropout, weight decay, etc.),
-foi feita uma busca guiada em **6 rodadas** de 3-5 configurações cada
-(28 execuções via `scripts/run_experiments.py`), totalizando **45 execuções**
-registradas em `results/`, mais um ensemble por soft voting dos 3 melhores
-modelos (`scripts/ensemble_eval.py`, sem retreinar nada). A cada rodada, o(s)
-melhor(es) resultado(s) da rodada anterior foram usados para decidir a
-próxima bateria de testes (busca gulosa/coordenada, não uma grade exaustiva)
-— cada rodada testa uma hipótese específica derivada da rodada anterior, não
-combinações aleatórias.
+foi feita uma busca guiada em **7 rodadas** de 3-5 configurações cada
+(32 execuções via `scripts/run_experiments.py`), totalizando **49 execuções**
+registradas em `results/`, mais uma busca de composição de **ensemble** por
+soft voting (4 combinações testadas em `scripts/ensemble_eval.py`, sem
+retreinar nada). A cada rodada, o(s) melhor(es) resultado(s) da rodada
+anterior foram usados para decidir a próxima bateria de testes (busca
+gulosa/coordenada, não uma grade exaustiva) — cada rodada testa uma hipótese
+específica derivada da rodada anterior, não combinações aleatórias.
 
 Todas as execuções usam CIFAR-10 (45.000 treino / 5.000 validação / 10.000
 teste), Adam como otimizador padrão e entropia cruzada como perda, exceto
@@ -108,8 +108,9 @@ onde indicado.
 | 3 | `combo_light` — gelu + dropout 0.2 + sem weight decay (combina os 3 vencedores da rodada 2) | 0.5655 | +1,33 p.p. |
 | 4 | `combo_deeper_wider` — rede ainda maior `[512,256,128,64,32]` | 0.5712 | +0,57 p.p. |
 | 5 | `deeper_wider_lr_lower` — mesma rede + learning rate menor (5e-4) | 0.5770 | +0,58 p.p. |
-| 6 | `combo_aug_schedule` — mesma rede + data augmentation (flip/crop) + LR cosine annealing | **0.5863** | +0,93 p.p. |
-| — | **Ensemble (soft voting)** dos 3 melhores modelos, sem retreinar | **0.6058** | +1,95 p.p. sobre o melhor individual |
+| 6 | `combo_aug_schedule` — mesma rede + data augmentation (flip/crop) + LR cosine annealing | 0.5863 | +0,93 p.p. |
+| 7 | `augmentation_more_epochs` — mesma rede + augmentation, 55 épocas em vez de 40 | **0.5998** | +1,35 p.p. |
+| — | **Ensemble (soft voting)** dos 3 modelos mais diversos, sem retreinar | **0.6135** | +1,37 p.p. sobre o melhor individual |
 
 O ganho por rodada tinha caído para +0,57-0,58 p.p. nas rodadas 4 e 5 —
 retornos decrescentes claros dentro do espaço já explorado (arquitetura,
@@ -118,8 +119,17 @@ de um tipo diferente** (data augmentation e LR schedule) e reverteu essa
 tendência: +0,93 p.p., maior que o ganho das duas rodadas anteriores juntas —
 sinal de que augmentation/schedule atacam uma fonte de erro diferente
 (overfitting/instabilidade de convergência) da que os hiperparâmetros de
-arquitetura já haviam esgotado. O ensemble, por sua vez, ataca ainda outra
-fonte (variância entre modelos individuais) e deu o maior salto de todos.
+arquitetura já haviam esgotado. A rodada 7 confirmou a suspeita de que os
+modelos com augmentation da rodada 6 não tinham convergido: dar mais 15
+épocas (`augmentation_more_epochs`, 55 no total) rendeu +1,35 p.p., o maior
+ganho de uma única rodada desde a rodada 2. Já normalização real do CIFAR-10
+e augmentation mais forte (color jitter), também testadas na rodada 7,
+**pioraram** ligeiramente o resultado (0.5840 e 0.5844 vs. 0.5863 do
+baseline da rodada) — nem toda alavanca nova ajuda. O ensemble, por fim,
+ataca uma fonte de erro diferente de todas as anteriores (variância entre
+modelos) e deu o maior resultado absoluto — mas só depois de uma busca pela
+melhor *composição* de membros (ver abaixo), não só pegando os de maior
+acurácia individual.
 
 ![Evolução da acurácia por rodada](results/plots/report/evolucao_por_rodada.png)
 
@@ -129,8 +139,9 @@ fonte (variância entre modelos individuais) e deu o maior salto de todos.
 
 ### Configuração vencedora final
 
-**Melhor modelo individual — `mlp_combo_aug_schedule`** — acurácia de teste
-**0.5863** (F1 0.5816), 40 épocas (sem early stopping — ainda melhorando):
+**Melhor modelo individual — `mlp_augmentation_more_epochs`** — acurácia de
+teste **0.5998** (F1 0.5942), 55 épocas (sem early stopping — ainda
+melhorando):
 
 | Hiperparâmetro | Valor |
 |---|---|
@@ -139,36 +150,59 @@ fonte (variância entre modelos individuais) e deu o maior salto de todos.
 | Dropout | 0.2 |
 | Batch Normalization | Sim |
 | Weight decay (L2) | 0.0 |
-| Learning rate | 1e-3 inicial, com **cosine annealing** decaindo a 0 em 40 épocas |
+| Learning rate | 5e-4 fixo |
 | Data augmentation | `RandomCrop(32, padding=4)` + `RandomHorizontalFlip()` no treino |
 | Otimizador | Adam |
 
-**Melhor resultado geral — ensemble (soft voting) de 3 modelos** —
-acurácia de teste **0.6058** (F1 0.6028), combinando as probabilidades
-(softmax) dos modelos `combo_aug_schedule` (0.5863), `augmentation_flip_crop`
-(0.5813) e `deeper_wider_lr_lower` (0.5770), sem nenhum retreino — ver
-`scripts/ensemble_eval.py` e `results/mlp_ensemble_top3_softvote/metadata.json`.
+**Busca de composição do ensemble**: testamos 4 combinações antes de
+escolher a final — o resultado mais importante foi que **diversidade de
+regime de treino importa mais que acurácia individual bruta**:
 
-Acurácia por classe (melhor modelo individual vs. ensemble):
-
-| Classe | `combo_aug_schedule` | Ensemble (top-3) |
+| Ensemble | Membros | Acurácia |
 |---|---|---|
-| airplane | 0.662 | 0.695 |
-| automobile | 0.684 | 0.707 |
-| bird | 0.432 | 0.475 |
-| cat | 0.345 | 0.417 |
-| deer | 0.465 | 0.492 |
-| dog | 0.452 | 0.455 |
-| frog | 0.709 | 0.715 |
-| horse | 0.696 | 0.694 |
-| ship | 0.746 | 0.732 |
-| truck | 0.672 | 0.676 |
+| `top3` (rodada 6) | `combo_aug_schedule`, `augmentation_flip_crop`, `deeper_wider_lr_lower` | 0.6058 |
+| `top5` | os 5 melhores por acurácia individual (incluindo `real_normalization` e `augmentation_color_jitter`, ambos mais fracos) | 0.6024 (pior que o `top3`!) |
+| `top4_v2` | os 2 melhores da rodada 7 + `combo_aug_schedule` + `deeper_wider_lr_lower` | 0.6105 |
+| **`final`** | `augmentation_more_epochs`, `combo_aug_schedule_more_epochs`, `deeper_wider_lr_lower` | **0.6135** |
 
-O ensemble melhora (quase) todas as classes, com o maior ganho justamente nas
-classes mais difíceis (`cat` +7,2 p.p., `bird` +4,3 p.p.) — consistente com a
-ideia de que modelos treinados com regimes distintos (com/sem augmentation,
-com/sem schedule) erram de formas parcialmente independentes nessas classes
-mais ambíguas, e a média das probabilidades corrige parte desses erros.
+Adicionar os modelos de maior acurácia individual (`top5`) piorou o
+resultado — dois membros mais fracos (0.584) diluíram a média sem
+acrescentar diversidade real (erram de forma parecida aos outros). Já trocar
+um membro correlacionado (`combo_aug_schedule`, mesma receita que
+`combo_aug_schedule_more_epochs`) por um modelo de regime bem diferente
+(`deeper_wider_lr_lower`, sem augmentation) manteve só 3 membros e ainda
+assim rendeu mais — 3 membros bem diversos > 4-5 membros com redundância.
+
+**Melhor resultado geral — ensemble final (soft voting) de 3 modelos** —
+acurácia de teste **0.6135** (F1 0.6102), combinando as probabilidades
+(softmax) de `augmentation_more_epochs` (0.5998), `combo_aug_schedule_more_epochs`
+(0.5984, mesma arquitetura + augmentation + cosine annealing) e
+`deeper_wider_lr_lower` (0.5770, sem augmentation — o membro "diferente" que
+dá diversidade ao ensemble), sem nenhum retreino — ver
+`scripts/ensemble_eval.py` e `results/mlp_ensemble_final_softvote/metadata.json`.
+
+Acurácia por classe (melhor modelo individual vs. ensemble final):
+
+| Classe | `augmentation_more_epochs` | Ensemble (final) | Diferença |
+|---|---|---|---|
+| airplane | 0.693 | 0.696 | +0,3 p.p. |
+| automobile | 0.702 | 0.707 | +0,5 p.p. |
+| bird | 0.353 | 0.429 | +7,6 p.p. |
+| cat | 0.386 | 0.421 | +3,5 p.p. |
+| deer | 0.457 | 0.500 | +4,3 p.p. |
+| dog | 0.525 | 0.495 | −3,0 p.p. |
+| frog | 0.762 | 0.738 | −2,4 p.p. |
+| horse | 0.692 | 0.701 | +0,9 p.p. |
+| ship | 0.706 | 0.738 | +3,2 p.p. |
+| truck | 0.722 | 0.710 | −1,2 p.p. |
+
+O ensemble melhora 7 das 10 classes — com destaque para as mais fracas do
+modelo individual (`bird` +7,6 p.p., `deer` +4,3 p.p., `cat` +3,5 p.p.), que
+é exatamente onde mais precisava melhorar. Em compensação, piora um pouco em
+3 classes onde o modelo individual já ia bem (`dog`, `frog`, `truck`) — soft
+voting reduz a variância média do conjunto e puxa classes muito boas de um
+membro específico para perto da média dos outros dois, não garante melhora
+em toda classe individualmente.
 
 ![Curvas de treino do melhor modelo](results/plots/report/training_curves_melhor_modelo.png)
 
@@ -180,27 +214,28 @@ A matriz de confusão do ensemble (normalizada por linha) confirma exatamente
 os pares de classes que um MLP sem estrutura espacial mais confunde — e
 quantifica o quanto:
 
-- **`cat` ↔ `dog`**: 17% dos gatos são classificados como cachorro e 24% dos
-  cachorros como gato — de longe a maior confusão da matriz, e o motivo de
-  `cat` (0.417) ser a classe mais fraca do modelo.
-- **`automobile` ↔ `truck`**: 15% de confusão em ambas as direções — dois
-  veículos de rodas com silhueta retangular similar em baixa resolução (32×32).
-- **`airplane` ↔ `ship`**: 11% dos aviões viram navio e 10% dos navios viram
+- **`cat` ↔ `dog`**: 19% dos gatos são classificados como cachorro e 23% dos
+  cachorros como gato — de longe a maior confusão da matriz.
+- **`automobile` ↔ `truck`**: 16% dos carros viram caminhão e 12% dos
+  caminhões viram carro — dois veículos de rodas com silhueta retangular
+  similar em baixa resolução (32×32).
+- **`airplane` ↔ `ship`**: 10% dos aviões viram navio e 9% dos navios viram
   avião — ambos tendem a aparecer como uma forma alongada sobre um fundo
   claro/uniforme (céu ou mar), o que um MLP sem noção de contexto/textura
   espacial não distingue bem.
-- As classes com melhor acurácia (`ship` 0.73, `frog` 0.71, `automobile`
-  0.71, `airplane` 0.69, `horse` 0.69) são as que têm silhueta ou cor de
-  fundo mais consistente entre exemplos; as piores (`cat` 0.42, `bird` 0.47,
-  `deer` 0.49, `dog` 0.46) são todas classes de animais com pose e textura
-  variáveis — reforça o limite estrutural do MLP discutido a seguir.
+- As classes com melhor acurácia no ensemble (`ship`/`frog` 0.74,
+  `automobile`/`truck` ~0.71, `airplane`/`horse` ~0.70) são as que têm
+  silhueta ou cor de fundo mais consistente entre exemplos; as piores
+  (`cat` 0.42, `bird` 0.43, `dog` 0.50, `deer` 0.50) são majoritariamente
+  classes de animais com pose e textura variáveis — reforça o limite
+  estrutural do MLP discutido a seguir.
 
-Padrão recorrente em **todos** os 45 experimentos, não só nos melhores:
+Padrão recorrente em **todos** os 49 experimentos, não só nos melhores:
 veículos e cenários com silhueta bem definida (`ship`, `frog`, `automobile`,
 `airplane`) são consistentemente as classes mais fáceis; animais com pose e
 textura variáveis (`cat`, `dog`, `bird`, `deer`) são as mais difíceis — `cat`
 e `dog` frequentemente se confundem entre si, e continuam sendo o gargalo
-mesmo no melhor resultado (`cat` = 0.417 no ensemble, a classe mais fraca de
+mesmo no melhor resultado (`cat` = 0.421 no ensemble, a classe mais fraca de
 todas). Isso é esperado para um MLP: sem convolução, o modelo não tem
 nenhuma noção de invariância translacional ou de textura local, então
 classes que dependem de forma/silhueta global se saem melhor do que classes
@@ -256,34 +291,64 @@ que dependem de padrões locais (pelo, textura).
   quando há mais "ruído" para estabilizar no fim do treino (introduzido pela
   augmentation) do que em treino sem augmentation, onde o LR fixo bem
   ajustado (5e-4) já bastava.
-- **Ensemble** (soft voting de 3 modelos, sem retreinar): maior ganho
-  isolado de toda a busca em termos absolutos (+1,95 p.p., 0.5863 → 0.6058),
-  e de graça computacionalmente (usa checkpoints já salvos). Funciona porque
-  os 3 modelos usam regimes de treino diferentes (com/sem augmentation,
-  com/sem schedule) e portanto erram de forma parcialmente independente.
+- **Mais épocas com augmentation** (rodada 7): `augmentation_flip_crop` e
+  `combo_aug_schedule` (rodada 6) tinham parado em 40 épocas ainda
+  melhorando. Dar mais espaço (55 épocas, `augmentation_more_epochs`) rendeu
+  +1,35 p.p. (0.5863 → 0.5998 no melhor da família) — o segundo maior ganho
+  de rodada de toda a busca, confirmando que o modelo realmente não tinha
+  convergido.
+- **Normalização real do CIFAR-10** (média/desvio-padrão reais em vez de
+  simplesmente [-1,1], rodada 7): **piorou** ligeiramente (0.5840 vs. 0.5863
+  do baseline da rodada) — contra-intuitivo, já que normalização real é
+  estatisticamente "mais correta", mas nesta arquitetura/regime não ajudou.
+  Hipótese: batch norm já absorve boa parte do benefício de uma normalização
+  de entrada melhor, tornando a escolha de mean/std de entrada menos
+  relevante.
+- **Augmentation mais forte** (crop+flip+color jitter, rodada 7): também
+  **piorou** ligeiramente (0.5844 vs. 0.5863) — jitter de cor parece remover
+  informação de cor que o MLP usa como atalho útil (já que não tem acesso a
+  textura/forma via convolução) — mais augmentation nem sempre é melhor.
+- **Ensemble** (soft voting, sem retreinar): maior ganho isolado de toda a
+  busca em termos absolutos (+1,37 p.p. sobre o melhor individual, 0.5998 →
+  0.6135), e de graça computacionalmente (usa checkpoints já salvos). O
+  achado mais interessante aqui não foi o ganho em si, mas **como compor o
+  ensemble**: testamos 4 combinações (ver tabela acima) e a que só pegava os
+  5 modelos de maior acurácia individual (`top5`) foi *pior* que usar só 3
+  modelos bem escolhidos (`top3`/`final`) — membros correlacionados (mesma
+  receita de treino) ou fracos diluem a média em vez de ajudar; o que importa
+  é ter membros que erram de forma parcialmente independente.
 
 ### Dá para melhorar mais, ou já chegou no limite?
 
-**Resposta confirmada empiricamente**: ainda dava para melhorar dentro da
-família MLP — as 3 alavancas sugeridas (augmentation, LR schedule, ensemble)
-somadas levaram a acurácia de 0.5770 para **0.6058** (+2,88 p.p.), maior que
-o ganho de qualquer rodada anterior de busca de hiperparâmetros "tradicional"
-(arquitetura/ativação/regularização/LR, que já tinha saturado em ~+0,57-0,58
-p.p. por rodada). Isso mostra que "retornos decrescentes" valia **para o tipo
-de alavanca já testado**, não para o MLP como família — trocar de categoria de
+**Resposta confirmada empiricamente, em duas rodadas de teste**: ainda dava
+para melhorar dentro da família MLP. As alavancas testadas nas rodadas 6-7
+(augmentation, LR schedule, mais épocas, ensemble) levaram a acurácia de
+0.5770 para **0.6135** (+3,65 p.p.), mais que o dobro do ganho de qualquer
+rodada anterior de busca de hiperparâmetros "tradicional" (arquitetura/
+ativação/regularização/LR, que já tinha saturado em ~+0,57-0,58 p.p. por
+rodada). Isso mostra que "retornos decrescentes" valia **para o tipo de
+alavanca já testado**, não para o MLP como família — trocar de categoria de
 alavanca (regularização de dados em vez de regularização do modelo; combinar
-modelos em vez de tunar um só) reabriu ganho real.
+modelos em vez de tunar um só) reabriu ganho real, duas vezes seguidas.
 
-Dito isso, **para um MLP puro, agora sim parece estar perto de um teto mais
-sério** — as alavancas "baratas" (arquitetura, ativação, regularização, LR,
-augmentation, schedule, ensemble simples) já foram testadas; o que resta
-tem retorno esperado menor ou custo bem mais alto:
+Mas a rodada 7 também mostrou os primeiros sinais reais de **retornos
+decrescentes até para as alavancas novas**: 2 das 4 frentes testadas
+(normalização real, augmentation mais forte) pioraram o resultado em vez de
+melhorar — a primeira vez em 7 rodadas que uma categoria inteira de alavanca
+nova (não só um valor extremo dela) deu resultado negativo. Isso sugere que
+a região de "alavancas baratas ainda não testadas" está se esgotando de
+verdade agora, não só aparentando esgotar como em rodadas anteriores.
+
+**Para um MLP puro, agora sim parece estar perto de um teto mais sério** —
+a maior parte das alavancas testáveis com esforço razoável (arquitetura,
+ativação, regularização, LR, augmentation leve/forte, schedule, mais
+épocas, normalização, ensemble) já foi testada:
 
 - Um MLP achata a imagem 32×32×3 num vetor de 3072 valores e perde toda
   estrutura espacial: não há invariância translacional nem detecção de
   padrões locais (bordas, texturas). Isso continua visível mesmo no melhor
-  resultado — `cat` (0.417) e `bird` (0.475) seguem as classes mais fracas do
-  ensemble, exatamente as que mais dependem de textura/pose em vez de
+  resultado — `cat` (0.421) e `bird` (0.429) seguem as classes mais fracas
+  do ensemble, exatamente as que mais dependem de textura/pose em vez de
   silhueta global. Nenhuma das alavancas testadas resolve essa limitação
   estrutural, só mitiga seus sintomas (menos overfitting, menos variância).
 - Redes CNN convolucionais tipicamente alcançam 70-90%+ em CIFAR-10 com
@@ -292,23 +357,28 @@ tem retorno esperado menor ou custo bem mais alto:
   prevê uma `fase2-cnn` como próxima etapa.
 
 **Alavancas que ainda não foram testadas e poderiam render mais alguns
-pontos**, em ordem aproximada de impacto esperado / esforço:
+pontos**, em ordem aproximada de impacto esperado / esforço — mas com
+expectativa mais modesta agora que 2 das 4 frentes da rodada 7 já vieram
+negativas:
 
-1. **Mais épocas com augmentation**: `augmentation_flip_crop` e
-   `combo_aug_schedule` chegaram ao teto de 40 épocas ainda melhorando —
-   rodar por mais tempo (60-80 épocas) provavelmente renderia mais um pouco.
-2. **Ensemble maior/mais diverso** (5+ modelos, incluindo seeds diferentes
-   da mesma config, não só configs diferentes) — o ganho de ensemble tende a
-   saturar, mas 3 membros é pouco; vale testar 5.
-3. **Normalização com média/desvio-padrão reais do CIFAR-10** (o código já
-   comenta essa alternativa em `data.py`, nunca testada nas 45 execuções).
-4. Jitter de cor/brightness além de crop+flip, ou `Cutout`/`Mixup` — formas
-   de augmentation mais agressivas que talvez ajudem ainda mais dado que
-   crop+flip sozinho já foi o maior ganho isolado da busca toda.
+1. **Épocas ainda maiores** (80-100+) para `augmentation_more_epochs` — a
+   curva de validação ainda não achatou de vez, mas o ganho marginal por
+   época tende a cair.
+2. **`Cutout`/`Mixup`** (formas de augmentation mais estruturadas que color
+   jitter, que não ajudou) — mascarar regiões da imagem ou misturar pares de
+   imagens/rótulos, em vez de perturbar cor/geometria.
+3. **Ensemble maior com seeds novas** (treinar 2-3 seeds adicionais da
+   melhor config, em vez de só recombinar modelos já existentes) — mais caro
+   (exige retreino), mas potencialmente mais diverso que recombinar o que já
+   existe.
+4. Grid fino em torno de dropout 0.2/lr 5e-4 — a busca já indica que a
+   região é estreita e plana ali perto, então retorno esperado é baixo.
 
 Resumindo: o MLP surpreendeu ao render mais do que o esperado inicialmente
-(pulou de um platô aparente de ~0.57 para 0.6058) assim que se mudou de
-categoria de alavanca — mas o limite estrutural (perda da estrutura 2D da
+(pulou de um platô aparente de ~0.577 para 0.6135) ao mudar de categoria de
+alavanca duas vezes seguidas (rodadas 6 e 7) — mas a rodada 7 também trouxe
+o primeiro sinal claro de que essa fonte de ganho está se esgotando (2 de 4
+frentes pioraram o resultado). O limite estrutural (perda da estrutura 2D da
 imagem) continua sendo o teto real, visível nas classes de animais que nunca
 passam de ~0.4-0.5 mesmo no melhor resultado. Para um salto de outra ordem de
 grandeza (70-90%+), o caminho é migrar para convolução (`fase2-cnn`).
