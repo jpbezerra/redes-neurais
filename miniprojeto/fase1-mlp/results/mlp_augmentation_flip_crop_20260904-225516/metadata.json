@@ -1,0 +1,90 @@
+{
+  "model_id": "mlp_augmentation_flip_crop_20260904-225516",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-04T22:55:16.795126",
+  "hyperparameters": {
+    "learning_rate": 0.0005,
+    "batch_size": 64,
+    "epochs": 40,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      512,
+      256,
+      128,
+      64,
+      32
+    ],
+    "activation": "gelu",
+    "dropout": 0.2,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "augment": true,
+    "patience": 10,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 40,
+    "train_loss": 1.3310180962456597,
+    "val_loss": 1.1667853240966797,
+    "test_accuracy": 0.5813,
+    "test_balanced_accuracy": 0.5812999999999999,
+    "test_precision": 0.5777031109965518,
+    "test_recall": 0.5813,
+    "test_f1_score": 0.5771694627527286
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.691,
+    "automobile": 0.734,
+    "bird": 0.481,
+    "cat": 0.362,
+    "deer": 0.431,
+    "dog": 0.427,
+    "frog": 0.709,
+    "horse": 0.684,
+    "ship": 0.67,
+    "truck": 0.624
+  },
+  "notes": "melhor config (deeper_wider_lr_lower) + data augmentation (RandomCrop+HorizontalFlip) no treino. Mais epocas/paciencia pois augmentation converge mais devagar.",
+  "tags": [],
+  "run_name": "augmentation_flip_crop"
+}

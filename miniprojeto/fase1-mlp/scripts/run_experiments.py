@@ -255,6 +255,37 @@ ROUNDS: dict[str, list[ExperimentConfig]] = {
             notes="confirma se gelu ainda vence relu nesta arquitetura mais profunda (nas rodadas anteriores a diferenca era pequena).",
         ),
     ],
+    # Round 6: testa 3 alavancas ainda nao exploradas nas rodadas 1-5, sobre a
+    # melhor config ate agora (deeper_wider_lr_lower, 0.5770): data
+    # augmentation (flip + crop), LR schedule (cosine annealing) e a
+    # combinacao das duas. Ensemble dos melhores modelos ja treinados fica
+    # em scripts/ensemble_eval.py (nao precisa retreinar).
+    "round6": [
+        ExperimentConfig(
+            run_name="augmentation_flip_crop",
+            hidden_layers=(512, 256, 128, 64, 32),
+            activation="gelu", dropout=0.2, batch_norm=True,
+            weight_decay=0.0, learning_rate=5e-4, optimizer="adam",
+            num_epochs=40, patience=10, augment=True,
+            notes="melhor config (deeper_wider_lr_lower) + data augmentation (RandomCrop+HorizontalFlip) no treino. Mais epocas/paciencia pois augmentation converge mais devagar.",
+        ),
+        ExperimentConfig(
+            run_name="lr_cosine_schedule",
+            hidden_layers=(512, 256, 128, 64, 32),
+            activation="gelu", dropout=0.2, batch_norm=True,
+            weight_decay=0.0, learning_rate=1e-3, optimizer="adam",
+            num_epochs=30, patience=30, lr_schedule="cosine",
+            notes="mesma arquitetura vencedora, mas com LR fixo trocado por cosine annealing (LR inicial 1e-3 decaindo a 0 em 30 epocas). patience=30 (~sem early stop) para deixar o schedule completar.",
+        ),
+        ExperimentConfig(
+            run_name="combo_aug_schedule",
+            hidden_layers=(512, 256, 128, 64, 32),
+            activation="gelu", dropout=0.2, batch_norm=True,
+            weight_decay=0.0, learning_rate=1e-3, optimizer="adam",
+            num_epochs=40, patience=40, augment=True, lr_schedule="cosine",
+            notes="combina data augmentation + cosine annealing, para ver se os efeitos se somam como aconteceu com gelu+dropout+weight_decay na rodada 3.",
+        ),
+    ],
 }
 
 
@@ -272,13 +303,18 @@ def main():
     train_loader, val_loader, test_loader = get_dataloaders(
         data_dir=DATA_DIR, batch_size=64, val_fraction=0.1, seed=42, num_workers=0,
     )
+    train_loader_aug = None
+    if any(cfg.augment for cfg in configs):
+        train_loader_aug, _, _ = get_dataloaders(
+            data_dir=DATA_DIR, batch_size=64, val_fraction=0.1, seed=42, num_workers=0, augment=True,
+        )
 
     for cfg in configs:
         print(f"\n{'=' * 60}\n{round_name} :: {cfg.run_name}\n{'=' * 60}")
         t0 = time.time()
         result = fit_or_load(
             config=cfg,
-            train_loader=train_loader,
+            train_loader=train_loader_aug if cfg.augment else train_loader,
             val_loader=val_loader,
             test_loader=test_loader,
             device=device,

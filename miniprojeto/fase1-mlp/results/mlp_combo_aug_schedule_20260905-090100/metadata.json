@@ -1,0 +1,90 @@
+{
+  "model_id": "mlp_combo_aug_schedule_20260905-090100",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-05T09:01:00.248479",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 40,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "hidden_layers": [
+      512,
+      256,
+      128,
+      64,
+      32
+    ],
+    "activation": "gelu",
+    "dropout": 0.2,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "patience": 40,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 40,
+    "train_loss": 1.3045901234308879,
+    "val_loss": 1.1566492031097413,
+    "test_accuracy": 0.5863,
+    "test_balanced_accuracy": 0.5863,
+    "test_precision": 0.5804570181297868,
+    "test_recall": 0.5863,
+    "test_f1_score": 0.581628465430221
+  },
+  "model_type": "MLP",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 1)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "layers": [
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear",
+      "BatchNorm1d",
+      "GELU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3072
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.662,
+    "automobile": 0.684,
+    "bird": 0.432,
+    "cat": 0.345,
+    "deer": 0.465,
+    "dog": 0.452,
+    "frog": 0.709,
+    "horse": 0.696,
+    "ship": 0.746,
+    "truck": 0.672
+  },
+  "notes": "combina data augmentation + cosine annealing, para ver se os efeitos se somam como aconteceu com gelu+dropout+weight_decay na rodada 3.",
+  "tags": [],
+  "run_name": "combo_aug_schedule"
+}

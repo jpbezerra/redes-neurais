@@ -41,12 +41,14 @@ class ExperimentConfig:
     learning_rate: float = 1e-3
     weight_decay: float = 0.0  # regularização L2
     momentum: float = 0.9  # usado apenas pelo SGD
+    lr_schedule: str = "none"  # none | cosine (ver train.build_scheduler)
 
     # Treinamento
     batch_size: int = 64
     num_epochs: int = 100
     patience: int = 5  # early stopping (nº de épocas sem melhora)
     val_fraction: float = 0.1  # fração do treino usada como validação
+    augment: bool = False  # data augmentation (flip + crop) no treino, ver data.get_dataloaders
 
     # Reprodutibilidade
     seed: int = 42

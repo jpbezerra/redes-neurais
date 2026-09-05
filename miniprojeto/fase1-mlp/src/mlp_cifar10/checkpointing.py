@@ -116,6 +116,8 @@ def save_run(
         "batch_norm": config.batch_norm,
         "weight_decay": config.weight_decay,
         "momentum": config.momentum,
+        "lr_schedule": config.lr_schedule,
+        "augment": config.augment,
         "patience": config.patience,
         "seed": config.seed,
     }

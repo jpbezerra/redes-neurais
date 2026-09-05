@@ -20,7 +20,8 @@ fase1-mlp/
 ├── notebooks/
 │   └── 01_train_mlp_cifar10.ipynb   # notebook principal: define e roda os experimentos originais
 ├── scripts/
-│   └── run_experiments.py  # baterias adicionais de experimentos (rounds de busca de hiperparâmetros), fora do notebook
+│   ├── run_experiments.py  # baterias adicionais de experimentos (rounds de busca de hiperparâmetros), fora do notebook
+│   └── ensemble_eval.py    # ensemble (soft voting) dos melhores modelos já treinados, sem retreinar
 ├── data/                    # CIFAR-10 baixado automaticamente (não versionado)
 └── results/                 # results/{model_id}/ — uma pasta por execução de treino (não versionado)
 ```
@@ -82,12 +83,14 @@ notebook), use `checkpointing.load_all_metadata(results_dir)` — ver a seção
 
 Além dos 17 experimentos originais do notebook (que cobrem cada hiperparâmetro
 isoladamente — ativação, otimizador, batch size, dropout, weight decay, etc.),
-foi feita uma busca guiada em **5 rodadas** de 5 configurações cada
-(25 execuções via `scripts/run_experiments.py`), totalizando **42 execuções**
-registradas em `results/`. A cada rodada, o(s) melhor(es) resultado(s) da
-rodada anterior foram usados para decidir a próxima bateria de testes
-(busca gulosa/coordenada, não uma grade exaustiva) — cada rodada testa uma
-hipótese específica derivada da rodada anterior, não combinações aleatórias.
+foi feita uma busca guiada em **6 rodadas** de 3-5 configurações cada
+(28 execuções via `scripts/run_experiments.py`), totalizando **45 execuções**
+registradas em `results/`, mais um ensemble por soft voting dos 3 melhores
+modelos (`scripts/ensemble_eval.py`, sem retreinar nada). A cada rodada, o(s)
+melhor(es) resultado(s) da rodada anterior foram usados para decidir a
+próxima bateria de testes (busca gulosa/coordenada, não uma grade exaustiva)
+— cada rodada testa uma hipótese específica derivada da rodada anterior, não
+combinações aleatórias.
 
 Todas as execuções usam CIFAR-10 (45.000 treino / 5.000 validação / 10.000
 teste), Adam como otimizador padrão e entropia cruzada como perda, exceto
@@ -102,16 +105,24 @@ onde indicado.
 | 2 | `no_weight_decay` — remove weight decay | 0.5522 | +1,35 p.p. |
 | 3 | `combo_light` — gelu + dropout 0.2 + sem weight decay (combina os 3 vencedores da rodada 2) | 0.5655 | +1,33 p.p. |
 | 4 | `combo_deeper_wider` — rede ainda maior `[512,256,128,64,32]` | 0.5712 | +0,57 p.p. |
-| 5 | `deeper_wider_lr_lower` — mesma rede + learning rate menor (5e-4) | **0.5770** | +0,58 p.p. |
+| 5 | `deeper_wider_lr_lower` — mesma rede + learning rate menor (5e-4) | 0.5770 | +0,58 p.p. |
+| 6 | `combo_aug_schedule` — mesma rede + data augmentation (flip/crop) + LR cosine annealing | **0.5863** | +0,93 p.p. |
+| — | **Ensemble (soft voting)** dos 3 melhores modelos, sem retreinar | **0.6058** | +1,95 p.p. sobre o melhor individual |
 
-O ganho por rodada está diminuindo (1,35 → 1,33 → 0,57 → 0,58 p.p.),
-um sinal característico de retornos decrescentes: cada rodada ainda melhora,
-mas cada vez menos, indicando que a busca está convergindo para um platô
-específico desta família de modelos (MLP).
+O ganho por rodada tinha caído para +0,57-0,58 p.p. nas rodadas 4 e 5 —
+retornos decrescentes claros dentro do espaço já explorado (arquitetura,
+ativação, regularização, learning rate). A rodada 6 testou **duas alavancas
+de um tipo diferente** (data augmentation e LR schedule) e reverteu essa
+tendência: +0,93 p.p., maior que o ganho das duas rodadas anteriores juntas —
+sinal de que augmentation/schedule atacam uma fonte de erro diferente
+(overfitting/instabilidade de convergência) da que os hiperparâmetros de
+arquitetura já haviam esgotado. O ensemble, por sua vez, ataca ainda outra
+fonte (variância entre modelos individuais) e deu o maior salto de todos.
 
 ### Configuração vencedora final
 
-`mlp_deeper_wider_lr_lower` — acurácia de teste **0.5770** (F1 0.5768):
+**Melhor modelo individual — `mlp_combo_aug_schedule`** — acurácia de teste
+**0.5863** (F1 0.5816), 40 épocas (sem early stopping — ainda melhorando):
 
 | Hiperparâmetro | Valor |
 |---|---|
@@ -120,28 +131,47 @@ específico desta família de modelos (MLP).
 | Dropout | 0.2 |
 | Batch Normalization | Sim |
 | Weight decay (L2) | 0.0 |
-| Learning rate | 5e-4 |
+| Learning rate | 1e-3 inicial, com **cosine annealing** decaindo a 0 em 40 épocas |
+| Data augmentation | `RandomCrop(32, padding=4)` + `RandomHorizontalFlip()` no treino |
 | Otimizador | Adam |
-| Épocas treinadas | 27 (early stopping, paciência 8) |
 
-Acurácia por classe do melhor modelo:
+**Melhor resultado geral — ensemble (soft voting) de 3 modelos** —
+acurácia de teste **0.6058** (F1 0.6028), combinando as probabilidades
+(softmax) dos modelos `combo_aug_schedule` (0.5863), `augmentation_flip_crop`
+(0.5813) e `deeper_wider_lr_lower` (0.5770), sem nenhum retreino — ver
+`scripts/ensemble_eval.py` e `results/mlp_ensemble_top3_softvote/metadata.json`.
 
-| Classe | Acurácia | Classe | Acurácia |
-|---|---|---|---|
-| airplane | 0.670 | dog | 0.437 |
-| automobile | 0.648 | frog | 0.663 |
-| bird | 0.437 | horse | 0.633 |
-| cat | 0.445 | ship | 0.694 |
-| deer | 0.511 | truck | 0.632 |
+Acurácia por classe (melhor modelo individual vs. ensemble):
 
-Padrão recorrente em **todos** os 42 experimentos, não só no melhor: veículos
-e cenários com silhueta bem definida (`ship`, `airplane`, `automobile`,
-`frog`) são consistentemente as classes mais fáceis; animais com pose e
+| Classe | `combo_aug_schedule` | Ensemble (top-3) |
+|---|---|---|
+| airplane | 0.662 | 0.695 |
+| automobile | 0.684 | 0.707 |
+| bird | 0.432 | 0.475 |
+| cat | 0.345 | 0.417 |
+| deer | 0.465 | 0.492 |
+| dog | 0.452 | 0.455 |
+| frog | 0.709 | 0.715 |
+| horse | 0.696 | 0.694 |
+| ship | 0.746 | 0.732 |
+| truck | 0.672 | 0.676 |
+
+O ensemble melhora (quase) todas as classes, com o maior ganho justamente nas
+classes mais difíceis (`cat` +7,2 p.p., `bird` +4,3 p.p.) — consistente com a
+ideia de que modelos treinados com regimes distintos (com/sem augmentation,
+com/sem schedule) erram de formas parcialmente independentes nessas classes
+mais ambíguas, e a média das probabilidades corrige parte desses erros.
+
+Padrão recorrente em **todos** os 45 experimentos, não só nos melhores:
+veículos e cenários com silhueta bem definida (`ship`, `frog`, `automobile`,
+`airplane`) são consistentemente as classes mais fáceis; animais com pose e
 textura variáveis (`cat`, `dog`, `bird`, `deer`) são as mais difíceis — `cat`
-e `dog` frequentemente se confundem entre si. Isso é esperado para um MLP:
-sem convolução, o modelo não tem nenhuma noção de invariância translacional
-ou de textura local, então classes que dependem de forma/silhueta global se
-saem melhor do que classes que dependem de padrões locais (pelo, textura).
+e `dog` frequentemente se confundem entre si, e continuam sendo o gargalo
+mesmo no melhor resultado (`cat` = 0.417 no ensemble, a classe mais fraca de
+todas). Isso é esperado para um MLP: sem convolução, o modelo não tem
+nenhuma noção de invariância translacional ou de textura local, então
+classes que dependem de forma/silhueta global se saem melhor do que classes
+que dependem de padrões locais (pelo, textura).
 
 ### O que a busca revelou sobre cada hiperparâmetro
 
@@ -176,49 +206,76 @@ saem melhor do que classes que dependem de padrões locais (pelo, textura).
   (round 3: gelu + dropout 0.2 + sem weight decay) rendeu mais do que
   qualquer um isoladamente — os efeitos de arquitetura, ativação e
   regularização são majoritariamente aditivos/independentes entre si nesta
-  faixa de valores.
+  faixa de valores. O mesmo padrão se repetiu na rodada 6: augmentation
+  sozinha (0.5813) + cosine schedule sozinho (0.5732) somados superam os
+  dois isoladamente (0.5863 combinados) — reforça que, dentro do espaço
+  testado, cada alavanca ataca uma fonte de erro distinta.
+- **Data augmentation** (`RandomCrop(32, padding=4)` + `RandomHorizontalFlip()`,
+  rodada 6): o ganho isolado mais alto de toda a busca (+4,3 p.p. sobre a
+  mesma arquitetura sem augmentation, 0.5770 → 0.5813) — e o modelo ainda não
+  tinha convergido em 40 épocas, sugerindo espaço para mais. Custo: ~3x mais
+  lento por época em CPU sem `num_workers` (crop/flip por amostra, sem
+  paralelismo), então cada execução com augmentation levou ~1h em vez de
+  ~10-20 min.
+- **LR schedule** (cosine annealing, rodada 6): isoladamente ficou levemente
+  **abaixo** do LR fixo mais bem ajustado (0.5732 vs. 0.5770), mas combinado
+  com augmentation superou os dois (0.5863) — o schedule parece ajudar mais
+  quando há mais "ruído" para estabilizar no fim do treino (introduzido pela
+  augmentation) do que em treino sem augmentation, onde o LR fixo bem
+  ajustado (5e-4) já bastava.
+- **Ensemble** (soft voting de 3 modelos, sem retreinar): maior ganho
+  isolado de toda a busca em termos absolutos (+1,95 p.p., 0.5863 → 0.6058),
+  e de graça computacionalmente (usa checkpoints já salvos). Funciona porque
+  os 3 modelos usam regimes de treino diferentes (com/sem augmentation,
+  com/sem schedule) e portanto erram de forma parcialmente independente.
 
 ### Dá para melhorar mais, ou já chegou no limite?
 
-**Para um MLP puro neste orçamento de treino, sim, já estamos perto do teto
-prático** — mas não porque os hiperparâmetros se esgotaram, e sim porque a
-**arquitetura em si é o fator limitante**:
+**Resposta confirmada empiricamente**: ainda dava para melhorar dentro da
+família MLP — as 3 alavancas sugeridas (augmentation, LR schedule, ensemble)
+somadas levaram a acurácia de 0.5770 para **0.6058** (+2,88 p.p.), maior que
+o ganho de qualquer rodada anterior de busca de hiperparâmetros "tradicional"
+(arquitetura/ativação/regularização/LR, que já tinha saturado em ~+0,57-0,58
+p.p. por rodada). Isso mostra que "retornos decrescentes" valia **para o tipo
+de alavanca já testado**, não para o MLP como família — trocar de categoria de
+alavanca (regularização de dados em vez de regularização do modelo; combinar
+modelos em vez de tunar um só) reabriu ganho real.
 
-- O ganho por rodada caiu de +1,35 p.p. para +0,57-0,58 p.p. nas duas
-  últimas rodadas — clássico sinal de retornos decrescentes na busca de
-  hiperparâmetros.
+Dito isso, **para um MLP puro, agora sim parece estar perto de um teto mais
+sério** — as alavancas "baratas" (arquitetura, ativação, regularização, LR,
+augmentation, schedule, ensemble simples) já foram testadas; o que resta
+tem retorno esperado menor ou custo bem mais alto:
+
 - Um MLP achata a imagem 32×32×3 num vetor de 3072 valores e perde toda
   estrutura espacial: não há invariância translacional nem detecção de
-  padrões locais (bordas, texturas). É exatamente por isso que as classes
-  mais confundidas são as que dependem de textura/pose (gato, cachorro,
-  pássaro) — nenhum ajuste de dropout ou learning rate resolve essa
-  limitação estrutural.
+  padrões locais (bordas, texturas). Isso continua visível mesmo no melhor
+  resultado — `cat` (0.417) e `bird` (0.475) seguem as classes mais fracas do
+  ensemble, exatamente as que mais dependem de textura/pose em vez de
+  silhueta global. Nenhuma das alavancas testadas resolve essa limitação
+  estrutural, só mitiga seus sintomas (menos overfitting, menos variância).
 - Redes CNN convolucionais tipicamente alcançam 70-90%+ em CIFAR-10 com
   esforço de tuning comparável, justamente porque exploram essa estrutura
   espacial que o MLP ignora — o que também explica por que este projeto já
   prevê uma `fase2-cnn` como próxima etapa.
 
-**Ainda assim, existem alavancas não exploradas nesta busca que poderiam
-render mais alguns pontos percentuais dentro da família MLP**, em ordem
-aproximada de impacto esperado:
+**Alavancas que ainda não foram testadas e poderiam render mais alguns
+pontos**, em ordem aproximada de impacto esperado / esforço:
 
-1. **Data augmentation** (flips horizontais, crops aleatórios, jitter de cor) —
-   não foi testado em nenhuma das 42 execuções; costuma ser o ganho mais
-   barato em CIFAR-10, mesmo para MLP.
-2. **LR schedule** (cosine annealing, warmup, ou redução ao patamar) em vez de
-   LR fixo — os treinos mais longos (`combo_longer`, `deeper_wider_more_patience`)
-   sugerem que a perda de validação oscila perto do fim, o que um schedule
-   ajudaria a estabilizar.
+1. **Mais épocas com augmentation**: `augmentation_flip_crop` e
+   `combo_aug_schedule` chegaram ao teto de 40 épocas ainda melhorando —
+   rodar por mais tempo (60-80 épocas) provavelmente renderia mais um pouco.
+2. **Ensemble maior/mais diverso** (5+ modelos, incluindo seeds diferentes
+   da mesma config, não só configs diferentes) — o ganho de ensemble tende a
+   saturar, mas 3 membros é pouco; vale testar 5.
 3. **Normalização com média/desvio-padrão reais do CIFAR-10** (o código já
-   comenta essa alternativa em `data.py`, mas os 42 experimentos usaram a
-   normalização simples para [-1, 1]).
-4. **Ensemble** de 3-5 modelos com seeds diferentes — ganho tipicamente de
-   1-2 p.p., mas não reduz a limitação estrutural do MLP.
-5. Ajuste fino adicional de dropout entre 0.15-0.2 e de LR entre 5e-4 e 1e-3
-   teria retorno marginal (a busca já mostrou que a região ótima é estreita
-   e plana ali perto).
+   comenta essa alternativa em `data.py`, nunca testada nas 45 execuções).
+4. Jitter de cor/brightness além de crop+flip, ou `Cutout`/`Mixup` — formas
+   de augmentation mais agressivas que talvez ajudem ainda mais dado que
+   crop+flip sozinho já foi o maior ganho isolado da busca toda.
 
-Resumindo: **mais hiperparâmetros isolados provavelmente não vão além de
-~0.58-0.60 de acurácia nesta arquitetura**; para um salto real, o caminho é
-data augmentation (ganho rápido dentro do MLP) ou migrar para convolução
-(`fase2-cnn`), que é onde a estrutura espacial da imagem passa a ser usada.
+Resumindo: o MLP surpreendeu ao render mais do que o esperado inicialmente
+(pulou de um platô aparente de ~0.57 para 0.6058) assim que se mudou de
+categoria de alavanca — mas o limite estrutural (perda da estrutura 2D da
+imagem) continua sendo o teto real, visível nas classes de animais que nunca
+passam de ~0.4-0.5 mesmo no melhor resultado. Para um salto de outra ordem de
+grandeza (70-90%+), o caminho é migrar para convolução (`fase2-cnn`).

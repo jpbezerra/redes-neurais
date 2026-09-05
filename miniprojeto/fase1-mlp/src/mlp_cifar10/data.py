@@ -28,6 +28,23 @@ def build_transform(mean=DEFAULT_MEAN, std=DEFAULT_STD) -> transforms.Compose:
     )
 
 
+def build_augmented_transform(mean=DEFAULT_MEAN, std=DEFAULT_STD) -> transforms.Compose:
+    """Transform de treino com data augmentation leve (flip horizontal + crop).
+
+    Só deve ser usada no conjunto de treino — validação/teste usam sempre
+    `build_transform` (sem augmentation), para que a métrica reportada meça o
+    modelo em imagens "normais", não aumentadas.
+    """
+    return transforms.Compose(
+        [
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ]
+    )
+
+
 def get_datasets(data_dir: str | Path = "./data", transform: transforms.Compose | None = None):
     """Baixa (se necessário) e retorna os datasets de treino e teste do CIFAR-10."""
     transform = transform or build_transform()
@@ -46,6 +63,7 @@ def get_dataloaders(
     val_fraction: float = 0.1,
     seed: int = 42,
     num_workers: int = 0,
+    augment: bool = False,
 ) -> tuple[DataLoader, DataLoader, DataLoader]:
     """Retorna (train_loader, val_loader, test_loader).
 
@@ -53,18 +71,42 @@ def get_dataloaders(
     CIFAR-10 só tem treino/teste oficialmente) para permitir acompanhar o
     desempenho durante o treino sem "vazar" informação do teste.
 
+    `augment=True` aplica `build_augmented_transform` (flip horizontal + crop
+    aleatório) só no subconjunto de treino; validação e teste sempre usam a
+    transform padrão sem augmentation. Para isso o dataset de treino é
+    instanciado duas vezes (uma com cada transform) sobre os mesmos arquivos
+    em disco (torchvision não baixa de novo) e a mesma seed de split é usada
+    nas duas, garantindo que os índices de treino/validação continuem
+    idênticos aos de `augment=False`.
+
     `num_workers=0` (padrão) evita o custo de multiprocessing do PyTorch, que
     no Windows exige rodar dentro de um bloco `if __name__ == "__main__":` em
     scripts (não é um problema em notebooks/Colab). Se estiver em
     Linux/macOS/Colab e quiser acelerar o carregamento de dados, pode chamar
     com `num_workers=2` (ou mais) manualmente.
     """
-    train_dataset, test_dataset = get_datasets(data_dir)
+    plain_transform = build_transform()
+    train_transform = build_augmented_transform() if augment else plain_transform
+
+    train_dataset = torchvision.datasets.CIFAR10(
+        root=str(data_dir), train=True, download=True, transform=train_transform
+    )
+    val_dataset = (
+        torchvision.datasets.CIFAR10(root=str(data_dir), train=True, download=True, transform=plain_transform)
+        if augment
+        else train_dataset
+    )
+    test_dataset = torchvision.datasets.CIFAR10(
+        root=str(data_dir), train=False, download=True, transform=plain_transform
+    )
 
     n_val = int(len(train_dataset) * val_fraction)
     n_train = len(train_dataset) - n_val
     generator = torch.Generator().manual_seed(seed)
-    train_subset, val_subset = random_split(train_dataset, [n_train, n_val], generator=generator)
+    train_indices, val_indices = random_split(range(n_train + n_val), [n_train, n_val], generator=generator)
+
+    train_subset = Subset(train_dataset, train_indices.indices)
+    val_subset = Subset(val_dataset, val_indices.indices)
 
     train_loader = DataLoader(train_subset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_subset, batch_size=batch_size, shuffle=False, num_workers=num_workers)

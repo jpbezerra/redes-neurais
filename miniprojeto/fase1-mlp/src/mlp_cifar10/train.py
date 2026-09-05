@@ -41,6 +41,15 @@ def build_optimizer(model: nn.Module, config: ExperimentConfig) -> torch.optim.O
     return _OPTIMIZERS[config.optimizer](model.parameters(), **kwargs)
 
 
+def build_scheduler(optimizer: torch.optim.Optimizer, config: ExperimentConfig):
+    """Retorna um LR scheduler conforme `config.lr_schedule`, ou `None` (LR fixo)."""
+    if config.lr_schedule == "none":
+        return None
+    if config.lr_schedule == "cosine":
+        return torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config.num_epochs)
+    raise ValueError(f"lr_schedule '{config.lr_schedule}' desconhecido. Opções: none, cosine")
+
+
 def build_loss(config: ExperimentConfig) -> nn.Module:
     if config.loss == "cross_entropy":
         return nn.CrossEntropyLoss()
@@ -90,6 +99,7 @@ def fit(
     """
     model = build_model(config).to(device)
     optimizer = build_optimizer(model, config)
+    scheduler = build_scheduler(optimizer, config)
     loss_fn = build_loss(config)
 
     best_val_loss = float("inf")
@@ -112,6 +122,8 @@ def fit(
             train_loss += loss.item() * images.size(0)
 
         train_loss /= len(train_loader.dataset)
+        if scheduler is not None:
+            scheduler.step()
         val_loss, val_targets, val_preds = evaluate(model, val_loader, loss_fn, device, config.num_classes)
         val_accuracy = get_scores(val_targets, val_preds)["accuracy"]
 
