@@ -1,0 +1,93 @@
+{
+  "model_id": "cnn_baseline_20260907-211552",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-07T21:15:52.323134",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 40,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64
+    ],
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "augment": false,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 5,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 9,
+    "train_loss": 0.22802374803026518,
+    "val_loss": 1.2168012546539306,
+    "test_accuracy": 0.7148,
+    "test_balanced_accuracy": 0.7148,
+    "test_precision": 0.7129270673384086,
+    "test_recall": 0.7148,
+    "test_f1_score": 0.7122810504679414
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.758,
+    "automobile": 0.863,
+    "bird": 0.588,
+    "cat": 0.495,
+    "deer": 0.652,
+    "dog": 0.608,
+    "frog": 0.85,
+    "horse": 0.758,
+    "ship": 0.832,
+    "truck": 0.744
+  },
+  "notes": "Baseline equivalente ao notebook de referencia (2 conv + 2 pool + 3 fc), ponto de partida da busca guiada da Fase 2.",
+  "tags": [
+    "baseline"
+  ],
+  "run_name": "baseline"
+}

@@ -1,0 +1,91 @@
+{
+  "model_id": "cnn_stride_2_no_pool_20260907-212041",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-07T21:20:41.367127",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 30,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64
+    ],
+    "kernel_size": 3,
+    "stride": 2,
+    "padding": 1,
+    "pool_size": 1,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "augment": false,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 5,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 8,
+    "train_loss": 0.3358149549245834,
+    "val_loss": 1.3372929866790773,
+    "test_accuracy": 0.643,
+    "test_balanced_accuracy": 0.643,
+    "test_precision": 0.656135258511737,
+    "test_recall": 0.643,
+    "test_f1_score": 0.6442358355161343
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.715,
+    "automobile": 0.735,
+    "bird": 0.443,
+    "cat": 0.628,
+    "deer": 0.591,
+    "dog": 0.429,
+    "frog": 0.697,
+    "horse": 0.708,
+    "ship": 0.752,
+    "truck": 0.732
+  },
+  "notes": "Substitui o pooling por stride=2 na propria convolucao (pool_size=1 = sem pooling extra).",
+  "tags": [],
+  "run_name": "stride_2_no_pool"
+}
