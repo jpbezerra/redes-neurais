@@ -1,0 +1,95 @@
+{
+  "model_id": "cnn_augment_deeper_20260907-232904",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-07T23:29:04.982715",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 50,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64,
+      128
+    ],
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 8,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 41,
+    "train_loss": 0.4618252861287859,
+    "val_loss": 0.584943424320221,
+    "test_accuracy": 0.807,
+    "test_balanced_accuracy": 0.807,
+    "test_precision": 0.8080463042789024,
+    "test_recall": 0.807,
+    "test_f1_score": 0.8051640595541245
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.869,
+    "automobile": 0.902,
+    "bird": 0.656,
+    "cat": 0.669,
+    "deer": 0.79,
+    "dog": 0.653,
+    "frog": 0.874,
+    "horse": 0.895,
+    "ship": 0.886,
+    "truck": 0.876
+  },
+  "notes": "Augment + rede mais profunda (deeper_3conv isolado deu 0.7394, mas overfitou rapido sem augment).",
+  "tags": [],
+  "run_name": "augment_deeper"
+}

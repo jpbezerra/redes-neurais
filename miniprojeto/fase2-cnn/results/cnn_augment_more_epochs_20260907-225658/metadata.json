@@ -1,0 +1,91 @@
+{
+  "model_id": "cnn_augment_more_epochs_20260907-225658",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-07T22:56:58.114790",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 60,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64
+    ],
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 8,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 54,
+    "train_loss": 0.5609807521714104,
+    "val_loss": 0.6680459987640381,
+    "test_accuracy": 0.7871,
+    "test_balanced_accuracy": 0.7870999999999999,
+    "test_precision": 0.7868739729015098,
+    "test_recall": 0.7871,
+    "test_f1_score": 0.7864949526446627
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.817,
+    "automobile": 0.862,
+    "bird": 0.7,
+    "cat": 0.593,
+    "deer": 0.756,
+    "dog": 0.695,
+    "frog": 0.863,
+    "horse": 0.825,
+    "ship": 0.867,
+    "truck": 0.893
+  },
+  "notes": "Augment sozinho rodou os 30 epochs sem convergir (val_accuracy ainda subindo) - mais epocas/paciencia para ver o teto.",
+  "tags": [],
+  "run_name": "augment_more_epochs"
+}
