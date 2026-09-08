@@ -1,0 +1,98 @@
+{
+  "model_id": "cnn_combo_lr_high_cosine_20260908-181827",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-08T18:18:27.363146",
+  "hyperparameters": {
+    "learning_rate": 0.002,
+    "batch_size": 32,
+    "epochs": 80,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64,
+      128
+    ],
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 10,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 68,
+    "train_loss": 0.25841113249195946,
+    "val_loss": 0.46821217029094697,
+    "test_accuracy": 0.8516,
+    "test_balanced_accuracy": 0.8516,
+    "test_precision": 0.8514973427168198,
+    "test_recall": 0.8516,
+    "test_f1_score": 0.8512438808102314
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.858,
+    "automobile": 0.914,
+    "bird": 0.778,
+    "cat": 0.692,
+    "deer": 0.875,
+    "dog": 0.804,
+    "frog": 0.892,
+    "horse": 0.888,
+    "ship": 0.925,
+    "truck": 0.89
+  },
+  "notes": "LR inicial 2x maior (2e-3) - par comum com cosine annealing (comeca mais alto, decai suave ate quase zero).",
+  "tags": [],
+  "run_name": "combo_lr_high_cosine"
+}
