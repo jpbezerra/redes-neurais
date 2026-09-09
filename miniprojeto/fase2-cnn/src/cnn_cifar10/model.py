@@ -5,11 +5,18 @@ stride, padding, pooling, cabeça densa) para permitir a busca de
 hiperparâmetros pedida no enunciado da Fase 2 sem reescrever a classe a cada
 experimento — mesmo espírito do `mlp_cifar10.model.MLP` da Fase 1.
 
-Cada bloco convolucional é: Conv2d -> [BatchNorm2d] -> ativação ->
-MaxPool2d(pool_size) -> [Dropout2d]. O tamanho do vetor achatado antes da
-cabeça densa depende de kernel/stride/padding/pool escolhidos, então é
-inferido automaticamente com um forward "a seco" no `__init__` em vez de
-calculado na mão (evita erro de aritmética a cada combinação nova testada).
+Cada estágio convolucional é: (Conv2d -> [BatchNorm2d] -> ativação) repetido
+`conv_layers_per_block` vezes -> MaxPool2d(pool_size) -> [Dropout2d].
+`conv_layers_per_block=1` reproduz a arquitetura original (1 conv por
+pooling); `2` empilha duas convoluções por estágio antes de reduzir a
+resolução (estilo VGG), dobrando a profundidade sem mudar quantas vezes o
+mapa espacial encolhe. Com `global_pool=True`, um `AdaptiveAvgPool2d(1)`
+substitui o achatamento denso após os estágios conv (corta a maior parte
+dos parâmetros da cabeça densa e regulariza). O tamanho do vetor achatado
+antes da cabeça densa depende de kernel/stride/padding/pool/global_pool
+escolhidos, então é inferido automaticamente com um forward "a seco" no
+`__init__` em vez de calculado na mão (evita erro de aritmética a cada
+combinação nova testada).
 """
 
 from __future__ import annotations
@@ -48,10 +55,12 @@ class CNN(nn.Module):
         input_size: int = 32,
         num_classes: int = 10,
         conv_channels: tuple[int, ...] = (32, 64),
+        conv_layers_per_block: int = 1,
         kernel_size: int = 3,
         stride: int = 1,
         padding: int = 1,
         pool_size: int = 2,
+        global_pool: bool = False,
         fc_layers: tuple[int, ...] = (120, 84),
         activation: str = "relu",
         dropout: float = 0.0,
@@ -59,19 +68,31 @@ class CNN(nn.Module):
     ) -> None:
         super().__init__()
 
+        if conv_layers_per_block < 1:
+            raise ValueError("conv_layers_per_block deve ser >= 1")
+
         conv_blocks: list[nn.Module] = []
         in_channels = input_channels
         for out_channels in conv_channels:
-            conv_blocks.append(
-                nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding)
-            )
-            if batch_norm:
-                conv_blocks.append(nn.BatchNorm2d(out_channels))
-            conv_blocks.append(get_activation(activation))
+            for i in range(conv_layers_per_block):
+                conv_blocks.append(
+                    nn.Conv2d(
+                        in_channels if i == 0 else out_channels,
+                        out_channels,
+                        kernel_size=kernel_size,
+                        stride=stride,
+                        padding=padding,
+                    )
+                )
+                if batch_norm:
+                    conv_blocks.append(nn.BatchNorm2d(out_channels))
+                conv_blocks.append(get_activation(activation))
             conv_blocks.append(nn.MaxPool2d(kernel_size=pool_size, stride=pool_size))
             if dropout > 0:
                 conv_blocks.append(nn.Dropout2d(dropout))
             in_channels = out_channels
+        if global_pool:
+            conv_blocks.append(nn.AdaptiveAvgPool2d(1))
         self.conv = nn.Sequential(*conv_blocks)
 
         # Infere o tamanho achatado com um forward "a seco" (evita calcular

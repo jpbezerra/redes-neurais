@@ -32,10 +32,12 @@ class ExperimentConfig:
     input_size: int = 32  # imagens 32x32
     num_classes: int = 10
     conv_channels: tuple[int, ...] = (32, 64)  # nº de filtros de saída por bloco conv
+    conv_layers_per_block: int = 1  # convs empilhadas por estágio de pooling (1 = original; 2 = estilo VGG)
     kernel_size: int = 3
     stride: int = 1
     padding: int = 1
     pool_size: int = 2  # MaxPool2d(kernel_size=pool_size, stride=pool_size) após cada bloco conv
+    global_pool: bool = False  # AdaptiveAvgPool2d(1) antes da cabeça densa (corta params da cabeça, regulariza)
 
     # Arquitetura — cabeça densa (após achatar os mapas de features)
     fc_layers: tuple[int, ...] = (120, 84)

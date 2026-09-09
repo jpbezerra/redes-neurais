@@ -1,0 +1,98 @@
+{
+  "model_id": "cnn_combo_weight_decay_light_20260908-225639",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-08T22:56:39.050952",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 60,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64,
+      128
+    ],
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 8,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 60,
+    "train_loss": 0.23902701139847438,
+    "val_loss": 0.37737226598262785,
+    "test_accuracy": 0.8722,
+    "test_balanced_accuracy": 0.8722000000000001,
+    "test_precision": 0.8722006614129428,
+    "test_recall": 0.8722,
+    "test_f1_score": 0.8721625782760407
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.868,
+    "automobile": 0.938,
+    "bird": 0.828,
+    "cat": 0.765,
+    "deer": 0.879,
+    "dog": 0.793,
+    "frog": 0.909,
+    "horse": 0.897,
+    "ship": 0.935,
+    "truck": 0.91
+  },
+  "notes": "L2 leve sobre o campeao - dropout piorou (leva 2), mas weight_decay regulariza diferente (pesos, nao ativacoes) e ainda nao foi testado neste regime.",
+  "tags": [],
+  "run_name": "combo_weight_decay_light"
+}
