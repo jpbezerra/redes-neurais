@@ -75,6 +75,49 @@ def build_loss(config: ExperimentConfig) -> nn.Module:
     raise ValueError(f"Função de erro '{config.loss}' desconhecida. Opções: cross_entropy, mse")
 
 
+def _rand_bbox(height: int, width: int, lam: float) -> tuple[int, int, int, int]:
+    """Retângulo aleatório cuja área é (1 - lam) da imagem — recorte do CutMix."""
+    ratio = (1.0 - lam) ** 0.5
+    cut_h, cut_w = int(height * ratio), int(width * ratio)
+    cy, cx = torch.randint(height, (1,)).item(), torch.randint(width, (1,)).item()
+    y1, y2 = max(cy - cut_h // 2, 0), min(cy + cut_h // 2, height)
+    x1, x2 = max(cx - cut_w // 2, 0), min(cx + cut_w // 2, width)
+    return y1, y2, x1, x2
+
+
+def apply_mix(images: torch.Tensor, labels: torch.Tensor, config: ExperimentConfig):
+    """Aplica MixUp ou CutMix ao batch, se configurado.
+
+    Retorna `(images, labels_a, labels_b, lam)`; a perda vira a combinação
+    `lam * loss(out, labels_a) + (1 - lam) * loss(out, labels_b)`. Quando
+    nenhuma mistura está ativa (ou o sorteio de `mix_prob` não passa),
+    devolve o batch intacto com `lam = 1.0`, e a fórmula acima degenera na
+    perda normal — por isso o loop de treino não precisa de nenhum `if`.
+    """
+    use_mixup = config.mixup_alpha > 0
+    use_cutmix = config.cutmix_alpha > 0
+    if not (use_mixup or use_cutmix) or torch.rand(1).item() > config.mix_prob:
+        return images, labels, labels, 1.0
+
+    # Com os dois ativos, sorteia qual usar neste batch.
+    mode = "mixup" if use_mixup and (not use_cutmix or torch.rand(1).item() < 0.5) else "cutmix"
+    alpha = config.mixup_alpha if mode == "mixup" else config.cutmix_alpha
+    lam = float(torch.distributions.Beta(alpha, alpha).sample())
+
+    perm = torch.randperm(images.size(0), device=images.device)
+    labels_b = labels[perm]
+
+    if mode == "mixup":
+        images = lam * images + (1.0 - lam) * images[perm]
+    else:
+        y1, y2, x1, x2 = _rand_bbox(images.size(2), images.size(3), lam)
+        images[:, :, y1:y2, x1:x2] = images[perm, :, y1:y2, x1:x2]
+        # lam efetivo = fração de pixels que sobrou da imagem original
+        lam = 1.0 - ((y2 - y1) * (x2 - x1) / (images.size(2) * images.size(3)))
+
+    return images, labels, labels_b, lam
+
+
 def _compute_loss(loss_fn: nn.Module, outputs: torch.Tensor, labels: torch.Tensor, num_classes: int) -> torch.Tensor:
     if isinstance(loss_fn, nn.MSELoss):
         targets_one_hot = torch.zeros_like(outputs).scatter_(1, labels.unsqueeze(1), 1.0)
@@ -129,9 +172,13 @@ def fit(
         for images, labels in train_loader:
             images, labels = images.to(device), labels.to(device)
 
+            images, labels_a, labels_b, lam = apply_mix(images, labels, config)
+
             optimizer.zero_grad()
             outputs = model(images)
-            loss = _compute_loss(loss_fn, outputs, labels, config.num_classes)
+            loss = lam * _compute_loss(loss_fn, outputs, labels_a, config.num_classes)
+            if lam < 1.0:
+                loss = loss + (1.0 - lam) * _compute_loss(loss_fn, outputs, labels_b, config.num_classes)
             loss.backward()
             optimizer.step()
 

@@ -64,6 +64,15 @@ class ExperimentConfig:
     augment_strength: str = "light"  # light (crop+flip) | strong (+ color jitter) | trivial (TrivialAugmentWide) | randaugment; só usado se augment=True
     normalization: str = "default"  # default ([-1,1] simples) | real (média/desvio-padrão reais do CIFAR-10)
 
+    # Mistura de amostras (regularização aplicada no batch, não na imagem isolada).
+    # MixUp interpola dois exemplos pixel a pixel; CutMix cola um recorte de um
+    # sobre o outro. Nos dois casos o rótulo vira uma mistura proporcional, o que
+    # impede a rede de ficar superconfiante e é o regularizador mais forte que
+    # ainda não foi testado neste projeto. 0.0 desliga.
+    mixup_alpha: float = 0.0  # parâmetro da Beta(α, α) do MixUp (típico: 0.2-1.0)
+    cutmix_alpha: float = 0.0  # idem para o CutMix (típico: 1.0)
+    mix_prob: float = 0.5  # probabilidade de aplicar mistura em cada batch
+
     # Reprodutibilidade
     seed: int = 42
 

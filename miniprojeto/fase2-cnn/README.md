@@ -115,11 +115,39 @@ jupyter notebook notebooks/01_train_cnn_cifar10.ipynb
    (`File > Download > Download .ipynb`, substituindo o arquivo aqui) junto
    com os `results/` novos.
 
+## Estado da busca (levas 1-7)
+
+Melhor modelo único até agora: **`vgg4_randaugment` = 0.9417** — VGG de 4
+estágios (64/128/256/512, 2 convs por estágio), global average pooling,
+SGD+momentum+cosine, `weight_decay=5e-4`, RandAugment, 120 épocas.
+
+Alavancas que realmente moveram a agulha, em ordem de impacto: profundidade
+real (2 convs por estágio de pooling, ~+1.5pp), SGD+momentum+cosine no lugar
+do Adam (~+3pp em redes fundas), canais mais largos (~+0.7pp) e
+`weight_decay=5e-4` (~+1.7pp sobre a família rasa). A leva 7 (regularização e
+augmentation sobre o campeão) espalhou seis modelos numa faixa de 0.47pp —
+dentro do ruído, ou seja, **o platô de ~0.94 não é de regularização**.
+
+O erro restante é concentrado: veículos vão a 0.964, animais ficam em 0.918,
+e `cat` (0.854) + `dog` (0.909) sozinhos respondem por cerca de um quarto de
+todos os erros.
+
 ## Próximos passos
 
-Ver seção 2 do notebook `01_train_cnn_cifar10.ipynb` para a lista de
-variações isoladas planejadas (kernel size, stride, padding, pooling,
-profundidade, dropout, batch norm, learning rate, augmentation) — mesmo
-padrão de busca guiada por rodadas da Fase 1 (leva 1 isolada, depois rodadas
-sequenciais combinando vencedores). Ao final, comparar o melhor resultado da
-CNN diretamente com o ensemble MLP (0.6135) no README.
+Três frentes já implementadas no notebook (seções 13-15), motivadas pela
+análise acima:
+
+- **Leva 8 — MixUp/CutMix** (`mixup_alpha`, `cutmix_alpha`, `mix_prob` no
+  `ExperimentConfig`): o único regularizador forte ainda não testado, com 200
+  épocas por ser mais lento a convergir.
+- **Ensemble** (`cnn_cifar10.ensemble`): média das probabilidades dos modelos
+  já salvos em `results/`, sem retreinar nada. Entra como comparação extra —
+  o resultado principal do mini-projeto continua sendo o modelo único.
+- **Hierárquico** (`cnn_cifar10.hierarchical`): um porteiro veículo vs. animal
+  mais dois especialistas (4 e 6 classes), recompostos por
+  `P(classe) = P(super) · P(classe | super)`. Testa se isolar o problema dos
+  animais compensa cada especialista ver menos dados e herdar os erros do
+  porteiro.
+
+Ao final, comparar o melhor resultado da CNN diretamente com o ensemble MLP
+(0.6135) no README.
