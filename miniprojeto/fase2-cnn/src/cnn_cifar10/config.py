@@ -48,9 +48,11 @@ class ExperimentConfig:
     # Otimização
     optimizer: str = "adam"  # adam | sgd | rmsprop
     loss: str = "cross_entropy"  # cross_entropy | mse
+    label_smoothing: float = 0.0  # só cross_entropy: suaviza os alvos one-hot, combate superconfiança/overfitting
     learning_rate: float = 1e-3
     weight_decay: float = 0.0  # regularização L2
     momentum: float = 0.9  # usado apenas pelo SGD
+    nesterov: bool = False  # momentum de Nesterov (só SGD)
     lr_schedule: str = "none"  # none | cosine (ver train.build_scheduler)
 
     # Treinamento
@@ -59,7 +61,7 @@ class ExperimentConfig:
     patience: int = 5  # early stopping (nº de épocas sem melhora)
     val_fraction: float = 0.1  # fração do treino usada como validação
     augment: bool = False  # data augmentation (flip + crop) no treino, ver data.get_dataloaders
-    augment_strength: str = "light"  # light (crop+flip) | strong (+ color jitter), só usado se augment=True
+    augment_strength: str = "light"  # light (crop+flip) | strong (+ color jitter) | trivial (TrivialAugmentWide) | randaugment; só usado se augment=True
     normalization: str = "default"  # default ([-1,1] simples) | real (média/desvio-padrão reais do CIFAR-10)
 
     # Reprodutibilidade

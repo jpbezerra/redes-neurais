@@ -1,0 +1,100 @@
+{
+  "model_id": "cnn_combo_wd_sgd_20260909-230641",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-09T23:06:41.316807",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 100,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64,
+      128
+    ],
+    "conv_layers_per_block": 1,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": false,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 20,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 100,
+    "train_loss": 0.24116966049141353,
+    "val_loss": 0.3523811897516251,
+    "test_accuracy": 0.8756,
+    "test_balanced_accuracy": 0.8756,
+    "test_precision": 0.8752071769920834,
+    "test_recall": 0.8756,
+    "test_f1_score": 0.8752109916123194
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.916,
+    "automobile": 0.941,
+    "bird": 0.815,
+    "cat": 0.74,
+    "deer": 0.884,
+    "dog": 0.806,
+    "frog": 0.912,
+    "horse": 0.895,
+    "ship": 0.929,
+    "truck": 0.918
+  },
+  "notes": "Receita classica de CIFAR: SGD+momentum 0.9, lr inicial alto (0.05) decaindo por cosine ate ~0, wd=5e-4. Costuma generalizar melhor que Adam no fim do treino. Eixo de otimizador nunca testado no regime de combo.",
+  "tags": [],
+  "run_name": "combo_wd_sgd"
+}

@@ -53,6 +53,7 @@ def build_optimizer(model: nn.Module, config: ExperimentConfig) -> torch.optim.O
     kwargs = {"lr": config.learning_rate, "weight_decay": config.weight_decay}
     if config.optimizer == "sgd":
         kwargs["momentum"] = config.momentum
+        kwargs["nesterov"] = config.nesterov
     return _OPTIMIZERS[config.optimizer](model.parameters(), **kwargs)
 
 
@@ -67,7 +68,7 @@ def build_scheduler(optimizer: torch.optim.Optimizer, config: ExperimentConfig):
 
 def build_loss(config: ExperimentConfig) -> nn.Module:
     if config.loss == "cross_entropy":
-        return nn.CrossEntropyLoss()
+        return nn.CrossEntropyLoss(label_smoothing=config.label_smoothing)
     if config.loss == "mse":
         # MSE precisa do alvo em one-hot; ver `_mse_loss_wrapper` abaixo.
         return nn.MSELoss()

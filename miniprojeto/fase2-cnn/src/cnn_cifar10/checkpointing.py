@@ -112,6 +112,8 @@ def save_run(
         "epochs": config.num_epochs,
         "optimizer": config.optimizer,
         "loss": config.loss,
+        "label_smoothing": config.label_smoothing,
+        "nesterov": config.nesterov,
         "conv_channels": list(config.conv_channels),
         "conv_layers_per_block": config.conv_layers_per_block,
         "kernel_size": config.kernel_size,

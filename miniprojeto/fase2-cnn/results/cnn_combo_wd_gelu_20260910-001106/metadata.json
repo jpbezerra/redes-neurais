@@ -1,0 +1,100 @@
+{
+  "model_id": "cnn_combo_wd_gelu_20260910-001106",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T00:11:06.236666",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 80,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64,
+      128
+    ],
+    "conv_layers_per_block": 1,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": false,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "gelu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 15,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 80,
+    "train_loss": 0.17335020683606467,
+    "val_loss": 0.39437700127363207,
+    "test_accuracy": 0.8759,
+    "test_balanced_accuracy": 0.8759,
+    "test_precision": 0.8759205418737905,
+    "test_recall": 0.8759,
+    "test_f1_score": 0.8757054758705455
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "GELU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "GELU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "GELU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "GELU",
+      "Linear",
+      "GELU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.911,
+    "automobile": 0.936,
+    "bird": 0.811,
+    "cat": 0.746,
+    "deer": 0.877,
+    "dog": 0.81,
+    "frog": 0.908,
+    "horse": 0.911,
+    "ship": 0.931,
+    "truck": 0.918
+  },
+  "notes": "Ativacao GELU no lugar de ReLU sobre o campeao - eixo de ativacao nunca mexido nesta fase.",
+  "tags": [],
+  "run_name": "combo_wd_gelu"
+}

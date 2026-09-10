@@ -48,14 +48,23 @@ def build_augmented_transform(mean=DEFAULT_MEAN, std=DEFAULT_STD, strength: str 
     `build_transform` (sem augmentation), para que a métrica reportada meça o
     modelo em imagens "normais", não aumentadas.
 
-    `strength="strong"` adiciona `ColorJitter` (brightness/contrast/saturation
-    leves) sobre o crop+flip de `strength="light"` (padrão).
+    Níveis de `strength` (todos partem de crop+flip):
+    - `light` (padrão): só RandomCrop(padding=4) + RandomHorizontalFlip.
+    - `strong`: + ColorJitter (brightness/contrast/saturation leves).
+    - `trivial`: + TrivialAugmentWide (augmentation automática forte, sem
+      hiperparâmetro para ajustar — bom default moderno para redes que
+      overfittam).
+    - `randaugment`: + RandAugment (também forte, mas com num_ops/magnitude).
     """
     ops = [transforms.RandomCrop(32, padding=4), transforms.RandomHorizontalFlip()]
     if strength == "strong":
         ops.append(transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2))
+    elif strength == "trivial":
+        ops.append(transforms.TrivialAugmentWide())
+    elif strength == "randaugment":
+        ops.append(transforms.RandAugment())
     elif strength != "light":
-        raise ValueError(f"strength '{strength}' desconhecida. Opções: light, strong")
+        raise ValueError(f"strength '{strength}' desconhecida. Opções: light, strong, trivial, randaugment")
     ops += [transforms.ToTensor(), transforms.Normalize(mean, std)]
     return transforms.Compose(ops)
 
