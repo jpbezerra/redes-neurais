@@ -1,0 +1,117 @@
+{
+  "model_id": "cnn_vgg4_trivial_aug_20260910-132352",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T13:23:52.917140",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 120,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.0,
+    "nesterov": false,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "trivial",
+    "normalization": "default",
+    "patience": 25,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 120,
+    "train_loss": 0.2917853906697697,
+    "val_loss": 0.1697488040164113,
+    "test_accuracy": 0.9411,
+    "test_balanced_accuracy": 0.9410999999999999,
+    "test_precision": 0.9412307268209381,
+    "test_recall": 0.9411,
+    "test_f1_score": 0.941136189075067
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.951,
+    "automobile": 0.972,
+    "bird": 0.917,
+    "cat": 0.874,
+    "deer": 0.957,
+    "dog": 0.899,
+    "frog": 0.956,
+    "horse": 0.955,
+    "ship": 0.964,
+    "truck": 0.966
+  },
+  "notes": "Campeao + TrivialAugmentWide (augmentation automatica forte, sem hiperparametro). Redes que overfittam costumam pedir augmentation mais agressiva.",
+  "tags": [],
+  "run_name": "vgg4_trivial_aug"
+}

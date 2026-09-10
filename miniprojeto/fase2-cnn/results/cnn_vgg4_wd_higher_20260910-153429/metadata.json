@@ -1,0 +1,117 @@
+{
+  "model_id": "cnn_vgg4_wd_higher_20260910-153429",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T15:34:29.790984",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 120,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.0,
+    "nesterov": false,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.001,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 25,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 120,
+    "train_loss": 0.012500504048851628,
+    "val_loss": 0.2168122788518667,
+    "test_accuracy": 0.937,
+    "test_balanced_accuracy": 0.9369999999999999,
+    "test_precision": 0.9371982761465691,
+    "test_recall": 0.937,
+    "test_f1_score": 0.9370101864252298
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.932,
+    "automobile": 0.967,
+    "bird": 0.909,
+    "cat": 0.884,
+    "deer": 0.96,
+    "dog": 0.882,
+    "frog": 0.959,
+    "horse": 0.951,
+    "ship": 0.971,
+    "truck": 0.955
+  },
+  "notes": "Campeao + L2 2x (5e-4 -> 1e-3). Na familia rasa 1.5e-3 exagerou, mas a rede grande tem mais parametros para segurar.",
+  "tags": [],
+  "run_name": "vgg4_wd_higher"
+}
