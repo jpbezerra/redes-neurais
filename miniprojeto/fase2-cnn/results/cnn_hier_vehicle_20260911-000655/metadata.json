@@ -1,0 +1,114 @@
+{
+  "model_id": "cnn_hier_vehicle_20260911-000655",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-11T00:06:55.261631",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 120,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.0,
+    "nesterov": false,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "randaugment",
+    "mixup_alpha": 0.0,
+    "cutmix_alpha": 0.0,
+    "mix_prob": 0.5,
+    "normalization": "default",
+    "patience": 25,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 120,
+    "train_loss": 0.023924139928860395,
+    "val_loss": 0.06869091882155291,
+    "test_accuracy": 0.97175,
+    "test_balanced_accuracy": 0.97175,
+    "test_precision": 0.9717499748945237,
+    "test_recall": 0.97175,
+    "test_f1_score": 0.9717476839446324
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 17995,
+    "val_size": 2005,
+    "test_size": 4000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 4
+  },
+  "per_class_accuracy": {
+    "airplane": 0.973,
+    "automobile": 0.976,
+    "ship": 0.971,
+    "truck": 0.967
+  },
+  "notes": "Especialista em veiculos (4 classes), ~18k imagens.",
+  "tags": [],
+  "run_name": "hier_vehicle"
+}

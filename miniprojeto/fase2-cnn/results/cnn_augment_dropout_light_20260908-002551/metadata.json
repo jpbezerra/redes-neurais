@@ -1,0 +1,95 @@
+{
+  "model_id": "cnn_augment_dropout_light_20260908-002551",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-08T00:25:51.463837",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 50,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64
+    ],
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.2,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 8,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 50,
+    "train_loss": 1.0046157612058852,
+    "val_loss": 0.7754120807647705,
+    "test_accuracy": 0.745,
+    "test_balanced_accuracy": 0.7449999999999999,
+    "test_precision": 0.7426166975843109,
+    "test_recall": 0.745,
+    "test_f1_score": 0.7405466586756809
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Dropout2d",
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Dropout2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "ReLU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.807,
+    "automobile": 0.887,
+    "bird": 0.515,
+    "cat": 0.512,
+    "deer": 0.688,
+    "dog": 0.635,
+    "frog": 0.86,
+    "horse": 0.84,
+    "ship": 0.858,
+    "truck": 0.848
+  },
+  "notes": "Dropout 0.3 isolado nao ajudou (0.7130 vs 0.7148 baseline); mais leve (0.2) combinado com augment pode regularizar sem atrapalhar a convergencia ja mais lenta.",
+  "tags": [],
+  "run_name": "augment_dropout_light"
+}

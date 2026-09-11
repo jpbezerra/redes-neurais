@@ -1,0 +1,117 @@
+{
+  "model_id": "cnn_vgg4_randaugment_20260910-141339",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T14:13:39.589962",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 120,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.0,
+    "nesterov": false,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "randaugment",
+    "normalization": "default",
+    "patience": 25,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 120,
+    "train_loss": 0.07018358840929965,
+    "val_loss": 0.1964836855817004,
+    "test_accuracy": 0.9417,
+    "test_balanced_accuracy": 0.9417,
+    "test_precision": 0.9417771248025345,
+    "test_recall": 0.9417,
+    "test_f1_score": 0.941689064279461
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.955,
+    "automobile": 0.974,
+    "bird": 0.927,
+    "cat": 0.854,
+    "deer": 0.945,
+    "dog": 0.909,
+    "frog": 0.965,
+    "horse": 0.961,
+    "ship": 0.964,
+    "truck": 0.963
+  },
+  "notes": "Campeao + RandAugment. Alternativa ao TrivialAugment - comparar qual regulariza melhor sem cortar sinal demais.",
+  "tags": [],
+  "run_name": "vgg4_randaugment"
+}

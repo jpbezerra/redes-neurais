@@ -1,0 +1,100 @@
+{
+  "model_id": "cnn_combo_wd_wider_20260909-221159",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-09T22:11:59.919703",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 100,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      64,
+      128,
+      256
+    ],
+    "conv_layers_per_block": 1,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": false,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 20,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 100,
+    "train_loss": 0.12865043659143977,
+    "val_loss": 0.35395961261987685,
+    "test_accuracy": 0.8864,
+    "test_balanced_accuracy": 0.8864000000000001,
+    "test_precision": 0.8863280593887918,
+    "test_recall": 0.8864,
+    "test_f1_score": 0.886174676282962
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.907,
+    "automobile": 0.935,
+    "bird": 0.83,
+    "cat": 0.782,
+    "deer": 0.896,
+    "dog": 0.81,
+    "frog": 0.921,
+    "horse": 0.921,
+    "ship": 0.935,
+    "truck": 0.927
+  },
+  "notes": "Campeao da leva 4 (wd=5e-4) + canais largos (64/128/256). wider_channels sem wd (leva 4) parou na epoca 36 com val_acc ainda subindo (0.8804) - aqui com wd e MUITO mais corda (100 epocas, patience 20).",
+  "tags": [],
+  "run_name": "combo_wd_wider"
+}

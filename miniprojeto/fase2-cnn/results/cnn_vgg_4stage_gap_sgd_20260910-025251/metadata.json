@@ -1,0 +1,115 @@
+{
+  "model_id": "cnn_vgg_4stage_gap_sgd_20260910-025251",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T02:52:51.432650",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 120,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 25,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 120,
+    "train_loss": 0.005865209270636033,
+    "val_loss": 0.2298929223017243,
+    "test_accuracy": 0.937,
+    "test_balanced_accuracy": 0.9369999999999999,
+    "test_precision": 0.9368517583115062,
+    "test_recall": 0.937,
+    "test_f1_score": 0.9368588805462205
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.949,
+    "automobile": 0.969,
+    "bird": 0.919,
+    "cat": 0.842,
+    "deer": 0.955,
+    "dog": 0.901,
+    "frog": 0.955,
+    "horse": 0.961,
+    "ship": 0.963,
+    "truck": 0.956
+  },
+  "notes": "4 estagios (64/128/256/512) x2 convs + GAP: 32->16->8->4->2, o mapa nao colapsa gracas ao global pool. Maior capacidade da fase, com SGD+cosine+wd pra segurar o overfit.",
+  "tags": [],
+  "run_name": "vgg_4stage_gap_sgd"
+}

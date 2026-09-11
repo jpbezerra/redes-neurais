@@ -1,0 +1,117 @@
+{
+  "model_id": "cnn_vgg4_reg_combo_20260910-162024",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T16:20:24.791096",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 120,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.1,
+    "nesterov": true,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "trivial",
+    "normalization": "default",
+    "patience": 25,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 120,
+    "train_loss": 0.7270646274036832,
+    "val_loss": 0.6289478137016297,
+    "test_accuracy": 0.9407,
+    "test_balanced_accuracy": 0.9407,
+    "test_precision": 0.9406337340108243,
+    "test_recall": 0.9407,
+    "test_f1_score": 0.9405741000610686
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.949,
+    "automobile": 0.97,
+    "bird": 0.913,
+    "cat": 0.852,
+    "deer": 0.964,
+    "dog": 0.893,
+    "frog": 0.964,
+    "horse": 0.96,
+    "ship": 0.974,
+    "truck": 0.968
+  },
+  "notes": "Combo guloso das apostas de baixo risco: label smoothing + TrivialAugment + Nesterov, tudo junto sobre o campeao.",
+  "tags": [],
+  "run_name": "vgg4_reg_combo"
+}

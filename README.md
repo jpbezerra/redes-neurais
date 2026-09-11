@@ -7,13 +7,29 @@ Repositório da disciplina de Redes Neurais (Centro de Informática - UFPE).
 ```
 .
 ├── miniprojeto/        # Mini-projeto 1: Classificação de imagens com MLPs e CNNs (CIFAR-10)
-│   ├── fase1-mlp/       # Fase 1 — MLP
-│   └── fase2-cnn/       # Fase 2 — CNN
+│   ├── fase1-mlp/       # Fase 1 — MLP        (melhor resultado: 0.6135)
+│   ├── fase2-cnn/       # Fase 2 — CNN        (melhor resultado: 0.9554)
+│   └── comparativo/     # Análise MLP × CNN lado a lado
 └── projeto/             # Projeto final da disciplina
 ```
 
 Cada pasta de projeto/fase tem seu próprio `README.md` com instruções específicas
 de execução, estrutura de código e status.
+
+## Mini-projeto 1 — resultado
+
+As duas fases estão concluídas. Classificando o CIFAR-10 com a mesma
+metodologia de busca (levas sucessivas de experimentos, cada uma informada
+pela anterior, terminando num ensemble por soft voting):
+
+| | Melhor modelo único | Melhor resultado (ensemble) |
+|---|---|---|
+| Fase 1 — MLP | 0.5998 | 0.6135 |
+| Fase 2 — CNN | **0.9490** | **0.9554** |
+
+A convolução valeu **+34,2 pontos percentuais**, uma redução de 88,5% na taxa
+de erro. A análise lado a lado está em
+[`miniprojeto/comparativo/`](miniprojeto/comparativo/).
 
 ## Convenções gerais
 

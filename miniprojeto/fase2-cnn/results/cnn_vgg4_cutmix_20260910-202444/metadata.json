@@ -1,0 +1,120 @@
+{
+  "model_id": "cnn_vgg4_cutmix_20260910-202444",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T20:24:44.603533",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 200,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.0,
+    "nesterov": false,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "mixup_alpha": 0.0,
+    "cutmix_alpha": 1.0,
+    "mix_prob": 0.5,
+    "normalization": "default",
+    "patience": 40,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 200,
+    "train_loss": 0.45228336210627523,
+    "val_loss": 0.1827847548365593,
+    "test_accuracy": 0.9429,
+    "test_balanced_accuracy": 0.9429000000000001,
+    "test_precision": 0.9432000179692328,
+    "test_recall": 0.9429,
+    "test_f1_score": 0.9429298030594657
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.964,
+    "automobile": 0.976,
+    "bird": 0.943,
+    "cat": 0.882,
+    "deer": 0.95,
+    "dog": 0.894,
+    "frog": 0.962,
+    "horse": 0.948,
+    "ship": 0.962,
+    "truck": 0.948
+  },
+  "notes": "Campeao + CutMix alpha=1.0. Recorte espacial em vez de interpolacao - preserva texturas locais, costuma bater o MixUp em imagens pequenas.",
+  "tags": [],
+  "run_name": "vgg4_cutmix"
+}

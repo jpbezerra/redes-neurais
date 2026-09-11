@@ -1,0 +1,66 @@
+{
+  "model_id": "cnn_ensemble_vgg4_top3_20260910-225702",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T22:57:02.969084",
+  "model_type": "Ensemble",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "run_name": "ensemble_vgg4_top3",
+  "hyperparameters": {
+    "members": [
+      "vgg4_randaugment",
+      "vgg4_trivial_aug",
+      "vgg4_reg_combo"
+    ],
+    "weights": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "combination": "média das probabilidades (softmax)"
+  },
+  "metrics": {
+    "epochs_trained": 0,
+    "test_accuracy": 0.9519,
+    "test_balanced_accuracy": 0.9519000000000002,
+    "test_precision": 0.9518384613993564,
+    "test_recall": 0.9519,
+    "test_f1_score": 0.9518210887186509,
+    "best_solo_accuracy": 0.9416999816894531
+  },
+  "per_class_accuracy": {
+    "airplane": 0.967,
+    "automobile": 0.976,
+    "bird": 0.931,
+    "cat": 0.878,
+    "deer": 0.963,
+    "dog": 0.913,
+    "frog": 0.972,
+    "horse": 0.966,
+    "ship": 0.98,
+    "truck": 0.973
+  },
+  "members": [
+    {
+      "run_name": "vgg4_randaugment",
+      "model_id": "cnn_vgg4_randaugment_20260910-141339",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.9416999816894531
+    },
+    {
+      "run_name": "vgg4_trivial_aug",
+      "model_id": "cnn_vgg4_trivial_aug_20260910-132352",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.941100001335144
+    },
+    {
+      "run_name": "vgg4_reg_combo",
+      "model_id": "cnn_vgg4_reg_combo_20260910-162024",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.9406999945640564
+    }
+  ],
+  "notes": "Media simples dos 3 melhores VGG-4 estagios.",
+  "tags": [
+    "ensemble"
+  ]
+}

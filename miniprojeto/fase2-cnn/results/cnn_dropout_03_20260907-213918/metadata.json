@@ -1,0 +1,95 @@
+{
+  "model_id": "cnn_dropout_03_20260907-213918",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-07T21:39:18.653038",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "epochs": 30,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64
+    ],
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.3,
+    "batch_norm": false,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "augment": false,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 5,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 30,
+    "train_loss": 0.8222640475379096,
+    "val_loss": 0.8399841476440429,
+    "test_accuracy": 0.713,
+    "test_balanced_accuracy": 0.713,
+    "test_precision": 0.7092452807150121,
+    "test_recall": 0.713,
+    "test_f1_score": 0.7095681652488525
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Dropout2d",
+      "Conv2d",
+      "ReLU",
+      "MaxPool2d",
+      "Dropout2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Dropout",
+      "Linear",
+      "ReLU",
+      "Dropout",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.795,
+    "automobile": 0.833,
+    "bird": 0.546,
+    "cat": 0.461,
+    "deer": 0.69,
+    "dog": 0.609,
+    "frog": 0.837,
+    "horse": 0.775,
+    "ship": 0.794,
+    "truck": 0.79
+  },
+  "notes": "Dropout 0.3 (Dropout2d nos blocos conv + Dropout na cabeca densa) sobre o baseline.",
+  "tags": [],
+  "run_name": "dropout_03"
+}

@@ -1,0 +1,98 @@
+{
+  "model_id": "cnn_combo_batch64_20260908-233707",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-08T23:37:07.890744",
+  "hyperparameters": {
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "epochs": 60,
+    "optimizer": "adam",
+    "loss": "cross_entropy",
+    "conv_channels": [
+      32,
+      64,
+      128
+    ],
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "fc_layers": [
+      120,
+      84
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "normalization": "default",
+    "patience": 8,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 55,
+    "train_loss": 0.2704714475154877,
+    "val_loss": 0.44801934633255003,
+    "test_accuracy": 0.8534,
+    "test_balanced_accuracy": 0.8534,
+    "test_precision": 0.8536825145713978,
+    "test_recall": 0.8534,
+    "test_f1_score": 0.8530815201147106
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.898,
+    "automobile": 0.922,
+    "bird": 0.761,
+    "cat": 0.709,
+    "deer": 0.846,
+    "dog": 0.788,
+    "frog": 0.908,
+    "horse": 0.878,
+    "ship": 0.915,
+    "truck": 0.909
+  },
+  "notes": "Batch size maior (64 vs 32 do padrao) - estatisticas de batch_norm mais estaveis, tambem acelera por epoca na GPU.",
+  "tags": [],
+  "run_name": "combo_batch64"
+}
