@@ -1,0 +1,116 @@
+{
+  "model_id": "cnn_hier_animal_20260911-003712",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-11T00:37:12.303753",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 120,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.0,
+    "nesterov": false,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "randaugment",
+    "mixup_alpha": 0.0,
+    "cutmix_alpha": 0.0,
+    "mix_prob": 0.5,
+    "normalization": "default",
+    "patience": 25,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 120,
+    "train_loss": 0.06598668833209936,
+    "val_loss": 0.23411087360923397,
+    "test_accuracy": 0.9298333333333333,
+    "test_balanced_accuracy": 0.9298333333333333,
+    "test_precision": 0.9297427282574965,
+    "test_recall": 0.9298333333333333,
+    "test_f1_score": 0.9297584514437466
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 27005,
+    "val_size": 2995,
+    "test_size": 6000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 6
+  },
+  "per_class_accuracy": {
+    "bird": 0.937,
+    "cat": 0.866,
+    "deer": 0.961,
+    "dog": 0.896,
+    "frog": 0.956,
+    "horse": 0.963
+  },
+  "notes": "Especialista em animais (6 classes), ~27k imagens - onde esta quase todo o erro do modelo achatado.",
+  "tags": [],
+  "run_name": "hier_animal"
+}

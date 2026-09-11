@@ -1,0 +1,120 @@
+{
+  "model_id": "cnn_vgg4_mixcut_aug_ls_20260910-225643",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T22:56:43.250858",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 200,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.1,
+    "nesterov": true,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "randaugment",
+    "mixup_alpha": 0.2,
+    "cutmix_alpha": 1.0,
+    "mix_prob": 0.5,
+    "normalization": "default",
+    "patience": 40,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 200,
+    "train_loss": 0.8076134207619561,
+    "val_loss": 0.6438916907310486,
+    "test_accuracy": 0.949,
+    "test_balanced_accuracy": 0.9489999999999998,
+    "test_precision": 0.948953443711898,
+    "test_recall": 0.949,
+    "test_f1_score": 0.948968574269674
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.957,
+    "automobile": 0.977,
+    "bird": 0.942,
+    "cat": 0.881,
+    "deer": 0.953,
+    "dog": 0.91,
+    "frog": 0.97,
+    "horse": 0.967,
+    "ship": 0.968,
+    "truck": 0.965
+  },
+  "notes": "Combo maximo: mistura + RandAugment (melhor da leva 7) + label smoothing + Nesterov. Se o teto de 0.94 for de regularizacao, este quebra.",
+  "tags": [],
+  "run_name": "vgg4_mixcut_aug_ls"
+}

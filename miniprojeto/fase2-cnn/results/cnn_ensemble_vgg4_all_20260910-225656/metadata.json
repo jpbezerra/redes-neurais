@@ -1,0 +1,98 @@
+{
+  "model_id": "cnn_ensemble_vgg4_all_20260910-225656",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T22:56:56.446632",
+  "model_type": "Ensemble",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "run_name": "ensemble_vgg4_all",
+  "hyperparameters": {
+    "members": [
+      "vgg_4stage_gap_sgd",
+      "vgg4_label_smooth",
+      "vgg4_trivial_aug",
+      "vgg4_randaugment",
+      "vgg4_dropout",
+      "vgg4_wd_higher",
+      "vgg4_reg_combo"
+    ],
+    "weights": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "combination": "média das probabilidades (softmax)"
+  },
+  "metrics": {
+    "epochs_trained": 0,
+    "test_accuracy": 0.9554,
+    "test_balanced_accuracy": 0.9553999999999998,
+    "test_precision": 0.9553427690248525,
+    "test_recall": 0.9554,
+    "test_f1_score": 0.9553405138034101,
+    "best_solo_accuracy": 0.9416999816894531
+  },
+  "per_class_accuracy": {
+    "airplane": 0.967,
+    "automobile": 0.981,
+    "bird": 0.937,
+    "cat": 0.893,
+    "deer": 0.969,
+    "dog": 0.915,
+    "frog": 0.975,
+    "horse": 0.973,
+    "ship": 0.975,
+    "truck": 0.969
+  },
+  "members": [
+    {
+      "run_name": "vgg_4stage_gap_sgd",
+      "model_id": "cnn_vgg_4stage_gap_sgd_20260910-025251",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.9369999766349792
+    },
+    {
+      "run_name": "vgg4_label_smooth",
+      "model_id": "cnn_vgg4_label_smooth_20260910-123901",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.9388999938964844
+    },
+    {
+      "run_name": "vgg4_trivial_aug",
+      "model_id": "cnn_vgg4_trivial_aug_20260910-132352",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.941100001335144
+    },
+    {
+      "run_name": "vgg4_randaugment",
+      "model_id": "cnn_vgg4_randaugment_20260910-141339",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.9416999816894531
+    },
+    {
+      "run_name": "vgg4_dropout",
+      "model_id": "cnn_vgg4_dropout_20260910-145432",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.9369999766349792
+    },
+    {
+      "run_name": "vgg4_wd_higher",
+      "model_id": "cnn_vgg4_wd_higher_20260910-153429",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.9369999766349792
+    },
+    {
+      "run_name": "vgg4_reg_combo",
+      "model_id": "cnn_vgg4_reg_combo_20260910-162024",
+      "weight": 1.0,
+      "solo_test_accuracy": 0.9406999945640564
+    }
+  ],
+  "notes": "Media simples das probabilidades dos 7 VGG-4 estagios das levas 6-7.",
+  "tags": [
+    "ensemble"
+  ]
+}

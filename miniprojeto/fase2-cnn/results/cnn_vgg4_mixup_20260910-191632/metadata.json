@@ -1,0 +1,120 @@
+{
+  "model_id": "cnn_vgg4_mixup_20260910-191632",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-10T19:16:32.231984",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "batch_size": 32,
+    "epochs": 200,
+    "optimizer": "sgd",
+    "loss": "cross_entropy",
+    "label_smoothing": 0.0,
+    "nesterov": false,
+    "conv_channels": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "conv_layers_per_block": 2,
+    "kernel_size": 3,
+    "stride": 1,
+    "padding": 1,
+    "pool_size": 2,
+    "global_pool": true,
+    "fc_layers": [
+      256
+    ],
+    "activation": "relu",
+    "dropout": 0.0,
+    "batch_norm": true,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "lr_schedule": "cosine",
+    "augment": true,
+    "augment_strength": "light",
+    "mixup_alpha": 0.2,
+    "cutmix_alpha": 0.0,
+    "mix_prob": 0.5,
+    "normalization": "default",
+    "patience": 40,
+    "seed": 42
+  },
+  "metrics": {
+    "epochs_trained": 200,
+    "train_loss": 0.22433168493313715,
+    "val_loss": 0.18437948896288872,
+    "test_accuracy": 0.9443,
+    "test_balanced_accuracy": 0.9442999999999999,
+    "test_precision": 0.9443407395751936,
+    "test_recall": 0.9443,
+    "test_f1_score": 0.9442929764698752
+  },
+  "model_type": "CNN",
+  "purpose": "Classificação de imagens CIFAR-10 (Mini-projeto 1 - Fase 2)",
+  "dataset": {
+    "name": "CIFAR-10",
+    "train_size": 45000,
+    "val_size": 5000,
+    "test_size": 10000
+  },
+  "architecture": {
+    "conv_layers": [
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "Conv2d",
+      "BatchNorm2d",
+      "ReLU",
+      "MaxPool2d",
+      "AdaptiveAvgPool2d"
+    ],
+    "fc_layers": [
+      "Linear",
+      "ReLU",
+      "Linear"
+    ],
+    "input_shape": [
+      3,
+      32,
+      32
+    ],
+    "num_classes": 10
+  },
+  "per_class_accuracy": {
+    "airplane": 0.945,
+    "automobile": 0.973,
+    "bird": 0.926,
+    "cat": 0.881,
+    "deer": 0.957,
+    "dog": 0.899,
+    "frog": 0.969,
+    "horse": 0.962,
+    "ship": 0.969,
+    "truck": 0.962
+  },
+  "notes": "Campeao + MixUp alpha=0.2 em 50% dos batches. Alpha baixo = mistura suave, o default mais seguro para CIFAR.",
+  "tags": [],
+  "run_name": "vgg4_mixup"
+}
