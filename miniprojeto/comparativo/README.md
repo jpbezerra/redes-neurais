@@ -44,7 +44,7 @@ segundos. Para regenerar o notebook do zero após mudar a análise:
 | **Melhor modelo único** | 0.5998 | **0.9490** | **+34,9 p.p.** |
 | **Melhor resultado geral (ensemble)** | 0.6135 | **0.9554** | **+34,2 p.p.** |
 | Taxa de erro (ensemble) | 38,6% | **4,5%** | **−88,5%** |
-| Execuções registradas | 50 | 56 | — |
+| Execuções registradas | 53 | 56 | — |
 | Levas de busca | 7 | 8 | — |
 
 ![MLP × CNN](figures/mlp_vs_cnn_geral.png)
