@@ -1,0 +1,76 @@
+{
+  "model_id": "lstm_l1_gru_20260915-210013",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-15T21:00:13.271127",
+  "hyperparameters": {
+    "run_name": "l1_gru",
+    "dataset": "tutorial",
+    "features": [
+      "Close"
+    ],
+    "target": "Close",
+    "window": 60,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "standard",
+    "log_price": false,
+    "diff_target": true,
+    "model_type": "gru",
+    "hidden_size": 64,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.0,
+    "fc_layers": [],
+    "task": "regression",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 32,
+    "num_epochs": 60,
+    "patience": 12,
+    "seed": 42,
+    "notes": "GRU: versao simplificada da LSTM, menos parametros.",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 16,
+    "train_loss": 0.9503221735792928,
+    "val_loss": 42.84107563283184,
+    "test_rmse": 607.36446843242,
+    "test_mae": 405.40784205588903,
+    "test_mape": 4.123472384241317,
+    "test_r2": 0.9695257864670888,
+    "test_directional_accuracy": 0.49606299212598426,
+    "test_naive_rmse": 607.9422903799082,
+    "test_beats_naive": true,
+    "val_rmse": 161.5145993435851,
+    "val_mae": 118.62010155529076,
+    "val_mape": 101.80842219346769,
+    "val_r2": 0.005408943994420157
+  },
+  "model_type": "GRU",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "regression",
+  "dataset": {
+    "name": "tutorial",
+    "train": 917,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "gru",
+    "recurrent": "GRU(1, 64, num_layers=2, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 37889
+  },
+  "notes": "GRU: versao simplificada da LSTM, menos parametros.",
+  "tags": [],
+  "run_name": "l1_gru"
+}

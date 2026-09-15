@@ -1,0 +1,76 @@
+{
+  "model_id": "lstm_baseline_nivel_20260915-205949",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-15T20:59:49.296273",
+  "hyperparameters": {
+    "run_name": "baseline_nivel",
+    "dataset": "tutorial",
+    "features": [
+      "Close"
+    ],
+    "target": "Close",
+    "window": 60,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": false,
+    "diff_target": false,
+    "model_type": "lstm",
+    "hidden_size": 64,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.0,
+    "fc_layers": [],
+    "task": "regression",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 0.0,
+    "batch_size": 32,
+    "num_epochs": 100,
+    "patience": 15,
+    "seed": 42,
+    "notes": "Reproduz o tutorial do enunciado: janela 60, MinMax, previsao do nivel do preco.",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 100,
+    "train_loss": 0.0001819748470792004,
+    "val_loss": 0.007043399064257594,
+    "test_rmse": 3940.8726500260136,
+    "test_mae": 2932.2008626451643,
+    "test_mape": 26.2627978189388,
+    "test_r2": -0.2829760618022714,
+    "test_directional_accuracy": 0.484251968503937,
+    "test_naive_rmse": 607.9422831678767,
+    "test_beats_naive": false,
+    "val_rmse": 216.35854977516485,
+    "val_mae": 164.12259460557806,
+    "val_mape": 5.483577487193648,
+    "val_r2": 0.9327134786271185
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "regression",
+  "dataset": {
+    "name": "tutorial",
+    "train": 918,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(1, 64, num_layers=2, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 50497
+  },
+  "notes": "Reproduz o tutorial do enunciado: janela 60, MinMax, previsao do nivel do preco.",
+  "tags": [],
+  "run_name": "baseline_nivel"
+}

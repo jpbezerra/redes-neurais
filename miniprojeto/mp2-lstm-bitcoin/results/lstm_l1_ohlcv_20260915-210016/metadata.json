@@ -1,0 +1,80 @@
+{
+  "model_id": "lstm_l1_ohlcv_20260915-210016",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-15T21:00:16.723147",
+  "hyperparameters": {
+    "run_name": "l1_ohlcv",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume"
+    ],
+    "target": "Close",
+    "window": 60,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "standard",
+    "log_price": false,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 64,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.0,
+    "fc_layers": [],
+    "task": "regression",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 32,
+    "num_epochs": 60,
+    "patience": 12,
+    "seed": 42,
+    "notes": "Usa OHLCV completo em vez de so o fechamento.",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 15,
+    "train_loss": 0.8220130783813281,
+    "val_loss": 42.61339289599126,
+    "test_rmse": 607.7046492154186,
+    "test_mae": 405.47222478783715,
+    "test_mape": 4.120879099065197,
+    "test_r2": 0.969491640100183,
+    "test_directional_accuracy": 0.5196850393700787,
+    "test_naive_rmse": 607.9422903799082,
+    "test_beats_naive": true,
+    "val_rmse": 161.63588823429336,
+    "val_mae": 118.66054261183172,
+    "val_mape": 101.69308749682338,
+    "val_r2": 0.003914612945540408
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "regression",
+  "dataset": {
+    "name": "tutorial",
+    "train": 917,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(5, 64, num_layers=2, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 51521
+  },
+  "notes": "Usa OHLCV completo em vez de so o fechamento.",
+  "tags": [],
+  "run_name": "l1_ohlcv"
+}
