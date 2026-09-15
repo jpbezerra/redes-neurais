@@ -1,0 +1,466 @@
+"""Gera `notebooks/02_results_report.ipynb` — o notebook de relatório.
+
+Divisão de responsabilidades entre os dois notebooks:
+
+- `01_train_lstm_bitcoin.ipynb` **treina**. É caro (horas de Kaggle), e o
+  gerador dele preserva as saídas das células que não mudaram.
+- `02_results_report.ipynb` **só lê** `results/`. Roda em segundos, não precisa
+  de GPU, e reconstrói todas as tabelas e gráficos do relatório a partir dos
+  `metadata.json` já salvos.
+
+Essa separação resolve um problema concreto: o notebook de treino pode ser
+regenerado e reexecutado à vontade sem medo de perder o registro visual dos
+resultados, porque o registro real são os `results/` — e este notebook os
+transforma em relatório sempre que preciso.
+
+Mesmo padrão do `02_results_report.ipynb` da Fase 1 do Mini-projeto 1.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+NB_PATH = Path(__file__).resolve().parents[1] / "notebooks" / "02_results_report.ipynb"
+
+
+def md(text: str) -> dict:
+    return {"cell_type": "markdown", "metadata": {}, "source": text.strip().splitlines(keepends=True)}
+
+
+def code(text: str) -> dict:
+    return {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [],
+            "source": text.strip().splitlines(keepends=True)}
+
+
+CELLS = [
+    md("""
+# Mini-projeto 2 — Relatório de resultados
+
+Este notebook **não treina nada**. Ele lê os `metadata.json` e `history.csv`
+salvos em `../results/` pelo notebook de treino e produz as tabelas e gráficos
+do relatório.
+
+Roda em segundos e não precisa de GPU. Pode ser reexecutado sempre que novos
+experimentos forem adicionados — é a forma de manter o relatório atualizado sem
+retreinar nada.
+
+**O que é gerado aqui:**
+
+1. Panorama de todas as execuções (seção 1)
+2. O diagnóstico do alvo: nível vs. variação vs. log-retorno (seção 2)
+3. As métricas que expõem o modelo-impostor (seção 3)
+4. Gráficos do melhor modelo de regressão (seção 4)
+5. Classificação de direção e matriz de confusão (seção 5)
+6. Tabela de hiperparâmetros para o relatório final (seção 6)
+"""),
+
+    code("""
+#@title Setup
+import json, sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+PROJECT_ROOT = Path.cwd().parent
+SRC = PROJECT_ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+RESULTS_DIR = PROJECT_ROOT / "results"
+FIGURES_DIR = PROJECT_ROOT / "reports" / "figures"
+TABLES_DIR  = PROJECT_ROOT / "reports" / "tables"
+for d in (FIGURES_DIR, TABLES_DIR):
+    d.mkdir(parents=True, exist_ok=True)
+
+from lstm_bitcoin.checkpointing import load_all_metadata, hyperparameter_table
+from lstm_bitcoin.metrics import confusion_matrix_percent
+from lstm_bitcoin.utils import plot_confusion, plot_training_curves
+
+C_A, C_B, C_OK, C_GREY = "#2F6F9F", "#B5651D", "#3E7C59", "#8A8A8A"
+plt.rcParams.update({"figure.dpi": 130, "font.size": 9, "axes.grid": True, "grid.alpha": .25,
+                     "axes.spines.top": False, "axes.spines.right": False})
+
+runs = {}
+for meta_path in sorted(RESULTS_DIR.glob("*/metadata.json")):
+    m = json.loads(meta_path.read_text(encoding="utf-8"))
+    m["_dir"] = meta_path.parent
+    runs[m.get("run_name", meta_path.parent.name)] = m
+
+print(f"{len(runs)} execucoes encontradas em {RESULTS_DIR}")
+if not runs:
+    print("\\nRode o notebook 01 antes — nao ha resultados para reportar.")
+"""),
+
+    md("""
+## 1. Panorama de todas as execuções
+
+A tabela abaixo é o ponto de partida: todas as execuções salvas, com as
+métricas que importam. Repare que ela **não é ordenada por RMSE** — a seção 3
+explica por quê.
+"""),
+    code("""
+#@title Tabela geral
+def linha(nome, m):
+    mt = m["metrics"]; hp = m["hyperparameters"]
+    return {
+        "run": nome, "tarefa": m.get("task", "regression"),
+        "rmse": mt.get("test_rmse"), "r2": mt.get("test_r2"),
+        "dir_acc": mt.get("test_directional_accuracy"),
+        "razao_mov": mt.get("test_movement_ratio"),
+        "corr_mov": mt.get("test_movement_corr"),
+        "bate_naive": mt.get("test_beats_naive"),
+        "acc": mt.get("test_accuracy"), "f1": mt.get("test_f1_score"),
+        "janela": hp.get("window"), "hidden": hp.get("hidden_size"),
+        "celula": hp.get("model_type"), "lr": hp.get("learning_rate"),
+        "diff": hp.get("diff_target"), "log": hp.get("log_price"),
+        "epocas": mt.get("epochs_trained"),
+    }
+
+tab = pd.DataFrame([linha(k, v) for k, v in runs.items()])
+reg = tab[tab.tarefa == "regression"].copy()
+dirc = tab[tab.tarefa == "direction"].copy()
+
+print(f"regressao: {len(reg)} | direcao: {len(dirc)}")
+if len(reg):
+    display(reg.drop(columns=["acc","f1","tarefa"]).sort_values("rmse").round(4))
+"""),
+
+    md("""
+## 2. O diagnóstico do alvo
+
+O achado que orienta o projeto: **o que se pede ao modelo importa mais que a
+arquitetura**. Esta seção compara as formulações do alvo lado a lado.
+"""),
+    code("""
+#@title Comparacao das formulacoes
+formul = reg[reg.run.str.startswith("formul_")] if len(reg) else pd.DataFrame()
+
+if len(formul):
+    display(formul[["run","rmse","r2","dir_acc","razao_mov","corr_mov","bate_naive"]]
+            .sort_values("rmse").round(4))
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 3.6))
+    ordem = formul.sort_values("rmse")
+    axes[0].barh(ordem.run, ordem.rmse, color=C_A)
+    naive = runs[ordem.run.iloc[0]]["metrics"].get("test_naive_rmse")
+    if naive:
+        axes[0].axvline(naive, color=C_B, ls="--", lw=1.4)
+        axes[0].text(naive, -.6, f" baseline ingenuo\\n ({naive:.0f})", color=C_B, fontsize=8, va="top")
+    axes[0].set_xlabel("RMSE (USD)"); axes[0].grid(axis="y", alpha=0)
+    axes[0].set_title("RMSE por formulacao", fontsize=10, loc="left")
+
+    axes[1].barh(ordem.run, ordem.razao_mov.fillna(0), color=C_OK)
+    axes[1].axvline(1.0, color=C_GREY, ls="--", lw=1)
+    axes[1].set_xlabel("razao_mov (1.0 = magnitude certa)"); axes[1].grid(axis="y", alpha=0)
+    axes[1].set_title("O modelo arrisca previsoes?", fontsize=10, loc="left")
+
+    fig.tight_layout(); fig.savefig(FIGURES_DIR/"rel_formulacoes.png", bbox_inches="tight"); plt.show()
+else:
+    print("Nenhum experimento 'formul_*' salvo ainda.")
+"""),
+    md("""
+### A leitura
+
+O gráfico da direita é o que revela o problema. `razao_mov` perto de **zero**
+significa que o modelo previu "amanhã ≈ hoje" — ele virou o baseline ingênuo, e
+o RMSE empatado não é coincidência: é o mesmo modelo.
+
+Um RMSE baixo com razão zero é o pior cenário possível num relatório, porque
+parece um bom resultado e não é.
+"""),
+
+    md("""
+## 3. As métricas que expõem o modelo-impostor
+
+Num passeio aleatório, prever "não muda" é a estratégia que **minimiza** o erro
+quadrático. Então o modelo que otimiza MSE tende a colapsar exatamente nisso —
+ele não falha em otimizar, otimiza perfeitamente para a métrica errada.
+
+O gráfico abaixo torna isso visível: RMSE no eixo X, correlação do movimento no
+eixo Y. O canto interessante é o **superior esquerdo** (erro baixo E correlação
+alta), não simplesmente o mais à esquerda.
+"""),
+    code("""
+#@title RMSE nao e o criterio
+val = reg.dropna(subset=["corr_mov"]) if len(reg) else pd.DataFrame()
+
+if len(val):
+    fig, ax = plt.subplots(figsize=(7.5, 4.6))
+    # Tamanho do ponto = razao_mov (quanto o modelo arrisca)
+    tam = 40 + 400 * val.razao_mov.clip(0, 1.5).fillna(0)
+    cor = [C_OK if (0.2 <= r <= 2.0 and rr > .5) else C_GREY
+           for r, rr in zip(val.razao_mov.fillna(0), val.r2.fillna(-9))]
+    ax.scatter(val.rmse, val.corr_mov, s=tam, c=cor, alpha=.75, edgecolors="white")
+
+    for _, r in val.iterrows():
+        ax.annotate(r.run, (r.rmse, r.corr_mov), fontsize=7,
+                    textcoords="offset points", xytext=(0, 9), ha="center", color="#444")
+
+    ax.axhline(0, color=C_GREY, lw=1)
+    naive = next((runs[k]["metrics"].get("test_naive_rmse") for k in runs
+                  if runs[k]["metrics"].get("test_naive_rmse")), None)
+    if naive:
+        ax.axvline(naive, color=C_B, ls="--", lw=1.3)
+        ax.text(naive, ax.get_ylim()[1], " baseline ingenuo", color=C_B, fontsize=8, va="top")
+
+    ax.set_xlabel("RMSE (USD) — menor e melhor")
+    ax.set_ylabel("correlacao do movimento — maior e melhor")
+    ax.set_title("Verde = arriscou E acertou. Cinza = colapsou ou explodiu.",
+                 fontsize=11, loc="left")
+    fig.tight_layout(); fig.savefig(FIGURES_DIR/"rel_rmse_vs_corr.png", bbox_inches="tight"); plt.show()
+
+    print("Tamanho do ponto = razao_mov (o quanto o modelo arrisca).")
+    print("Verde = razao entre 0.2 e 2.0 E R2 > 0.5 — os unicos candidatos honestos.")
+"""),
+
+    md("""
+## 4. O melhor modelo de regressão
+
+Critério: entre os modelos com `razao_mov` entre 0,2 e 2,0 **e** R² > 0,5, o de
+maior `corr_mov`.
+
+As duas guardas são necessárias. Sem o piso, vence o que colapsou no baseline e
+teve correlação alta por acaso. Sem o teto, vence um modelo que prevê
+movimentos absurdos — o `baseline_nivel`, por exemplo, tem razão 4,4 e
+correlação 0,12, mas RMSE de 3.940 e R² **negativo**.
+"""),
+    code("""
+#@title Melhor modelo e suas curvas
+eleg = reg[(reg.razao_mov.between(0.2, 2.0)) & (reg.r2 > 0.5)] if len(reg) else pd.DataFrame()
+
+if len(eleg):
+    MELHOR = eleg.loc[eleg.corr_mov.idxmax(), "run"]
+    print("MELHOR MODELO DE REGRESSAO:", MELHOR)
+    display(eleg.sort_values("corr_mov", ascending=False)
+            [["run","rmse","r2","dir_acc","razao_mov","corr_mov","bate_naive"]].round(4))
+
+    hist_path = runs[MELHOR]["_dir"] / "history.csv"
+    if hist_path.exists():
+        h = pd.read_csv(hist_path).to_dict("records")
+        plot_training_curves(h, title=f"{MELHOR} — curvas de treino",
+                             save_path=FIGURES_DIR/"rel_melhor_curvas.png"); plt.show()
+
+    m = runs[MELHOR]["metrics"]
+    print(f"\\nRMSE {m['test_rmse']:.1f} contra baseline {m.get('test_naive_rmse', float('nan')):.1f}"
+          f"  ->  {'BATE' if m.get('test_beats_naive') else 'NAO bate'}")
+else:
+    print("AVISO: nenhum modelo passou nos criterios de elegibilidade.")
+    print("Todos colapsaram no baseline (razao ~ 0) ou tem R2 baixo.")
+    if len(reg):
+        display(reg.sort_values("rmse")[["run","rmse","r2","razao_mov","corr_mov"]].head().round(4))
+"""),
+
+    md("""
+## 5. Classificação de direção
+
+A parte do projeto que funcionou. Prever *quanto* o preço muda é dominado por
+ruído; prever *para onde* ele vai é tratável.
+"""),
+    code("""
+#@title Resultados de direcao + matriz de confusao
+if len(dirc):
+    display(dirc[["run","acc","f1","janela","hidden","lr","epocas"]]
+            .sort_values("acc", ascending=False).round(4))
+
+    MELHOR_DIR = dirc.loc[dirc.acc.idxmax(), "run"]
+    m = runs[MELHOR_DIR]
+    maj = m["metrics"].get("test_majority_rate")
+    print(f"\\nMELHOR: {MELHOR_DIR}  |  acuracia {m['metrics']['test_accuracy']:.4f}")
+    if maj:
+        print(f"Classe majoritaria (baseline): {maj:.4f}  ->  ganho de "
+              f"{(m['metrics']['test_accuracy']-maj)*100:+.1f} p.p.")
+
+    cm_info = m.get("confusion_matrix")
+    if cm_info:
+        cm = np.array(cm_info["counts"])
+        plot_confusion(cm, title=f"{MELHOR_DIR} — matriz de confusao",
+                       save_path=FIGURES_DIR/"rel_matriz_confusao.png"); plt.show()
+
+        print("\\nCONTAGEM:")
+        display(pd.DataFrame(cm, index=["real baixa","real alta"],
+                             columns=["prev. baixa","prev. alta"]))
+        print("PERCENTUAL POR LINHA (recall — das que eram X, quantas acertou):")
+        display(pd.DataFrame(np.round(confusion_matrix_percent(cm,"true"),2),
+                             index=["real baixa","real alta"],
+                             columns=["prev. baixa %","prev. alta %"]))
+        print("PERCENTUAL POR COLUNA (precision — das que disse X, quantas acertou):")
+        display(pd.DataFrame(np.round(confusion_matrix_percent(cm,"pred"),2),
+                             index=["real baixa","real alta"],
+                             columns=["prev. baixa %","prev. alta %"]))
+else:
+    print("Nenhum experimento de direcao salvo ainda.")
+"""),
+    md("""
+### Como ler a matriz
+
+A **assimetria entre as linhas** é o que diagnostica viés. Se o modelo acerta
+muito mais as quedas que as altas (ou o contrário), ele tem uma preferência
+sistemática — o que é esperado numa série que subiu muito no período de teste.
+
+A leitura por linha responde *"das vezes que o preço realmente subiu, em
+quantas o modelo acertou?"* (recall). A leitura por coluna responde *"das vezes
+que o modelo disse alta, em quantas ele acertou?"* (precision).
+"""),
+
+    md("""
+## 6. Regressão × direção — o contraste
+
+Este é o gráfico mais interessante do relatório: as duas tarefas, sobre os
+mesmos dados, com dificuldades completamente diferentes.
+"""),
+    code("""
+#@title O contraste entre as duas tarefas
+if len(reg) and len(dirc):
+    naive = next((runs[k]["metrics"].get("test_naive_rmse") for k in runs
+                  if runs[k]["metrics"].get("test_naive_rmse")), None)
+    maj = next((runs[k]["metrics"].get("test_majority_rate") for k in runs
+                if runs[k]["metrics"].get("test_majority_rate")), None)
+
+    melhor_reg_rmse = reg.rmse.min()
+    melhor_dir_acc = dirc.acc.max()
+
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.4))
+
+    axes[0].bar(["baseline\\ningenuo","melhor\\nmodelo"], [naive or 0, melhor_reg_rmse],
+                color=[C_GREY, C_A])
+    axes[0].set_ylabel("RMSE (USD)")
+    axes[0].set_title("Regressao: quanto o preco muda", fontsize=10, loc="left")
+    for i, v in enumerate([naive or 0, melhor_reg_rmse]):
+        axes[0].text(i, v, f"{v:.0f}", ha="center", va="bottom", fontsize=9)
+
+    axes[1].bar(["classe\\nmajoritaria","melhor\\nmodelo"], [maj or 0, melhor_dir_acc],
+                color=[C_GREY, C_OK])
+    axes[1].set_ylabel("Acuracia"); axes[1].set_ylim(0, 1)
+    axes[1].set_title("Direcao: para onde o preco vai", fontsize=10, loc="left")
+    for i, v in enumerate([maj or 0, melhor_dir_acc]):
+        axes[1].text(i, v, f"{v:.3f}", ha="center", va="bottom", fontsize=9)
+
+    fig.tight_layout(); fig.savefig(FIGURES_DIR/"rel_contraste_tarefas.png", bbox_inches="tight")
+    plt.show()
+
+    if naive and maj:
+        print(f"Regressao: ganho de {(naive-melhor_reg_rmse)/naive*100:+.1f}% sobre o baseline")
+        print(f"Direcao  : ganho de {(melhor_dir_acc-maj)*100:+.1f} p.p. sobre o baseline")
+"""),
+
+    md("""
+## 7. Tabela de hiperparâmetros para o relatório
+
+Mostra **apenas os hiperparâmetros que de fato variaram** entre as execuções,
+junto das métricas de teste. Colunas constantes são omitidas.
+"""),
+    code("""
+#@title Tabela final
+tabela = hyperparameter_table(RESULTS_DIR, only_varied=True)
+display(tabela)
+
+tabela.to_csv(TABLES_DIR/"tabela_hiperparametros.csv", index=False)
+reg.to_csv(TABLES_DIR/"resumo_regressao.csv", index=False)
+if len(dirc):
+    dirc.to_csv(TABLES_DIR/"resumo_direcao.csv", index=False)
+
+print("\\nSalvos em", TABLES_DIR)
+for f in sorted(TABLES_DIR.glob("*.csv")):
+    print("  ", f.name)
+print("\\nFiguras em", FIGURES_DIR)
+for f in sorted(FIGURES_DIR.glob("rel_*.png")):
+    print("  ", f.name)
+"""),
+
+    md("""
+## 8. Conclusões
+
+Escritas depois da primeira execução completa. Atualize conforme novos
+experimentos entram em `results/` — este notebook roda em segundos, então
+manter a conclusão em dia não custa nada.
+
+**O alvo importa mais que a arquitetura.** Variar janela (5 a 90), capacidade
+(16 a 128) e tipo de célula (LSTM/GRU/RNN) produziu RMSE entre 607,2 e 607,8 —
+uma faixa de 0,1%. Com o alvo errado, nenhum hiperparâmetro conseguia importar.
+O erro estava em prever a variação em *dólares*, que não é estacionária (desvio
+23× maior no teste que no treino), em vez do retorno percentual, que é (1,23×).
+
+**O RMSE sozinho engana.** Todos aqueles modelos empataram com o baseline
+ingênuo não por coincidência: eles *viraram* o baseline. As métricas
+`movement_ratio` (0,015) e `movement_corr` (negativa) expuseram isso — o modelo
+previa movimentos 67× menores que os reais. Num passeio aleatório, prever "não
+muda" é o que minimiza o erro quadrático, então o modelo otimizou perfeitamente
+para a métrica errada. É o gráfico da seção 3 que torna isso visível.
+
+**Regressão e classificação são problemas de dificuldade muito diferente.**
+Prever *quanto* o preço muda é dominado por ruído; prever *para onde* ele vai é
+tratável. A direção chegou a ~74% contra 52,8% da classe majoritária, mais de
+20 p.p. de ganho, enquanto a regressão mal empatava com o palpite trivial. Esse
+contraste — o gráfico da seção 6 — é o achado mais interessante do relatório.
+
+### Pontos a confirmar com os resultados acima
+
+- Com log-retorno, algum modelo passou a bater o ingênuo de forma consistente? Qual `movement_corr` atingiu?
+- Qual learning rate fez o modelo sair do colapso? A janela curta confirmou a vantagem?
+- LSTM superou GRU e RNN simples? Se as três empatarem, a memória longa não ajuda em retorno diário — um resultado negativo que vale reportar.
+- O Optuna convergiu para uma config que arrisca, ou para o baseline disfarçado? (conferir `movement_ratio` do vencedor)
+- A matriz de confusão é simétrica, ou o modelo tem viés de alta? Numa série que subiu muito no teste, viés é esperado.
+- Generalizou para a base moderna do Kaggle?
+
+**Limite honesto:** séries de preço são próximas de passeio aleatório. A
+autocorrelação do log-retorno no treino é −0,22 no lag 1 — existe estrutura,
+mas pouca. Ganhos pequenos na regressão e moderados na direção são o resultado
+correto; qualquer coisa espetacular quase sempre indica vazamento temporal.
+"""),
+]
+
+
+def _key(cell: dict) -> str:
+    return hashlib.sha1("".join(cell["source"]).encode("utf-8")).hexdigest()
+
+
+def merge_outputs(novas: list[dict], nb_path: Path) -> tuple[list[dict], int]:
+    """Preserva as saídas das células cujo código não mudou (ver make_notebook.py)."""
+    if not nb_path.exists():
+        return novas, 0
+    try:
+        antigo = json.loads(nb_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return novas, 0
+
+    salvas = {_key(c): (c["outputs"], c.get("execution_count"))
+              for c in antigo.get("cells", [])
+              if c.get("cell_type") == "code" and c.get("outputs")}
+
+    preservadas, resultado = 0, []
+    for c in novas:
+        c = dict(c)
+        if c["cell_type"] == "code" and _key(c) in salvas:
+            c["outputs"], c["execution_count"] = salvas[_key(c)]
+            preservadas += 1
+        resultado.append(c)
+    return resultado, preservadas
+
+
+def main(limpar: bool = False) -> int:
+    celulas, preservadas = (CELLS, 0) if limpar else merge_outputs(CELLS, NB_PATH)
+    nb = {
+        "cells": celulas,
+        "metadata": {
+            "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+            "language_info": {"name": "python", "version": "3.10"},
+        },
+        "nbformat": 4, "nbformat_minor": 5,
+    }
+    NB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    NB_PATH.write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    total = sum(1 for c in celulas if c["cell_type"] == "code")
+    print(f"Notebook de relatorio gerado com {len(celulas)} células em {NB_PATH}")
+    print("  (--limpar: saidas descartadas)" if limpar
+          else f"  saidas preservadas: {preservadas}/{total} células de código")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(limpar="--limpar" in sys.argv))

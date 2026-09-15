@@ -7,7 +7,9 @@ de novo regenera o arquivo do zero.
 
 from __future__ import annotations
 
+import hashlib
 import json
+import sys
 from pathlib import Path
 
 NB_PATH = Path(__file__).resolve().parents[1] / "notebooks" / "01_train_lstm_bitcoin.ipynb"
@@ -593,98 +595,29 @@ else:
     print("Baixe com:  kaggle datasets download -d mczielinski/bitcoin-historical-data")
 """),
 
-    md("""
-## 8.1 Gráficos do melhor modelo de regressão
-
-Os gráficos são gerados a partir de um retreino rápido do melhor modelo. Isso
-é necessário porque `fit_or_load` devolve `model=None` quando reaproveita um
-resultado do disco — as predições não ficam salvas, só as métricas.
-
-O gráfico de previsão é o mais revelador do projeto: se a curva prevista for a
-curva real deslocada um dia à direita, o modelo está copiando o último preço.
-"""),
-    code("""
-#@title Graficos do melhor modelo (por movement_corr)
-# Criterio: entre os modelos que PREVEEM MOVIMENTO de magnitude plausivel
-# (0.2 <= razao <= 2.0), escolhe o de maior correlacao.
-#
-# As duas guardas importam. Sem o piso, vence o modelo que colapsou no baseline
-# (razao ~ 0) e teve correlacao alta por acaso. Sem o teto, vence um modelo que
-# prevê movimentos absurdos — o `baseline_nivel`, por exemplo, tem razao 4.4 e
-# correlacao 0.12, mas RMSE de 3.940 e R2 NEGATIVO: ele "acerta a direcao" so
-# porque erra escandalosamente para todos os lados.
-reg = {k: v for k, v in experiment_results.items()
-       if "movement_corr" in v.get("test_scores", {})}
-
-elegiveis = {k: v for k, v in reg.items()
-             if 0.2 <= v["test_scores"].get("movement_ratio", 0) <= 2.0
-             and v["test_scores"].get("r2", -9) > 0.5}
-
-if not elegiveis:
-    print("AVISO: nenhum modelo previu movimento de magnitude plausivel.")
-    print("Todos colapsaram no baseline (razao ~ 0) ou explodiram (razao > 2).")
-    print("Usando o de menor RMSE como fallback.\\n")
-    elegiveis = reg
-
-if elegiveis:
-    MELHOR_REG = max(elegiveis, key=lambda k: elegiveis[k]["test_scores"]["movement_corr"])
-    print("Melhor por movement_corr:", MELHOR_REG)
-    print({k: round(v,4) if isinstance(v,float) else v
-           for k,v in elegiveis[MELHOR_REG]["test_scores"].items()})
-
-    # Reconstroi o config a partir do metadata salvo e retreina (rapido).
-    meta = json.loads((elegiveis[MELHOR_REG]["run_dir"]/"metadata.json").read_text(encoding="utf-8"))
-    cfg_plot = ExperimentConfig.from_dict(meta["hyperparameters"])
-    cfg_plot.run_name = MELHOR_REG
-
-    s_plot = prepare_splits(df, cfg_plot); set_seed(cfg_plot.seed)
-    r_plot = fit(cfg_plot, s_plot, device, save_checkpoint=False, verbose=False)
-    tr = r_plot["test_result"]
-
-    plot_forecast(s_plot["test_dates"], tr["y_true"], tr["y_pred"], naive=tr.get("anchor"),
-                  title=f"{MELHOR_REG} — previsao vs. real",
-                  save_path=FIGURES_DIR/"melhor_previsao.png"); plt.show()
-    plot_residuals(tr["y_true"], tr["y_pred"], title=f"{MELHOR_REG} — residuos",
-                   save_path=FIGURES_DIR/"melhor_residuos.png"); plt.show()
-    plot_training_curves(r_plot["history"], title=f"{MELHOR_REG} — curvas de treino",
-                         save_path=FIGURES_DIR/"melhor_curvas.png"); plt.show()
-
-    mov_p = tr["y_pred"] - tr["anchor"]; mov_r = tr["y_true"] - tr["anchor"]
-    fig, ax = plt.subplots(figsize=(4.6,4.4))
-    ax.scatter(mov_r, mov_p, s=12, alpha=.6, color="#2F6F9F")
-    ax.axhline(0, color="#8A8A8A", lw=.8); ax.axvline(0, color="#8A8A8A", lw=.8)
-    ax.set_xlabel("Movimento real (USD)"); ax.set_ylabel("Movimento previsto (USD)")
-    ax.set_title("Previu movimento ou copiou o preco?", fontsize=11, loc="left")
-    fig.tight_layout(); fig.savefig(FIGURES_DIR/"melhor_movimento.png", bbox_inches="tight"); plt.show()
-    print("\\nSe os pontos formarem uma faixa horizontal estreita em torno de zero,")
-    print("o modelo nao esta prevendo movimento — so repetindo o ultimo preco.")
-else:
-    print("Nenhum experimento de regressao com metricas de movimento ainda.")
-"""),
 
     md("""
-## 9. Tabela de hiperparâmetros e resultados
+## 9. E o relatório?
 
-`hyperparameter_table` monta a tabela do relatório final mostrando **apenas os
-hiperparâmetros que de fato variaram** entre as execuções, junto das métricas
-de teste. Colunas constantes são omitidas para a tabela não virar um muro de
-valores repetidos.
-"""),
-    code("""
-#@title Tabela final de hiperparametros variados
-tabela = hyperparameter_table(RESULTS_DIR, only_varied=True)
-display(tabela)
-tabela.to_csv(TABLES_DIR/"tabela_hiperparametros.csv", index=False)
-print(f"Salva em {TABLES_DIR/'tabela_hiperparametros.csv'}")
-"""),
-    code("""
-#@title Todas as execucoes salvas
-dfm = load_all_metadata(RESULTS_DIR)
-if not dfm.empty:
-    cols = [c for c in ["run_name","task","metrics.test_rmse","metrics.test_mae",
-                        "metrics.test_directional_accuracy","metrics.test_accuracy",
-                        "metrics.epochs_trained"] if c in dfm.columns]
-    display(dfm[cols].sort_values(cols[2] if len(cols)>2 else "run_name"))
+Tabelas, gráficos comparativos e conclusões **não ficam aqui** — ficam em
+`02_results_report.ipynb`.
+
+O motivo é prático. Este notebook é caro: roda horas no Kaggle e cada saída é
+um registro que se perde se algo der errado. O notebook de relatório só lê
+`results/`, roda em segundos e pode ser reexecutado à vontade — ajustando um
+gráfico, renomeando uma coluna, reescrevendo uma conclusão — sem retreinar
+nada.
+
+Ter as duas coisas separadas evita o pior cenário: duas versões da mesma
+tabela que divergem silenciosamente porque você corrigiu uma e esqueceu a
+outra.
+
+Depois que este notebook terminar, rode:
+
+```bash
+python scripts/make_report_notebook.py   # se quiser regenerar
+jupyter notebook notebooks/02_results_report.ipynb
+```
 """),
 
     md("""
@@ -810,48 +743,77 @@ else:
     md("""
 ## 10. Conclusões
 
-Preencher ao final. A primeira execução já estabeleceu os pontos de partida:
-
-**O alvo importa mais que a arquitetura.** Variar janela (5 a 90), capacidade
-(16 a 128) e tipo de célula (LSTM/GRU/RNN) produziu RMSE entre 607,2 e 607,8 —
-uma faixa de 0,1%. Com o alvo errado, nenhum hiperparâmetro conseguia
-importar. O erro estava em prever a variação em *dólares*, que não é
-estacionária (desvio 23× maior no teste que no treino), em vez do retorno
-percentual, que é (1,23×).
-
-**O RMSE sozinho engana.** Todos aqueles modelos empataram com o baseline
-ingênuo não por coincidência: eles *viraram* o baseline. As métricas
-`movement_ratio` (0,015) e `movement_corr` (negativa) expuseram isso — o
-modelo previa movimentos 67× menores que os reais. Num passeio aleatório,
-prever "não muda" é o que minimiza o erro quadrático, então o modelo otimizou
-perfeitamente para a métrica errada.
-
-**Regressão e classificação são problemas de dificuldade muito diferente.**
-Prever *quanto* o preço muda é dominado por ruído; prever *para onde* ele vai é
-tratável. A direção chegou a ~74% contra 52,8% da classe majoritária, mais de
-20 p.p. de ganho, enquanto a regressão mal empatava com o palpite trivial.
-Esse contraste é o achado mais interessante para o relatório.
-
-Pontos a cobrir depois de rodar:
-
-- Com log-retorno, algum modelo passou a bater o ingênuo de forma consistente? Qual `movement_corr` atingiu?
-- Qual learning rate fez o modelo sair do colapso? A janela curta confirmou a vantagem?
-- LSTM superou GRU e RNN simples? Se as três empatarem, a memória longa não ajuda em retorno diário — um resultado negativo que vale reportar.
-- O Optuna convergiu para uma config que arrisca, ou para o baseline disfarçado? (conferir `movement_ratio` do vencedor)
-- A matriz de confusão é simétrica, ou o modelo tem viés de alta? Numa série que subiu muito no teste, viés é esperado.
-- Generalizou para a base moderna do Kaggle?
-
-**Limite honesto:** séries de preço são próximas de passeio aleatório. A
-autocorrelação do log-retorno no treino é −0,22 no lag 1 — existe estrutura,
-mas pouca. Ganhos pequenos na regressão e moderados na direção são o resultado
-correto; qualquer coisa espetacular quase sempre indica vazamento temporal.
+Estão em `02_results_report.ipynb`, seção 8 — junto das tabelas e gráficos que
+as sustentam, num notebook que você reexecuta em segundos para mantê-las em dia.
 """),
 ]
 
 
-def main() -> int:
+def _key(cell: dict) -> str:
+    """Identidade de uma célula: o hash do seu código-fonte.
+
+    Duas células com o mesmo código são "a mesma célula", ainda que tenham
+    mudado de posição no notebook. É isso que permite preservar a saída de uma
+    célula quando outra, antes dela, foi editada.
+    """
+    return hashlib.sha1("".join(cell["source"]).encode("utf-8")).hexdigest()
+
+
+def merge_outputs(novas: list[dict], nb_path: Path) -> tuple[list[dict], int]:
+    """Transporta as saídas já executadas do notebook em disco para as células novas.
+
+    O gerador reconstrói a estrutura do notebook a cada execução, mas o arquivo
+    em disco pode conter **saídas caras** — gráficos, tabelas e logs de treinos
+    que levaram horas no Kaggle. Descartá-las a cada regeneração significaria
+    perder o registro visual da execução.
+
+    A regra é conservadora e simples: uma célula de código só herda a saída
+    anterior se o seu **código for byte a byte idêntico**. Se o código mudou, a
+    saída antiga passou a não corresponder ao que a célula faz, então ela é
+    descartada — é o comportamento correto, porque uma saída que não bate com o
+    código é pior que nenhuma saída.
+    """
+    if not nb_path.exists():
+        return novas, 0
+
+    try:
+        antigo = json.loads(nb_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        print(f"  (nao consegui ler o notebook anterior: {exc}; gerando limpo)")
+        return novas, 0
+
+    # Mapa código -> (saídas, execution_count) das células já executadas.
+    salvas = {}
+    for c in antigo.get("cells", []):
+        if c.get("cell_type") == "code" and c.get("outputs"):
+            salvas[_key(c)] = (c["outputs"], c.get("execution_count"))
+
+    preservadas = 0
+    resultado = []
+    for c in novas:
+        c = dict(c)
+        if c["cell_type"] == "code":
+            achou = salvas.get(_key(c))
+            if achou:
+                c["outputs"], c["execution_count"] = achou
+                preservadas += 1
+        resultado.append(c)
+    return resultado, preservadas
+
+
+def main(limpar: bool = False) -> int:
+    """Gera o notebook, preservando as saídas das células cujo código não mudou.
+
+    `--limpar` força um notebook sem saída nenhuma (útil antes de commitar uma
+    versão enxuta, ou quando as saídas antigas viraram ruído).
+    """
+    celulas = CELLS
+    preservadas = 0
+    if not limpar:
+        celulas, preservadas = merge_outputs(CELLS, NB_PATH)
+
     nb = {
-        "cells": CELLS,
+        "cells": celulas,
         "metadata": {
             "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
             "language_info": {"name": "python", "version": "3.10"},
@@ -860,9 +822,18 @@ def main() -> int:
     }
     NB_PATH.parent.mkdir(parents=True, exist_ok=True)
     NB_PATH.write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"Notebook gerado com {len(CELLS)} células em {NB_PATH}")
+
+    total_code = sum(1 for c in celulas if c["cell_type"] == "code")
+    print(f"Notebook gerado com {len(celulas)} células em {NB_PATH}")
+    if limpar:
+        print("  (--limpar: saidas descartadas)")
+    else:
+        print(f"  saidas preservadas: {preservadas}/{total_code} células de código")
+        if preservadas < total_code:
+            print(f"  {total_code - preservadas} célula(s) mudaram de código — saida descartada,")
+            print("  rode-as de novo para atualizar.")
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(limpar="--limpar" in sys.argv))

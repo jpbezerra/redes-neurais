@@ -26,9 +26,11 @@ mp2-lstm-bitcoin/
 │   ├── tuning.py            # busca automática com Optuna (TPE + pruning + importância)
 │   └── utils.py             # seed, device e os gráficos padrão do relatório
 ├── notebooks/
-│   └── 01_train_lstm_bitcoin.ipynb   # orquestra os experimentos
+│   ├── 01_train_lstm_bitcoin.ipynb   # treina — caro, roda no Kaggle
+│   └── 02_results_report.ipynb       # só lê results/ — rápido, gera o relatório
 ├── scripts/
-│   └── make_notebook.py     # gera o notebook programaticamente
+│   ├── make_notebook.py         # gera o notebook de treino
+│   └── make_report_notebook.py  # gera o notebook de relatório
 ├── data/                    # CSVs baixados automaticamente (não versionados)
 ├── reports/figures/         # gráficos do relatório
 └── results/                 # results/{model_id}/ — uma pasta por execução
@@ -36,6 +38,31 @@ mp2-lstm-bitcoin/
 
 Mesma separação do Mini-projeto 1: `src/` tem a implementação testável,
 `notebooks/` orquestra e reporta.
+
+### Por que dois notebooks
+
+`01_train` **treina**: é caro (horas de GPU no Kaggle) e a saída de cada célula
+é um registro que não se quer perder à toa. `02_results_report` **só lê**
+`results/`: roda em segundos, não precisa de GPU, e reconstrói todas as tabelas
+e figuras do relatório a partir dos `metadata.json` já salvos.
+
+A vantagem prática é que o relatório pode ser refeito quantas vezes for
+preciso — ajustando um gráfico, renomeando uma coluna — sem retreinar nada,
+porque o registro real dos resultados é a pasta `results/`, não a saída de uma
+célula.
+
+### Os geradores são incrementais
+
+Os dois notebooks são gerados por script, e os geradores **preservam as saídas
+das células cujo código não mudou** (comparação por hash do fonte). Editar uma
+célula descarta a saída só dela; as outras 18 continuam com o resultado da
+execução anterior.
+
+```bash
+python scripts/make_notebook.py            # regenera preservando saídas
+python scripts/make_report_notebook.py
+python scripts/make_notebook.py --limpar   # descarta todas as saídas
+```
 
 ## Como rodar
 
