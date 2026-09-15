@@ -28,6 +28,8 @@ Dois cuidados implementados aqui:
 
 from __future__ import annotations
 
+import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
@@ -162,10 +164,54 @@ def run_study(
     return study
 
 
-def best_config(study: optuna.Study, base_config: ExperimentConfig, run_name: str = "optuna_best") -> ExperimentConfig:
-    """Converte o melhor trial de volta num `ExperimentConfig` treinável."""
+def study_signature(study: optuna.Study, length: int = 6) -> str:
+    """Assinatura curta e determinística do resultado de um estudo.
+
+    Deriva de `study.best_params` (o hash dos hiperparâmetros vencedores), então
+    dois estudos que chegaram à MESMA configuração produzem a mesma assinatura,
+    e estudos que chegaram a configurações diferentes produzem assinaturas
+    diferentes. É isso que faz o nome ser informativo em vez de só único.
+    """
+    payload = json.dumps(study.best_params, sort_keys=True, default=str)
+    return hashlib.sha1(payload.encode("utf-8")).hexdigest()[:length]
+
+
+def best_config(
+    study: optuna.Study,
+    base_config: ExperimentConfig,
+    run_name: str | None = None,
+    prefix: str = "optuna",
+) -> ExperimentConfig:
+    """Converte o melhor trial de volta num `ExperimentConfig` treinável.
+
+    Por padrão o `run_name` é **dinâmico**: `{prefix}_{task}_{n_trials}t_{hash}`,
+    por exemplo `optuna_regression_50t_a3f9c1`.
+
+    Isso importa por um motivo concreto: `fit_or_load` reaproveita qualquer
+    execução salva com o mesmo `run_name`. Com um nome fixo como
+    "optuna_best", rodar um segundo estudo — com mais trials, outro espaço de
+    busca ou a tarefa de direção — não treinaria nada: o notebook carregaria
+    silenciosamente o resultado do primeiro e você compararia um modelo consigo
+    mesmo sem perceber.
+
+    Os três componentes do nome respondem às perguntas que separam um estudo do
+    outro: qual tarefa, quanto esforço de busca, e qual configuração venceu.
+    Passe `run_name` explicitamente para sobrescrever.
+    """
+    n_done = len([t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE])
+    if run_name is None:
+        run_name = f"{prefix}_{base_config.task}_{n_done}t_{study_signature(study)}"
+
     merged = {**base_config.to_dict(), **study.best_params, "run_name": run_name}
-    return ExperimentConfig.from_dict(merged)
+    config = ExperimentConfig.from_dict(merged)
+
+    if not config.notes:
+        config.notes = (
+            f"Melhor configuracao do estudo Optuna '{study.study_name}' "
+            f"({n_done} trials completos, melhor val_loss={study.best_value:.6f})."
+        )
+    config.tags = [*config.tags, "optuna", study.study_name]
+    return config
 
 
 def study_dataframe(study: optuna.Study):

@@ -229,6 +229,7 @@ prevê baixa — exatamente o tipo de leitura que só a matriz de confusão dá.
 - **Otimiza a validação, nunca o teste.** Otimizar no teste seria escolher o modelo que teve sorte com aquele conjunto.
 - **Persistência opcional em SQLite** (`storage="sqlite:///optuna.db"`), para o estudo sobreviver à queda da sessão do Kaggle e ser retomado.
 - **`importance_table()`** dá o ranking fANOVA — o análogo automático da análise "o que a busca revelou sobre cada hiperparâmetro" feita à mão no Mini-projeto 1.
+- **`run_name` dinâmico.** `best_config()` gera um nome no formato `optuna_{tarefa}_{n_trials}t_{hash}` (ex.: `optuna_regression_50t_a3f9c1`). O hash deriva dos hiperparâmetros vencedores, então dois estudos que chegam à mesma configuração recebem o mesmo nome e estudos diferentes recebem nomes diferentes. Isso não é cosmético: `fit_or_load` reaproveita qualquer execução com o mesmo `run_name`, então um nome fixo faria um segundo estudo — com mais trials ou outra tarefa — carregar silenciosamente o resultado do primeiro.
 
 O espaço padrão (`DEFAULT_SPACE`) cobre janela, tamanho e número de camadas,
 dropout, learning rate, batch size, weight decay, tipo de célula (LSTM/GRU),
