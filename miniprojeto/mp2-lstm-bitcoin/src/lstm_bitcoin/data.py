@@ -208,13 +208,32 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
         raise ValueError(f"target '{config.target}' precisa estar em features={feats}")
     target_idx = feats.index(config.target)
 
-    values = df[feats].to_numpy(dtype=np.float64)
+    values = df[feats].to_numpy(dtype=np.float64).copy()
     dates = df["Date"].to_numpy()
 
     if config.log_price:
-        if (values <= 0).any():
-            raise ValueError("log_price=True exige valores estritamente positivos")
-        values = np.log(values)
+        # O log só faz sentido para PREÇO. O volume pode ser zero (36 dias na
+        # base do enunciado) e, mais importante, volume não é uma quantidade
+        # cujo crescimento seja multiplicativo do mesmo jeito — aplicar log nele
+        # junto seria uma escolha diferente, não uma consequência de log_price.
+        #
+        # Então: log nas colunas de preço, `log1p` nas demais (que aceita zero e
+        # se comporta como log para valores grandes). A coluna alvo é sempre
+        # tratada como preço, já que é ela que será reconstruída na avaliação.
+        price_like = {"Open", "High", "Low", "Close", "VolumeQuote"}
+        for j, name in enumerate(feats):
+            col = values[:, j]
+            if name in price_like or j == target_idx:
+                if (col <= 0).any():
+                    raise ValueError(
+                        f"log_price=True exige valores positivos na coluna de preço '{name}' "
+                        f"(encontrado mínimo {col.min()})"
+                    )
+                values[:, j] = np.log(col)
+            else:
+                if (col < 0).any():
+                    raise ValueError(f"coluna '{name}' tem valores negativos; log1p não se aplica")
+                values[:, j] = np.log1p(col)
 
     # `diff_target` troca o nível pela VARIAÇÃO entre dias consecutivos.
     #
@@ -225,10 +244,23 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
     # escolha de normalização conserta isso — a saída de uma rede saturada em
     # tanh/sigmoid simplesmente não alcança aqueles valores.
     #
-    # A variação, por outro lado, é aproximadamente estacionária: subir 3% em
-    # 2016 e subir 3% em 2018 são o mesmo número, mesmo com o preço 10× maior.
-    # Guardamos o nível original em `levels` para reconstruir o preço depois
-    # (preço previsto = último preço observado + variação prevista).
+    # ATENÇÃO — combine SEMPRE com `log_price=True`. A escolha entre os dois
+    # modos de diferença decide se o alvo é de fato estacionário, e medindo na
+    # série do enunciado a diferença é gritante:
+    #
+    #   diff_target sozinho (variação em US$):   desvio treino 26,2 / teste 608,2  -> 23,2x
+    #   diff_target + log_price (log-retorno):   desvio treino 0,044 / teste 0,055 ->  1,23x
+    #
+    # A variação em dólares NÃO é estacionária: um movimento de 3% valia US$ 20
+    # em 2015 e US$ 500 em 2018. Como o scaler é ajustado só no treino, o
+    # modelo aprende numa escala 23x menor que a do teste — e o resultado é um
+    # RMSE que apenas empata com o baseline ingênuo, porque a rede aprende a
+    # prever "aproximadamente zero" o tempo todo.
+    #
+    # O log-retorno resolve: subir 3% em 2016 e subir 3% em 2018 é o mesmo
+    # número. Guardamos o nível (já em log, se aplicável) em `levels` para
+    # reconstruir o preço depois — somar log-retorno equivale a multiplicar o
+    # preço, e a exponencial é desfeita na avaliação.
     levels = values[:, target_idx].copy()
     if config.diff_target:
         values = np.diff(values, axis=0)

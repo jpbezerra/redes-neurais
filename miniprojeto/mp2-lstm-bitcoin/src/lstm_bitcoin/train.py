@@ -157,6 +157,26 @@ def evaluate_split(
         scores["naive_rmse"] = naive_baseline_scores(y_true, last)["rmse"]
         scores["beats_naive"] = bool(scores["rmse"] < scores["naive_rmse"])
 
+        # Diagnóstico decisivo: o modelo está PREVENDO MOVIMENTO ou apenas
+        # copiando o último preço?
+        #
+        # `movement_ratio` é o desvio do movimento previsto dividido pelo
+        # desvio do movimento real. Perto de 0 significa que a rede convergiu
+        # para "amanhã é igual a hoje" — ela virou o baseline ingênuo, e o RMSE
+        # empatado não é coincidência, é o mesmo modelo. Perto de 1 significa
+        # que ela arrisca movimentos da magnitude certa.
+        #
+        # `movement_corr` é a correlação entre movimento previsto e real: é
+        # onde mora o poder preditivo de verdade. Sem essas duas métricas, um
+        # RMSE bonito esconde um modelo que não aprendeu nada.
+        pred_move = y_pred - last
+        true_move = y_true - last
+        scores["movement_ratio"] = float(pred_move.std() / true_move.std()) if true_move.std() > 0 else 0.0
+        scores["movement_corr"] = (
+            float(np.corrcoef(pred_move, true_move)[0, 1])
+            if pred_move.std() > 1e-12 and true_move.std() > 1e-12 else 0.0
+        )
+
     return {"scores": scores, "y_true": y_true, "y_pred": y_pred, "anchor": last}
 
 
