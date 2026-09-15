@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lstm-bitcoin"
+version = "0.1.0"
+description = "Mini-projeto 2 - LSTM para previsao do preco do Bitcoin (CIFAR/UFPE)"
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scikit-learn",
+    "optuna",
+    "tqdm",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
