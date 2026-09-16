@@ -1,0 +1,12 @@
+run,tarefa,rmse,r2,dir_acc,razao_mov,corr_mov,bate_naive,acc,f1,janela,hidden,celula,lr,diff,log,epocas
+dir_w10_lr0.0001,direction,,,,,,,0.5275590551181102,0.0,10,32,lstm,0.0001,True,True,13
+dir_w10_lr0.001,direction,,,,,,,0.5275590551181102,0.0,10,32,lstm,0.001,True,True,13
+dir_w30_lr0.0001,direction,,,,,,,0.5275590551181102,0.0,30,32,lstm,0.0001,True,True,13
+dir_w30_lr0.001,direction,,,,,,,0.5275590551181102,0.0,30,32,lstm,0.001,True,True,13
+dir_w5_lr0.0001,direction,,,,,,,0.5275590551181102,0.0,5,32,lstm,0.0001,True,True,13
+dir_w5_lr0.001,direction,,,,,,,0.6062992125984252,0.6031746031746033,5,32,lstm,0.001,True,True,80
+dirseed_0,direction,,,,,,,0.6181102362204725,0.616600790513834,5,32,lstm,0.001,True,True,80
+dirseed_123,direction,,,,,,,0.5275590551181102,0.0,5,32,lstm,0.001,True,True,13
+dirseed_1,direction,,,,,,,0.6259842519685039,0.5814977973568282,5,32,lstm,0.001,True,True,80
+dirseed_42,direction,,,,,,,0.6062992125984252,0.6031746031746033,5,32,lstm,0.001,True,True,80
+dirseed_7,direction,,,,,,,0.6220472440944882,0.6307692307692309,5,32,lstm,0.001,True,True,80

@@ -1,0 +1,78 @@
+{
+  "model_id": "lstm_loss_huber_20260916-100415",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-16T10:04:15.836046",
+  "hyperparameters": {
+    "run_name": "loss_huber",
+    "dataset": "tutorial",
+    "features": [
+      "Close"
+    ],
+    "target": "Close",
+    "window": 30,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 64,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.0,
+    "fc_layers": [],
+    "task": "regression",
+    "optimizer": "adam",
+    "loss": "huber",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 32,
+    "num_epochs": 80,
+    "patience": 12,
+    "seed": 42,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 24,
+    "train_loss": 0.0005700409179028405,
+    "val_loss": 0.0008228893304188358,
+    "test_rmse": 607.6435582789708,
+    "test_mae": 406.4440022415402,
+    "test_mape": 4.121837793055773,
+    "test_r2": 0.9694977735499656,
+    "test_directional_accuracy": 0.5078740157480315,
+    "test_naive_rmse": 607.9422669664602,
+    "test_beats_naive": true,
+    "test_movement_ratio": 0.050896064984867324,
+    "test_movement_corr": 0.027766114521197528,
+    "val_rmse": 0.055373498793692875,
+    "val_mae": 0.03887030779692932,
+    "val_mape": 3.859673178811265,
+    "val_r2": -0.0018149173621393455
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "regression",
+  "dataset": {
+    "name": "tutorial",
+    "train": 917,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(1, 64, num_layers=2, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 50497
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "loss_huber"
+}
