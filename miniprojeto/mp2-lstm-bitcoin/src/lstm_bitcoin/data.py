@@ -221,8 +221,19 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
         # se comporta como log para valores grandes). A coluna alvo é sempre
         # tratada como preço, já que é ela que será reconstruída na avaliação.
         price_like = {"Open", "High", "Low", "Close", "VolumeQuote"}
+        # Features derivadas (ver `features.py`) ja sao razoes ou log-retornos:
+        # adimensionais, estacionarias e frequentemente NEGATIVAS (o corpo do
+        # candle vai de -1 a 1). Aplicar log nelas nao faz sentido dimensional e
+        # quebraria no primeiro valor negativo, entao ficam de fora.
+        derivadas = {
+            "amplitude", "pos_close", "corpo", "sombra_sup", "sombra_inf",
+            "ret_1", "ret_2", "ret_3", "ret_5", "ret_acum_5", "ret_acum_10",
+            "vol_5", "vol_10", "vol_20", "vol_razao", "vol_rel",
+        }
         for j, name in enumerate(feats):
             col = values[:, j]
+            if name in derivadas and j != target_idx:
+                continue
             if name in price_like or j == target_idx:
                 if (col <= 0).any():
                     raise ValueError(

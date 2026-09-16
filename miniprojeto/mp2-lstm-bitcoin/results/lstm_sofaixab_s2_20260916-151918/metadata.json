@@ -1,0 +1,126 @@
+{
+  "model_id": "lstm_sofaixab_s2_20260916-151918",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-16T15:19:18.289483",
+  "hyperparameters": {
+    "run_name": "sofaixab_s2",
+    "dataset": "tutorial",
+    "features": [
+      "Close",
+      "amplitude",
+      "pos_close",
+      "corpo",
+      "sombra_sup",
+      "sombra_inf"
+    ],
+    "target": "Close",
+    "window": 10,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "gru",
+    "hidden_size": 64,
+    "num_layers": 1,
+    "bidirectional": false,
+    "dropout": 0.243,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0039468,
+    "weight_decay": 2.765e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 2,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 21,
+    "train_loss": 0.5165645695048104,
+    "val_loss": 0.5660106285963908,
+    "test_accuracy": 0.7086614173228346,
+    "test_precision": 0.6825396825396826,
+    "test_recall": 0.7166666666666667,
+    "test_f1_score": 0.6991869918699187,
+    "test_majority_rate": 0.5275590551181102,
+    "val_accuracy": 0.7128712871287128,
+    "val_precision": 0.6862745098039216,
+    "val_recall": 0.7291666666666666,
+    "val_f1_score": 0.7070707070707071,
+    "val_majority_rate": 0.5247524752475248
+  },
+  "model_type": "GRU",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 917,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "gru",
+    "recurrent": "GRU(6, 64, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 13889
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "sofaixab_s2",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        94,
+        40
+      ],
+      [
+        34,
+        86
+      ]
+    ],
+    "percent_by_true": [
+      [
+        70.15,
+        29.85
+      ],
+      [
+        28.33,
+        71.67
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        73.44,
+        31.75
+      ],
+      [
+        26.56,
+        68.25
+      ]
+    ],
+    "percent_of_total": [
+      [
+        37.01,
+        15.75
+      ],
+      [
+        13.39,
+        33.86
+      ]
+    ]
+  }
+}

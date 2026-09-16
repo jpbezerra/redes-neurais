@@ -1,0 +1,130 @@
+{
+  "model_id": "lstm_fx_retorno_s1_20260916-151407",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-16T15:14:07.892086",
+  "hyperparameters": {
+    "run_name": "fx_retorno_s1",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "ret_1",
+      "ret_2",
+      "ret_3",
+      "ret_5",
+      "ret_acum_5",
+      "ret_acum_10"
+    ],
+    "target": "Close",
+    "window": 10,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "gru",
+    "hidden_size": 64,
+    "num_layers": 1,
+    "bidirectional": false,
+    "dropout": 0.243,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0039468,
+    "weight_decay": 2.765e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 1,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 25,
+    "train_loss": 0.5615579371855441,
+    "val_loss": 0.5326370811462402,
+    "test_accuracy": 0.7063492063492064,
+    "test_precision": 0.6691729323308271,
+    "test_recall": 0.7478991596638656,
+    "test_f1_score": 0.7063492063492064,
+    "test_majority_rate": 0.5277777777777778,
+    "val_accuracy": 0.73,
+    "val_precision": 0.6981132075471698,
+    "val_recall": 0.7708333333333334,
+    "val_f1_score": 0.7326732673267327,
+    "val_majority_rate": 0.52
+  },
+  "model_type": "GRU",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 909,
+    "val": 100,
+    "test": 252
+  },
+  "architecture": {
+    "model_type": "gru",
+    "recurrent": "GRU(10, 64, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 14657
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "fx_retorno_s1",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        89,
+        44
+      ],
+      [
+        30,
+        89
+      ]
+    ],
+    "percent_by_true": [
+      [
+        66.92,
+        33.08
+      ],
+      [
+        25.21,
+        74.79
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        74.79,
+        33.08
+      ],
+      [
+        25.21,
+        66.92
+      ]
+    ],
+    "percent_of_total": [
+      [
+        35.32,
+        17.46
+      ],
+      [
+        11.9,
+        35.32
+      ]
+    ]
+  }
+}
