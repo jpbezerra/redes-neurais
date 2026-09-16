@@ -1,0 +1,124 @@
+{
+  "model_id": "lstm_optval_s7_20260916-143633",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-16T14:36:33.817452",
+  "hyperparameters": {
+    "run_name": "optval_s7",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close"
+    ],
+    "target": "Close",
+    "window": 10,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "gru",
+    "hidden_size": 64,
+    "num_layers": 1,
+    "bidirectional": false,
+    "dropout": 0.243,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0039468,
+    "weight_decay": 2.765e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 7,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 37,
+    "train_loss": 0.5484536631236134,
+    "val_loss": 0.5224039572300297,
+    "test_accuracy": 0.7283464566929134,
+    "test_precision": 0.6976744186046512,
+    "test_recall": 0.75,
+    "test_f1_score": 0.7228915662650603,
+    "test_majority_rate": 0.5275590551181102,
+    "val_accuracy": 0.7326732673267327,
+    "val_precision": 0.723404255319149,
+    "val_recall": 0.7083333333333334,
+    "val_f1_score": 0.7157894736842105,
+    "val_majority_rate": 0.5247524752475248
+  },
+  "model_type": "GRU",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 917,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "gru",
+    "recurrent": "GRU(4, 64, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 13505
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "optval_s7",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        95,
+        39
+      ],
+      [
+        30,
+        90
+      ]
+    ],
+    "percent_by_true": [
+      [
+        70.9,
+        29.1
+      ],
+      [
+        25.0,
+        75.0
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        76.0,
+        30.23
+      ],
+      [
+        24.0,
+        69.77
+      ]
+    ],
+    "percent_of_total": [
+      [
+        37.4,
+        15.35
+      ],
+      [
+        11.81,
+        35.43
+      ]
+    ]
+  }
+}

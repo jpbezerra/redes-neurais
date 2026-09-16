@@ -1,0 +1,125 @@
+{
+  "model_id": "lstm_feat_ohlcv_s42_20260916-142619",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-16T14:26:19.929372",
+  "hyperparameters": {
+    "run_name": "feat_ohlcv_s42",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume"
+    ],
+    "target": "Close",
+    "window": 5,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 32,
+    "num_layers": 1,
+    "bidirectional": false,
+    "dropout": 0.0,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 32,
+    "num_epochs": 80,
+    "patience": 12,
+    "seed": 42,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 80,
+    "train_loss": 0.6226025997546681,
+    "val_loss": 0.5841591057210865,
+    "test_accuracy": 0.6732283464566929,
+    "test_precision": 0.6390977443609023,
+    "test_recall": 0.7083333333333334,
+    "test_f1_score": 0.6719367588932806,
+    "test_majority_rate": 0.5275590551181102,
+    "val_accuracy": 0.6831683168316832,
+    "val_precision": 0.6481481481481481,
+    "val_recall": 0.7291666666666666,
+    "val_f1_score": 0.6862745098039215,
+    "val_majority_rate": 0.5247524752475248
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 917,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(5, 32, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 5025
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "feat_ohlcv_s42",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        86,
+        48
+      ],
+      [
+        35,
+        85
+      ]
+    ],
+    "percent_by_true": [
+      [
+        64.18,
+        35.82
+      ],
+      [
+        29.17,
+        70.83
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        71.07,
+        36.09
+      ],
+      [
+        28.93,
+        63.91
+      ]
+    ],
+    "percent_of_total": [
+      [
+        33.86,
+        18.9
+      ],
+      [
+        13.78,
+        33.46
+      ]
+    ]
+  }
+}
