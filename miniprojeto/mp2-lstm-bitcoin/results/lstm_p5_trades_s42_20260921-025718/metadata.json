@@ -1,0 +1,125 @@
+{
+  "model_id": "lstm_p5_trades_s42_20260921-025718",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-21T02:57:18.617597",
+  "hyperparameters": {
+    "run_name": "p5_trades_s42",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "atividade_rel"
+    ],
+    "target": "Close",
+    "window": 3,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 32,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.1781,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0036407,
+    "weight_decay": 5.1165e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 42,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 37,
+    "train_loss": 0.5537954188301303,
+    "val_loss": 0.5189494365869567,
+    "test_accuracy": 0.7238979118329466,
+    "test_precision": 0.7916666666666666,
+    "test_recall": 0.6129032258064516,
+    "test_f1_score": 0.6909090909090909,
+    "test_majority_rate": 0.5034802784222738,
+    "val_accuracy": 0.75,
+    "val_precision": 0.7571428571428571,
+    "val_recall": 0.6708860759493671,
+    "val_f1_score": 0.7114093959731544,
+    "val_majority_rate": 0.5406976744186046
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 1552,
+    "val": 172,
+    "test": 431
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(5, 32, num_layers=2, batch_first=True, dropout=0.1781)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 13473
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "p5_trades_s42",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        179,
+        35
+      ],
+      [
+        84,
+        133
+      ]
+    ],
+    "percent_by_true": [
+      [
+        83.64,
+        16.36
+      ],
+      [
+        38.71,
+        61.29
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        68.06,
+        20.83
+      ],
+      [
+        31.94,
+        79.17
+      ]
+    ],
+    "percent_of_total": [
+      [
+        41.53,
+        8.12
+      ],
+      [
+        19.49,
+        30.86
+      ]
+    ]
+  }
+}

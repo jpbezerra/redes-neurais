@@ -59,6 +59,33 @@ def directional_accuracy(y_true: np.ndarray, y_pred: np.ndarray, last_observed: 
     return float(((y_pred > last) == (y_true > last)).mean())
 
 
+def pocid(y_true: np.ndarray, y_pred: np.ndarray, last_observed: np.ndarray) -> float:
+    """POCID — *Prediction Of Change In Direction*.
+
+    Nome usado na literatura de previsao de series temporais financeiras para
+    exatamente a metrica acima: a fracao de dias em que o modelo acertou se o
+    valor SUBIU ou DESCEU em relacao ao ultimo valor observado.
+
+        POCID = (1/N) * SUM( D_t ),  onde D_t = 1 se
+                (y_pred[t] - last[t]) e (y_true[t] - last[t]) tem o mesmo sinal
+
+    E reportada em percentual (0 a 100) na maior parte dos artigos; aqui a
+    funcao devolve a fracao (0 a 1) para ser consistente com as demais, e
+    `pocid_pct` faz a conversao.
+
+    Por que ela importa mais que o RMSE neste problema: num passeio aleatorio,
+    o modelo que minimiza o erro quadratico e o que preve "amanha = hoje". Esse
+    modelo tem RMSE otimo e POCID indefinido/zero — ele nunca aponta direcao.
+    O RMSE sozinho nao distingue um previsor util de um copiador; o POCID sim.
+    """
+    return directional_accuracy(y_true, y_pred, last_observed)
+
+
+def pocid_pct(y_true: np.ndarray, y_pred: np.ndarray, last_observed: np.ndarray) -> float:
+    """POCID em percentual (0-100), como e convencionalmente reportado."""
+    return 100.0 * pocid(y_true, y_pred, last_observed)
+
+
 def naive_baseline_scores(y_true: np.ndarray, last_observed: np.ndarray) -> dict:
     """Desempenho do palpite 'amanhã é igual a hoje'.
 

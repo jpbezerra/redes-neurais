@@ -334,3 +334,45 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
         "n_features": len(feats),
         "split_sizes": {"train": n_train, "val": n_val, "test": n_test},
     }
+
+
+def load_professor(data_dir: str | Path = "../data", nome: str = "btc_prof_2023.csv") -> pd.DataFrame:
+    """Carrega a base fornecida pelo professor (2017-08-17 a 2023-08-01).
+
+    Diferenças para a base do tutorial, todas em favor desta:
+
+    - **2176 dias** contra 1273 — 71% mais dados, e o treino de uma LSTM é
+      limitado por quantidade de exemplos.
+    - **Sem buracos**: todos os 2175 intervalos entre dias consecutivos são de
+      exatamente 1 dia. A série do tutorial tinha lacunas.
+    - **Cobre 2018-2023**: inclui o crash de 2018, a alta de 2021 e o inverno
+      cripto de 2022. A base antiga parava em maio/2018, ou seja, avaliava o
+      modelo num único ciclo de mercado.
+    - Traz `number_of_trades` no lugar do volume — uma contagem de negócios,
+      que é uma medida de atividade menos sujeita a manipulação que o volume
+      em si.
+
+    As colunas vêm em minúsculas e são renomeadas para o padrão do projeto
+    (Open/High/Low/Close), para que todo o pipeline existente funcione sem
+    alteração.
+    """
+    caminho = Path(data_dir) / nome
+    if not caminho.exists():
+        raise FileNotFoundError(
+            f"Base do professor não encontrada em {caminho}. "
+            "Copie o CSV do enunciado para a pasta data/."
+        )
+
+    df = pd.read_csv(caminho)
+    df = df.rename(columns={
+        "date": "Date", "open": "Open", "high": "High",
+        "low": "Low", "close": "Close", "number_of_trades": "Trades",
+    })
+    df["Date"] = pd.to_datetime(df["Date"])
+    df = df.sort_values("Date").reset_index(drop=True)
+
+    faltando = {"Open", "High", "Low", "Close"} - set(df.columns)
+    if faltando:
+        raise ValueError(f"Colunas ausentes na base do professor: {sorted(faltando)}")
+
+    return df

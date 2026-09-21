@@ -97,10 +97,22 @@ def adicionar_features(df: pd.DataFrame, grupos: tuple[str, ...] = ("faixa",)) -
         add("vol_razao", out["vol_5"] / (out["vol_20"] + EPS))
 
     if "volume" in grupos or "completo" in grupos:
-        if "Volume" not in out.columns:
-            raise ValueError("grupo 'volume' exige a coluna Volume")
-        v = out["Volume"]
-        add("vol_rel", v / (v.shift(1).rolling(20).mean() + EPS))
+        # A medida de atividade muda conforme a base: o CSV do tutorial traz
+        # `Volume`, o do enunciado traz `Trades` (numero de negocios). As duas
+        # respondem a mesma pergunta — "o mercado esteve mais agitado que o
+        # normal?" — entao a feature e a mesma, so a coluna de origem muda.
+        col = next((c for c in ("Volume", "Trades") if c in out.columns), None)
+        if col is None:
+            # Nao e erro: a base simplesmente nao tem medida de atividade.
+            # O grupo "completo" nao deve quebrar por causa disso.
+            if "volume" in grupos:
+                raise ValueError(
+                    "grupo 'volume' exige uma coluna Volume ou Trades; "
+                    f"a base tem {sorted(out.columns)}"
+                )
+        else:
+            v = out[col]
+            add("atividade_rel", v / (v.shift(1).rolling(20).mean() + EPS))
 
     antes = len(out)
     out = out.replace([np.inf, -np.inf], np.nan).dropna().reset_index(drop=True)

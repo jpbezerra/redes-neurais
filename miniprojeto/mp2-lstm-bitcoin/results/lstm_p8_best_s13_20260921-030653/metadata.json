@@ -1,0 +1,129 @@
+{
+  "model_id": "lstm_p8_best_s13_20260921-030653",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-21T03:06:53.420722",
+  "hyperparameters": {
+    "run_name": "p8_best_s13",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "amplitude",
+      "pos_close",
+      "corpo",
+      "sombra_sup",
+      "sombra_inf"
+    ],
+    "target": "Close",
+    "window": 2,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "gru",
+    "hidden_size": 64,
+    "num_layers": 1,
+    "bidirectional": false,
+    "dropout": 0.08499849923353915,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.005775875548345632,
+    "weight_decay": 1.226193289614503e-06,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 5.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 13,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 26,
+    "train_loss": 0.5168432297609041,
+    "val_loss": 0.5334264454485356,
+    "test_accuracy": 0.7241379310344828,
+    "test_precision": 0.7289719626168224,
+    "test_recall": 0.7155963302752294,
+    "test_f1_score": 0.7222222222222223,
+    "test_majority_rate": 0.5011494252873563,
+    "val_accuracy": 0.7241379310344828,
+    "val_precision": 0.6896551724137931,
+    "val_recall": 0.7407407407407407,
+    "val_f1_score": 0.7142857142857143,
+    "val_majority_rate": 0.5344827586206896
+  },
+  "model_type": "GRU",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 1566,
+    "val": 174,
+    "test": 435
+  },
+  "architecture": {
+    "model_type": "gru",
+    "recurrent": "GRU(9, 64, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 14465
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "p8_best_s13",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        159,
+        58
+      ],
+      [
+        62,
+        156
+      ]
+    ],
+    "percent_by_true": [
+      [
+        73.27,
+        26.73
+      ],
+      [
+        28.44,
+        71.56
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        71.95,
+        27.1
+      ],
+      [
+        28.05,
+        72.9
+      ]
+    ],
+    "percent_of_total": [
+      [
+        36.55,
+        13.33
+      ],
+      [
+        14.25,
+        35.86
+      ]
+    ]
+  }
+}

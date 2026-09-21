@@ -1,0 +1,129 @@
+{
+  "model_id": "lstm_p12_w2gru_s1_20260921-033031",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-21T03:30:31.533696",
+  "hyperparameters": {
+    "run_name": "p12_w2gru_s1",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "amplitude",
+      "pos_close",
+      "corpo",
+      "sombra_sup",
+      "sombra_inf"
+    ],
+    "target": "Close",
+    "window": 2,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "gru",
+    "hidden_size": 64,
+    "num_layers": 1,
+    "bidirectional": false,
+    "dropout": 0.085,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0058,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 1,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 32,
+    "train_loss": 0.5124237162377828,
+    "val_loss": 0.5459473239279341,
+    "test_accuracy": 0.7264367816091954,
+    "test_precision": 0.776536312849162,
+    "test_recall": 0.6376146788990825,
+    "test_f1_score": 0.7002518891687657,
+    "test_majority_rate": 0.5011494252873563,
+    "val_accuracy": 0.7586206896551724,
+    "val_precision": 0.7671232876712328,
+    "val_recall": 0.691358024691358,
+    "val_f1_score": 0.7272727272727273,
+    "val_majority_rate": 0.5344827586206896
+  },
+  "model_type": "GRU",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 1566,
+    "val": 174,
+    "test": 435
+  },
+  "architecture": {
+    "model_type": "gru",
+    "recurrent": "GRU(9, 64, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 14465
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "p12_w2gru_s1",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        177,
+        40
+      ],
+      [
+        79,
+        139
+      ]
+    ],
+    "percent_by_true": [
+      [
+        81.57,
+        18.43
+      ],
+      [
+        36.24,
+        63.76
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        69.14,
+        22.35
+      ],
+      [
+        30.86,
+        77.65
+      ]
+    ],
+    "percent_of_total": [
+      [
+        40.69,
+        9.2
+      ],
+      [
+        18.16,
+        31.95
+      ]
+    ]
+  }
+}
