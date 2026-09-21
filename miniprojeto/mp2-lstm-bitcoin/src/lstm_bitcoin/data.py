@@ -163,6 +163,7 @@ def make_windows(
     window: int,
     horizon: int = 1,
     task: str = "regression",
+    alvo_ja_e_variacao: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Converte uma série [T, F] em pares (X, y) de janelas deslizantes.
 
@@ -178,8 +179,22 @@ def make_windows(
         xs.append(array[i : i + window])
         future = array[i + window + horizon - 1, target_col]
         if task == "direction":
-            last = array[i + window - 1, target_col]
-            ys.append(1.0 if future > last else 0.0)
+            if alvo_ja_e_variacao:
+                # BUG CORRIGIDO. Com `diff_target=True` o array ja contem
+                # VARIACOES, nao niveis. Comparar `future > last` perguntava
+                # "a variacao de amanha e maior que a de hoje?", que NAO e a
+                # direcao do preco — e uma pergunta quase trivial, porque o
+                # log-retorno tem reversao a media: se hoje caiu, amanha quase
+                # certamente varia mais. Uma regra de uma linha ("prever alta
+                # se o retorno de hoje foi negativo") acertava 75% desse alvo,
+                # acima do que o modelo alcancava.
+                #
+                # O alvo correto e o sinal da propria variacao: o preco subiu
+                # de D para D+1 se a variacao que chega em D+1 for positiva.
+                ys.append(1.0 if future > 0 else 0.0)
+            else:
+                last = array[i + window - 1, target_col]
+                ys.append(1.0 if future > last else 0.0)
         else:
             ys.append(future)
     if not xs:
@@ -301,7 +316,15 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
         ("val", max(0, n_train - w - h + 1), n_trainval),
         ("test", max(0, n_trainval - w - h + 1), n),
     ]:
-        x, y = make_windows(scaled[start:end], target_idx, w, h, config.task)
+        # ATENCAO: o sinal da variacao precisa ser lido na escala ORIGINAL.
+        # O scaler desloca o zero (minmax manda o minimo para 0), entao
+        # `future > 0` no array escalado responderia outra pergunta.
+        if config.task == "direction" and config.diff_target:
+            x, _ = make_windows(scaled[start:end], target_idx, w, h, "regression")
+            _, y = make_windows(values[start:end], target_idx, w, h,
+                                "direction", alvo_ja_e_variacao=True)
+        else:
+            x, y = make_windows(scaled[start:end], target_idx, w, h, config.task)
         parts[name] = (x, y)
         offsets[name] = start + w + h - 1  # índice, na série original, do 1º alvo
 
