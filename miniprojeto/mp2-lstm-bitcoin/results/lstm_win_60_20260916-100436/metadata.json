@@ -1,0 +1,78 @@
+{
+  "model_id": "lstm_win_60_20260916-100436",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-16T10:04:36.564779",
+  "hyperparameters": {
+    "run_name": "win_60",
+    "dataset": "tutorial",
+    "features": [
+      "Close"
+    ],
+    "target": "Close",
+    "window": 60,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 64,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.0,
+    "fc_layers": [],
+    "task": "regression",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 32,
+    "num_epochs": 80,
+    "patience": 12,
+    "seed": 42,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 20,
+    "train_loss": 0.0004913029296931136,
+    "val_loss": 0.0016319218488170368,
+    "test_rmse": 608.1575627488401,
+    "test_mae": 406.54554893856607,
+    "test_mape": 4.123006878609338,
+    "test_r2": 0.9694461481796783,
+    "test_directional_accuracy": 0.5118110236220472,
+    "test_naive_rmse": 607.9422669664602,
+    "test_beats_naive": false,
+    "test_movement_ratio": 0.05189697143700151,
+    "test_movement_corr": 0.012740627811676326,
+    "val_rmse": 0.05535738868206165,
+    "val_mae": 0.03893294887278911,
+    "val_mape": 3.8695634935327385,
+    "val_r2": -0.0012320752896737286
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "regression",
+  "dataset": {
+    "name": "tutorial",
+    "train": 917,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(1, 64, num_layers=2, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 50497
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "win_60"
+}

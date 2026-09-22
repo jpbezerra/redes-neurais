@@ -1,0 +1,129 @@
+{
+  "model_id": "lstm_p12_w3lstm_s2_20260921-033050",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-21T03:30:50.966258",
+  "hyperparameters": {
+    "run_name": "p12_w3lstm_s2",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "amplitude",
+      "pos_close",
+      "corpo",
+      "sombra_sup",
+      "sombra_inf"
+    ],
+    "target": "Close",
+    "window": 3,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 32,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.178,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0036,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 2,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 30,
+    "train_loss": 0.51321697595481,
+    "val_loss": 0.528372325088786,
+    "test_accuracy": 0.7103448275862069,
+    "test_precision": 0.7674418604651163,
+    "test_recall": 0.6055045871559633,
+    "test_f1_score": 0.6769230769230771,
+    "test_majority_rate": 0.5011494252873563,
+    "val_accuracy": 0.7586206896551724,
+    "val_precision": 0.76,
+    "val_recall": 0.7037037037037037,
+    "val_f1_score": 0.7307692307692308,
+    "val_majority_rate": 0.5344827586206896
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 1566,
+    "val": 174,
+    "test": 435
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(9, 32, num_layers=2, batch_first=True, dropout=0.178)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 13985
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "p12_w3lstm_s2",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        177,
+        40
+      ],
+      [
+        86,
+        132
+      ]
+    ],
+    "percent_by_true": [
+      [
+        81.57,
+        18.43
+      ],
+      [
+        39.45,
+        60.55
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        67.3,
+        23.26
+      ],
+      [
+        32.7,
+        76.74
+      ]
+    ],
+    "percent_of_total": [
+      [
+        40.69,
+        9.2
+      ],
+      [
+        19.77,
+        30.34
+      ]
+    ]
+  }
+}

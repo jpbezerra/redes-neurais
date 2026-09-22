@@ -1,0 +1,78 @@
+{
+  "model_id": "lstm_formul_lognivel_20260916-100236",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-16T10:02:36.438662",
+  "hyperparameters": {
+    "run_name": "formul_lognivel",
+    "dataset": "tutorial",
+    "features": [
+      "Close"
+    ],
+    "target": "Close",
+    "window": 30,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": false,
+    "model_type": "lstm",
+    "hidden_size": 64,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.0,
+    "fc_layers": [],
+    "task": "regression",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 32,
+    "num_epochs": 80,
+    "patience": 12,
+    "seed": 42,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 80,
+    "train_loss": 0.00027561020633092503,
+    "val_loss": 0.000527402089844172,
+    "test_rmse": 1217.5379294628112,
+    "test_mae": 835.0910145695816,
+    "test_mape": 7.971524092169253,
+    "test_r2": 0.8775387371843492,
+    "test_directional_accuracy": 0.5039370078740157,
+    "test_naive_rmse": 607.942271663599,
+    "test_beats_naive": false,
+    "test_movement_ratio": 1.328279529569377,
+    "test_movement_corr": 0.08578841682481902,
+    "val_rmse": 215.06365978691338,
+    "val_mae": 162.06546868484827,
+    "val_mape": 5.255362567122738,
+    "val_r2": 0.9335164872043944
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "regression",
+  "dataset": {
+    "name": "tutorial",
+    "train": 918,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(1, 64, num_layers=2, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 50497
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "formul_lognivel"
+}

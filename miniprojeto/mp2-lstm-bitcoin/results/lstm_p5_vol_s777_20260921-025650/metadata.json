@@ -1,0 +1,128 @@
+{
+  "model_id": "lstm_p5_vol_s777_20260921-025650",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-21T02:56:50.892778",
+  "hyperparameters": {
+    "run_name": "p5_vol_s777",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "vol_5",
+      "vol_10",
+      "vol_20",
+      "vol_razao"
+    ],
+    "target": "Close",
+    "window": 3,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 32,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.1781,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0036407,
+    "weight_decay": 5.1165e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 777,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 60,
+    "train_loss": 0.5395906070804042,
+    "val_loss": 0.54677910028502,
+    "test_accuracy": 0.7325581395348837,
+    "test_precision": 0.772972972972973,
+    "test_recall": 0.6620370370370371,
+    "test_f1_score": 0.7132169576059851,
+    "test_majority_rate": 0.5023255813953489,
+    "val_accuracy": 0.7441860465116279,
+    "val_precision": 0.7432432432432432,
+    "val_recall": 0.6875,
+    "val_f1_score": 0.7142857142857143,
+    "val_majority_rate": 0.5348837209302325
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 1552,
+    "val": 172,
+    "test": 430
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(8, 32, num_layers=2, batch_first=True, dropout=0.1781)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 13857
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "p5_vol_s777",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        172,
+        42
+      ],
+      [
+        73,
+        143
+      ]
+    ],
+    "percent_by_true": [
+      [
+        80.37,
+        19.63
+      ],
+      [
+        33.8,
+        66.2
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        70.2,
+        22.7
+      ],
+      [
+        29.8,
+        77.3
+      ]
+    ],
+    "percent_of_total": [
+      [
+        40.0,
+        9.77
+      ],
+      [
+        16.98,
+        33.26
+      ]
+    ]
+  }
+}

@@ -163,6 +163,7 @@ def make_windows(
     window: int,
     horizon: int = 1,
     task: str = "regression",
+    alvo_ja_e_variacao: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Converte uma série [T, F] em pares (X, y) de janelas deslizantes.
 
@@ -178,8 +179,22 @@ def make_windows(
         xs.append(array[i : i + window])
         future = array[i + window + horizon - 1, target_col]
         if task == "direction":
-            last = array[i + window - 1, target_col]
-            ys.append(1.0 if future > last else 0.0)
+            if alvo_ja_e_variacao:
+                # BUG CORRIGIDO. Com `diff_target=True` o array ja contem
+                # VARIACOES, nao niveis. Comparar `future > last` perguntava
+                # "a variacao de amanha e maior que a de hoje?", que NAO e a
+                # direcao do preco — e uma pergunta quase trivial, porque o
+                # log-retorno tem reversao a media: se hoje caiu, amanha quase
+                # certamente varia mais. Uma regra de uma linha ("prever alta
+                # se o retorno de hoje foi negativo") acertava 75% desse alvo,
+                # acima do que o modelo alcancava.
+                #
+                # O alvo correto e o sinal da propria variacao: o preco subiu
+                # de D para D+1 se a variacao que chega em D+1 for positiva.
+                ys.append(1.0 if future > 0 else 0.0)
+            else:
+                last = array[i + window - 1, target_col]
+                ys.append(1.0 if future > last else 0.0)
         else:
             ys.append(future)
     if not xs:
@@ -208,13 +223,43 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
         raise ValueError(f"target '{config.target}' precisa estar em features={feats}")
     target_idx = feats.index(config.target)
 
-    values = df[feats].to_numpy(dtype=np.float64)
+    values = df[feats].to_numpy(dtype=np.float64).copy()
     dates = df["Date"].to_numpy()
 
     if config.log_price:
-        if (values <= 0).any():
-            raise ValueError("log_price=True exige valores estritamente positivos")
-        values = np.log(values)
+        # O log só faz sentido para PREÇO. O volume pode ser zero (36 dias na
+        # base do enunciado) e, mais importante, volume não é uma quantidade
+        # cujo crescimento seja multiplicativo do mesmo jeito — aplicar log nele
+        # junto seria uma escolha diferente, não uma consequência de log_price.
+        #
+        # Então: log nas colunas de preço, `log1p` nas demais (que aceita zero e
+        # se comporta como log para valores grandes). A coluna alvo é sempre
+        # tratada como preço, já que é ela que será reconstruída na avaliação.
+        price_like = {"Open", "High", "Low", "Close", "VolumeQuote"}
+        # Features derivadas (ver `features.py`) ja sao razoes ou log-retornos:
+        # adimensionais, estacionarias e frequentemente NEGATIVAS (o corpo do
+        # candle vai de -1 a 1). Aplicar log nelas nao faz sentido dimensional e
+        # quebraria no primeiro valor negativo, entao ficam de fora.
+        derivadas = {
+            "amplitude", "pos_close", "corpo", "sombra_sup", "sombra_inf",
+            "ret_1", "ret_2", "ret_3", "ret_5", "ret_acum_5", "ret_acum_10",
+            "vol_5", "vol_10", "vol_20", "vol_razao", "vol_rel",
+        }
+        for j, name in enumerate(feats):
+            col = values[:, j]
+            if name in derivadas and j != target_idx:
+                continue
+            if name in price_like or j == target_idx:
+                if (col <= 0).any():
+                    raise ValueError(
+                        f"log_price=True exige valores positivos na coluna de preço '{name}' "
+                        f"(encontrado mínimo {col.min()})"
+                    )
+                values[:, j] = np.log(col)
+            else:
+                if (col < 0).any():
+                    raise ValueError(f"coluna '{name}' tem valores negativos; log1p não se aplica")
+                values[:, j] = np.log1p(col)
 
     # `diff_target` troca o nível pela VARIAÇÃO entre dias consecutivos.
     #
@@ -225,10 +270,23 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
     # escolha de normalização conserta isso — a saída de uma rede saturada em
     # tanh/sigmoid simplesmente não alcança aqueles valores.
     #
-    # A variação, por outro lado, é aproximadamente estacionária: subir 3% em
-    # 2016 e subir 3% em 2018 são o mesmo número, mesmo com o preço 10× maior.
-    # Guardamos o nível original em `levels` para reconstruir o preço depois
-    # (preço previsto = último preço observado + variação prevista).
+    # ATENÇÃO — combine SEMPRE com `log_price=True`. A escolha entre os dois
+    # modos de diferença decide se o alvo é de fato estacionário, e medindo na
+    # série do enunciado a diferença é gritante:
+    #
+    #   diff_target sozinho (variação em US$):   desvio treino 26,2 / teste 608,2  -> 23,2x
+    #   diff_target + log_price (log-retorno):   desvio treino 0,044 / teste 0,055 ->  1,23x
+    #
+    # A variação em dólares NÃO é estacionária: um movimento de 3% valia US$ 20
+    # em 2015 e US$ 500 em 2018. Como o scaler é ajustado só no treino, o
+    # modelo aprende numa escala 23x menor que a do teste — e o resultado é um
+    # RMSE que apenas empata com o baseline ingênuo, porque a rede aprende a
+    # prever "aproximadamente zero" o tempo todo.
+    #
+    # O log-retorno resolve: subir 3% em 2016 e subir 3% em 2018 é o mesmo
+    # número. Guardamos o nível (já em log, se aplicável) em `levels` para
+    # reconstruir o preço depois — somar log-retorno equivale a multiplicar o
+    # preço, e a exponencial é desfeita na avaliação.
     levels = values[:, target_idx].copy()
     if config.diff_target:
         values = np.diff(values, axis=0)
@@ -258,7 +316,15 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
         ("val", max(0, n_train - w - h + 1), n_trainval),
         ("test", max(0, n_trainval - w - h + 1), n),
     ]:
-        x, y = make_windows(scaled[start:end], target_idx, w, h, config.task)
+        # ATENCAO: o sinal da variacao precisa ser lido na escala ORIGINAL.
+        # O scaler desloca o zero (minmax manda o minimo para 0), entao
+        # `future > 0` no array escalado responderia outra pergunta.
+        if config.task == "direction" and config.diff_target:
+            x, _ = make_windows(scaled[start:end], target_idx, w, h, "regression")
+            _, y = make_windows(values[start:end], target_idx, w, h,
+                                "direction", alvo_ja_e_variacao=True)
+        else:
+            x, y = make_windows(scaled[start:end], target_idx, w, h, config.task)
         parts[name] = (x, y)
         offsets[name] = start + w + h - 1  # índice, na série original, do 1º alvo
 
@@ -291,3 +357,45 @@ def prepare_splits(df: pd.DataFrame, config) -> dict:
         "n_features": len(feats),
         "split_sizes": {"train": n_train, "val": n_val, "test": n_test},
     }
+
+
+def load_professor(data_dir: str | Path = "../data", nome: str = "btc_prof_2023.csv") -> pd.DataFrame:
+    """Carrega a base fornecida pelo professor (2017-08-17 a 2023-08-01).
+
+    Diferenças para a base do tutorial, todas em favor desta:
+
+    - **2176 dias** contra 1273 — 71% mais dados, e o treino de uma LSTM é
+      limitado por quantidade de exemplos.
+    - **Sem buracos**: todos os 2175 intervalos entre dias consecutivos são de
+      exatamente 1 dia. A série do tutorial tinha lacunas.
+    - **Cobre 2018-2023**: inclui o crash de 2018, a alta de 2021 e o inverno
+      cripto de 2022. A base antiga parava em maio/2018, ou seja, avaliava o
+      modelo num único ciclo de mercado.
+    - Traz `number_of_trades` no lugar do volume — uma contagem de negócios,
+      que é uma medida de atividade menos sujeita a manipulação que o volume
+      em si.
+
+    As colunas vêm em minúsculas e são renomeadas para o padrão do projeto
+    (Open/High/Low/Close), para que todo o pipeline existente funcione sem
+    alteração.
+    """
+    caminho = Path(data_dir) / nome
+    if not caminho.exists():
+        raise FileNotFoundError(
+            f"Base do professor não encontrada em {caminho}. "
+            "Copie o CSV do enunciado para a pasta data/."
+        )
+
+    df = pd.read_csv(caminho)
+    df = df.rename(columns={
+        "date": "Date", "open": "Open", "high": "High",
+        "low": "Low", "close": "Close", "number_of_trades": "Trades",
+    })
+    df["Date"] = pd.to_datetime(df["Date"])
+    df = df.sort_values("Date").reset_index(drop=True)
+
+    faltando = {"Open", "High", "Low", "Close"} - set(df.columns)
+    if faltando:
+        raise ValueError(f"Colunas ausentes na base do professor: {sorted(faltando)}")
+
+    return df

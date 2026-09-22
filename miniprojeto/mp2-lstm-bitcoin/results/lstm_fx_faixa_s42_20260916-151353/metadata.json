@@ -1,0 +1,129 @@
+{
+  "model_id": "lstm_fx_faixa_s42_20260916-151353",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-16T15:13:53.797344",
+  "hyperparameters": {
+    "run_name": "fx_faixa_s42",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "amplitude",
+      "pos_close",
+      "corpo",
+      "sombra_sup",
+      "sombra_inf"
+    ],
+    "target": "Close",
+    "window": 10,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "gru",
+    "hidden_size": 64,
+    "num_layers": 1,
+    "bidirectional": false,
+    "dropout": 0.243,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0039468,
+    "weight_decay": 2.765e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 42,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 26,
+    "train_loss": 0.5001189598963568,
+    "val_loss": 0.5773646135141354,
+    "test_accuracy": 0.7204724409448819,
+    "test_precision": 0.6991869918699187,
+    "test_recall": 0.7166666666666667,
+    "test_f1_score": 0.7078189300411523,
+    "test_majority_rate": 0.5275590551181102,
+    "val_accuracy": 0.7623762376237624,
+    "val_precision": 0.7608695652173914,
+    "val_recall": 0.7291666666666666,
+    "val_f1_score": 0.7446808510638298,
+    "val_majority_rate": 0.5247524752475248
+  },
+  "model_type": "GRU",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 917,
+    "val": 101,
+    "test": 254
+  },
+  "architecture": {
+    "model_type": "gru",
+    "recurrent": "GRU(9, 64, batch_first=True)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 14465
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "fx_faixa_s42",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        97,
+        37
+      ],
+      [
+        34,
+        86
+      ]
+    ],
+    "percent_by_true": [
+      [
+        72.39,
+        27.61
+      ],
+      [
+        28.33,
+        71.67
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        74.05,
+        30.08
+      ],
+      [
+        25.95,
+        69.92
+      ]
+    ],
+    "percent_of_total": [
+      [
+        38.19,
+        14.57
+      ],
+      [
+        13.39,
+        33.86
+      ]
+    ]
+  }
+}

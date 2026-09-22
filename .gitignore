@@ -50,7 +50,7 @@ ENV/
 !**/results/**
 
 # ==== Relatórios gerados ====
-**/reports/figures/*
+# **/reports/figures/*
 !**/reports/figures/.gitkeep
 
 # ==== SO / Editor ====
@@ -61,3 +61,9 @@ Thumbs.db
 
 # ==== Outras pastas de trabalho ====
 temp
+
+# ==== Scripts geradores ====
+# Os scripts que GERAM os notebooks (make_notebook.py, make_report_notebook.py)
+# e o driver de execucao local. O artefato que importa e o notebook gerado,
+# que ja e versionado em notebooks/.
+**/scripts/

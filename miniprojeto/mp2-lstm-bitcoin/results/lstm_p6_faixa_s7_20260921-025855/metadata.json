@@ -1,0 +1,129 @@
+{
+  "model_id": "lstm_p6_faixa_s7_20260921-025855",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-21T02:58:55.974210",
+  "hyperparameters": {
+    "run_name": "p6_faixa_s7",
+    "dataset": "tutorial",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "amplitude",
+      "pos_close",
+      "corpo",
+      "sombra_sup",
+      "sombra_inf"
+    ],
+    "target": "Close",
+    "window": 3,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 32,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.1781,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0036407,
+    "weight_decay": 5.1165e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 7,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 51,
+    "train_loss": 0.510006859564888,
+    "val_loss": 0.5418150400978395,
+    "test_accuracy": 0.7195402298850575,
+    "test_precision": 0.7448979591836735,
+    "test_recall": 0.6697247706422018,
+    "test_f1_score": 0.7053140096618358,
+    "test_majority_rate": 0.5011494252873563,
+    "val_accuracy": 0.7528735632183908,
+    "val_precision": 0.7209302325581395,
+    "val_recall": 0.7654320987654321,
+    "val_f1_score": 0.7425149700598802,
+    "val_majority_rate": 0.5344827586206896
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "tutorial",
+    "train": 1566,
+    "val": 174,
+    "test": 435
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(9, 32, num_layers=2, batch_first=True, dropout=0.1781)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 13985
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "p6_faixa_s7",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        167,
+        50
+      ],
+      [
+        72,
+        146
+      ]
+    ],
+    "percent_by_true": [
+      [
+        76.96,
+        23.04
+      ],
+      [
+        33.03,
+        66.97
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        69.87,
+        25.51
+      ],
+      [
+        30.13,
+        74.49
+      ]
+    ],
+    "percent_of_total": [
+      [
+        38.39,
+        11.49
+      ],
+      [
+        16.55,
+        33.56
+      ]
+    ]
+  }
+}

@@ -26,9 +26,11 @@ mp2-lstm-bitcoin/
 │   ├── tuning.py            # busca automática com Optuna (TPE + pruning + importância)
 │   └── utils.py             # seed, device e os gráficos padrão do relatório
 ├── notebooks/
-│   └── 01_train_lstm_bitcoin.ipynb   # orquestra os experimentos
+│   ├── 01_train_lstm_bitcoin.ipynb   # treina — caro, roda no Kaggle
+│   └── 02_results_report.ipynb       # só lê results/ — rápido, gera o relatório
 ├── scripts/
-│   └── make_notebook.py     # gera o notebook programaticamente
+│   ├── make_notebook.py         # gera o notebook de treino
+│   └── make_report_notebook.py  # gera o notebook de relatório
 ├── data/                    # CSVs baixados automaticamente (não versionados)
 ├── reports/figures/         # gráficos do relatório
 └── results/                 # results/{model_id}/ — uma pasta por execução
@@ -36,6 +38,31 @@ mp2-lstm-bitcoin/
 
 Mesma separação do Mini-projeto 1: `src/` tem a implementação testável,
 `notebooks/` orquestra e reporta.
+
+### Por que dois notebooks
+
+`01_train` **treina**: é caro (horas de GPU no Kaggle) e a saída de cada célula
+é um registro que não se quer perder à toa. `02_results_report` **só lê**
+`results/`: roda em segundos, não precisa de GPU, e reconstrói todas as tabelas
+e figuras do relatório a partir dos `metadata.json` já salvos.
+
+A vantagem prática é que o relatório pode ser refeito quantas vezes for
+preciso — ajustando um gráfico, renomeando uma coluna — sem retreinar nada,
+porque o registro real dos resultados é a pasta `results/`, não a saída de uma
+célula.
+
+### Os geradores são incrementais
+
+Os dois notebooks são gerados por script, e os geradores **preservam as saídas
+das células cujo código não mudou** (comparação por hash do fonte). Editar uma
+célula descarta a saída só dela; as outras 18 continuam com o resultado da
+execução anterior.
+
+```bash
+python scripts/make_notebook.py            # regenera preservando saídas
+python scripts/make_report_notebook.py
+python scripts/make_notebook.py --limpar   # descarta todas as saídas
+```
 
 ## Como rodar
 
@@ -51,9 +78,28 @@ jupyter notebook notebooks/01_train_lstm_bitcoin.ipynb
 ### Colab / Kaggle
 
 Abra o notebook e rode a célula de setup — ela clona o repositório, instala o
-pacote e ajusta os caminhos. No Kaggle, prefira **"Save Version" → "Save & Run
-All (Commit)"**: o modo commit roda num kernel gerenciado em segundo plano e
-não depende da aba do navegador ficar aberta.
+pacote e ajusta os caminhos. No Kaggle, ative *Settings → Internet → On* e
+prefira **"Save Version" → "Save & Run All (Commit)"**: o modo commit roda num
+kernel gerenciado em segundo plano e não depende da aba do navegador ficar
+aberta.
+
+#### Devolver os resultados ao GitHub
+
+O Kaggle tem um botão nativo *File → Link to GitHub*, mas ele versiona **apenas
+o arquivo .ipynb** — não os `results/` nem os gráficos, que é justamente o que
+interessa aqui.
+
+Por isso a seção 9.1 do notebook faz o push por código. Configuração, uma vez
+só: gere um *fine-grained token* no GitHub com permissão **Contents: Read and
+write** restrita a este repositório, e guarde no Kaggle em *Add-ons → Secrets*
+com o label `GITHUB_TOKEN`. O token fica no cofre do Kaggle, nunca no código, e
+a URL com credencial é removida do `git remote` ao final da célula.
+
+O push vai para o branch `kaggle-results`, não para a `main` — assim os
+resultados chegam sem risco de conflito, e você mescla quando quiser com
+`git fetch origin && git merge origin/kaggle-results`. Quem preferir não
+configurar token tem, logo abaixo, a célula alternativa que empacota tudo num
+zip na aba Output.
 
 Este projeto é **muito mais leve que a Fase 2 do Mini-projeto 1**: a série tem
 1.273 pontos (contra 50.000 imagens), então cada treino leva segundos a poucos
@@ -133,44 +179,75 @@ RMSE. Isso é o que separa um relatório honesto de um gráfico bonito e vazio.
 
 ---
 
-# O diagnóstico central: nível vs. variação
+# O diagnóstico central: qual alvo é estacionário
 
-Este é o achado que orienta o projeto inteiro, e ele aparece já na inspeção
-dos dados, antes de qualquer modelo:
+Este é o achado que orienta o projeto, e a primeira execução completa o
+refinou de forma importante.
+
+## O problema de partida
 
 | Partição | Faixa de preço |
 |---|---|
 | Treino (918 dias) | US$ 120 – US$ 2.698 |
 | Teste (254 dias) | US$ 3.617 – US$ 19.650 |
 
-**As faixas não se sobrepõem.** O menor preço do teste é maior que o maior
-preço do treino. Um modelo que prevê o *nível* precisa extrapolar para valores
-7× acima de tudo que viu — e redes neurais não extrapolam bem.
+**As faixas não se sobrepõem.** Prevendo o *nível*, a rede precisa extrapolar
+7× acima de tudo que viu — e redes não extrapolam bem.
 
-A correção é mudar o alvo: prever a **variação** entre dias consecutivos em
-vez do nível. Subir 3% em 2016 e subir 3% em 2018 são o mesmo número, mesmo
-com o preço 10× maior — a variação é aproximadamente estacionária. O preço é
-reconstruído depois como `último preço observado + variação prevista`.
+## A correção tem dois modos, e só um funciona
 
-Medição com treinos curtos (25 épocas, `hidden_size=32`), tudo o mais igual:
+A solução é prever a mudança em vez do nível. Mas **variação em dólares** e
+**retorno percentual** são coisas diferentes:
 
-| Formulação | RMSE | R² | Bate o ingênuo? |
+| Alvo | Desvio no treino | Desvio no teste | Razão |
 |---|---|---|---|
-| Nível + MinMax (o do tutorial) | 5.485 | −1,49 | não |
-| Nível + log + MinMax | 4.679 | −0,81 | não |
-| **Variação + Standard** | **607,5** | **0,970** | **sim** |
-| Variação em log (retorno) | 609,2 | 0,969 | quase |
+| Variação em US$ | 26,2 | 608,2 | **23,2×** |
+| Log-retorno | 0,044 | 0,055 | **1,23×** |
 
-*(Números de diagnóstico do pipeline, não do experimento final.)*
+A variação em dólares **não é estacionária**: um movimento de 3% valia US$ 20
+em 2015 e US$ 500 em 2018. Como o scaler é ajustado só no treino, o modelo
+aprende numa escala 23× menor que a do teste.
 
-O R² negativo das duas primeiras linhas significa literalmente que o modelo é
-pior do que ter respondido a média em todos os dias. Nenhuma escolha de
-normalização resolve — é o alvo que estava errado.
+Foi exatamente o que aconteceu na primeira execução: **as 14 execuções de
+regressão empataram em RMSE ≈ 607**, o valor do baseline ingênuo. Variar
+janela (5 a 90), capacidade (16 a 128) e célula (LSTM/GRU/RNN) produziu uma
+faixa de 0,1%. Com o alvo errado, nenhum hiperparâmetro conseguia importar.
 
-Esse resultado é o análogo, neste projeto, do que a leva 3 foi no Mini-projeto
-1: um fracasso que reorienta a busca inteira.
+A configuração agora usa `diff_target=True` **junto com** `log_price=True`.
 
----
+## As métricas que expuseram o problema
+
+Um RMSE de 607 parecia ótimo e escondia um modelo que não aprendeu nada. Duas
+métricas novas em `train.evaluate_split` tornam isso visível:
+
+- **`movement_ratio`** — desvio do movimento previsto ÷ desvio do real. Perto
+  de 0 significa que o modelo previu "amanhã ≈ hoje": ele *virou* o baseline.
+  Na primeira execução deu **0,015** (movimentos 67× menores que os reais).
+- **`movement_corr`** — correlação entre movimento previsto e real. Era
+  **negativa**.
+
+O motivo é conceitual: numa série quase aleatória, prever "não muda" é a
+estratégia que *minimiza* o erro quadrático. O modelo não falhou em otimizar —
+otimizou perfeitamente para a métrica errada.
+
+Por isso a seleção do melhor modelo não usa RMSE. O critério é: entre os
+modelos com `movement_ratio` entre 0,2 e 2,0 e R² > 0,5, o de maior
+`movement_corr`. As duas guardas são necessárias — sem o piso vence quem
+colapsou, sem o teto vence o `baseline_nivel`, que tem razão 4,4 e correlação
+0,12 mas RMSE de 3.940 e R² negativo.
+
+## Regressão e direção têm dificuldades muito diferentes
+
+O contraste é o achado mais interessante do projeto:
+
+| Tarefa | Resultado | Baseline | Ganho |
+|---|---|---|---|
+| Regressão (quanto muda) | RMSE 603 | 607,9 | marginal |
+| **Direção (para onde vai)** | **~74% de acurácia** | 52,8% | **+21 p.p.** |
+
+Prever *quanto* o preço muda é dominado por ruído; prever *para onde* ele vai é
+tratável. A autocorrelação do log-retorno no treino é **−0,22 no lag 1** —
+existe estrutura, mas pouca, e ela aparece no sinal, não na magnitude.
 
 # As três coisas pedidas para o relatório
 
@@ -229,6 +306,7 @@ prevê baixa — exatamente o tipo de leitura que só a matriz de confusão dá.
 - **Otimiza a validação, nunca o teste.** Otimizar no teste seria escolher o modelo que teve sorte com aquele conjunto.
 - **Persistência opcional em SQLite** (`storage="sqlite:///optuna.db"`), para o estudo sobreviver à queda da sessão do Kaggle e ser retomado.
 - **`importance_table()`** dá o ranking fANOVA — o análogo automático da análise "o que a busca revelou sobre cada hiperparâmetro" feita à mão no Mini-projeto 1.
+- **`run_name` dinâmico.** `best_config()` gera um nome no formato `optuna_{tarefa}_{n_trials}t_{hash}` (ex.: `optuna_regression_50t_a3f9c1`). O hash deriva dos hiperparâmetros vencedores, então dois estudos que chegam à mesma configuração recebem o mesmo nome e estudos diferentes recebem nomes diferentes. Isso não é cosmético: `fit_or_load` reaproveita qualquer execução com o mesmo `run_name`, então um nome fixo faria um segundo estudo — com mais trials ou outra tarefa — carregar silenciosamente o resultado do primeiro.
 
 O espaço padrão (`DEFAULT_SPACE`) cobre janela, tamanho e número de camadas,
 dropout, learning rate, batch size, weight decay, tipo de célula (LSTM/GRU),

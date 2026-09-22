@@ -1,0 +1,7 @@
+modelo,acc
+classe majoritaria,0.5379
+dummy,0.4628
+regressao logistica,0.4814
+random forest,0.493
+gradient boosting,0.5116
+"LSTM/GRU (alvo corrigido, 10 sementes)",0.4867
