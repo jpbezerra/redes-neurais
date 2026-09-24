@@ -1,0 +1,124 @@
+{
+  "model_id": "lstm_gan_aug_s0_20260924-202310",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-24T20:23:10.626696",
+  "hyperparameters": {
+    "run_name": "gan_aug_s0",
+    "dataset": "professor",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close"
+    ],
+    "target": "Close",
+    "window": 3,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 32,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.1781,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0036407,
+    "weight_decay": 5.1165e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 0,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 27,
+    "train_loss": 0.4311038006925715,
+    "val_loss": 0.7540778942491816,
+    "test_accuracy": 0.5471264367816092,
+    "test_precision": 0.6666666666666666,
+    "test_recall": 0.03980099502487562,
+    "test_f1_score": 0.07511737089201877,
+    "test_majority_rate": 0.5379310344827586,
+    "val_accuracy": 0.5114942528735632,
+    "val_precision": 0.5,
+    "val_recall": 0.11764705882352941,
+    "val_f1_score": 0.19047619047619047,
+    "val_majority_rate": 0.5114942528735632
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "professor",
+    "train": 1566,
+    "val": 174,
+    "test": 435
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(4, 32, num_layers=2, batch_first=True, dropout=0.1781)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 13345
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "gan_aug_s0",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        230,
+        4
+      ],
+      [
+        193,
+        8
+      ]
+    ],
+    "percent_by_true": [
+      [
+        98.29,
+        1.71
+      ],
+      [
+        96.02,
+        3.98
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        54.37,
+        33.33
+      ],
+      [
+        45.63,
+        66.67
+      ]
+    ],
+    "percent_of_total": [
+      [
+        52.87,
+        0.92
+      ],
+      [
+        44.37,
+        1.84
+      ]
+    ]
+  }
+}
