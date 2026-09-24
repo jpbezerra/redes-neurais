@@ -1,0 +1,124 @@
+{
+  "model_id": "lstm_gan_aug_s7_20260924-202853",
+  "framework": "PyTorch",
+  "timestamp": "2026-09-24T20:28:53.759146",
+  "hyperparameters": {
+    "run_name": "gan_aug_s7",
+    "dataset": "professor",
+    "features": [
+      "Open",
+      "High",
+      "Low",
+      "Close"
+    ],
+    "target": "Close",
+    "window": 3,
+    "horizon": 1,
+    "test_fraction": 0.2,
+    "val_fraction": 0.1,
+    "scaler": "minmax",
+    "log_price": true,
+    "diff_target": true,
+    "model_type": "lstm",
+    "hidden_size": 32,
+    "num_layers": 2,
+    "bidirectional": false,
+    "dropout": 0.1781,
+    "fc_layers": [],
+    "task": "direction",
+    "optimizer": "adam",
+    "loss": "mse",
+    "learning_rate": 0.0036407,
+    "weight_decay": 5.1165e-05,
+    "momentum": 0.9,
+    "lr_schedule": "none",
+    "grad_clip": 1.0,
+    "batch_size": 16,
+    "num_epochs": 60,
+    "patience": 10,
+    "seed": 7,
+    "notes": "",
+    "tags": []
+  },
+  "metrics": {
+    "epochs_trained": 39,
+    "train_loss": 0.43184117127847865,
+    "val_loss": 0.6983323624764366,
+    "test_accuracy": 0.4666666666666667,
+    "test_precision": 0.46335697399527187,
+    "test_recall": 0.9751243781094527,
+    "test_f1_score": 0.6282051282051282,
+    "test_majority_rate": 0.5379310344827586,
+    "val_accuracy": 0.4885057471264368,
+    "val_precision": 0.4878048780487805,
+    "val_recall": 0.9411764705882353,
+    "val_f1_score": 0.642570281124498,
+    "val_majority_rate": 0.5114942528735632
+  },
+  "model_type": "LSTM",
+  "purpose": "Previsão do preço do Bitcoin (Mini-projeto 2 — LSTM)",
+  "task": "direction",
+  "dataset": {
+    "name": "professor",
+    "train": 1566,
+    "val": 174,
+    "test": 435
+  },
+  "architecture": {
+    "model_type": "lstm",
+    "recurrent": "LSTM(4, 32, num_layers=2, batch_first=True, dropout=0.1781)",
+    "head": [
+      "Linear"
+    ],
+    "n_parameters": 13345
+  },
+  "notes": "",
+  "tags": [],
+  "run_name": "gan_aug_s7",
+  "confusion_matrix": {
+    "labels": [
+      "baixa",
+      "alta"
+    ],
+    "counts": [
+      [
+        7,
+        227
+      ],
+      [
+        5,
+        196
+      ]
+    ],
+    "percent_by_true": [
+      [
+        2.99,
+        97.01
+      ],
+      [
+        2.49,
+        97.51
+      ]
+    ],
+    "percent_by_pred": [
+      [
+        58.33,
+        53.66
+      ],
+      [
+        41.67,
+        46.34
+      ]
+    ],
+    "percent_of_total": [
+      [
+        1.61,
+        52.18
+      ],
+      [
+        1.15,
+        45.06
+      ]
+    ]
+  }
+}
