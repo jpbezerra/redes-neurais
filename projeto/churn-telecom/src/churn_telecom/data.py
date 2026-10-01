@@ -44,21 +44,36 @@ TARGET_COL = "Churn"
 ID_COL = "customerID"
 
 
-def load_raw(data_dir: str | Path) -> pd.DataFrame:
+def load_raw(data_dir: str | Path, force_download: bool = False) -> pd.DataFrame:
     """Le o CSV bruto exatamente como veio (sem dtype forcado, sem dropna).
+
+    Se o arquivo nao existir em `data_dir` (ex.: clone fresco do repo no
+    Kaggle, onde `data/` nao e versionado), baixa automaticamente de
+    `RAW_CSV_URL` antes de ler — mesmo padrao do `load_tutorial` do
+    mini-projeto 2. `force_download=True` baixa de novo mesmo se ja existir.
 
     `TotalCharges` propositalmente NAO e convertido para float aqui — a
     conversao e responsabilidade do pipeline de pre-processamento (pipeline de dados),
     que deve decidir e documentar como tratar os valores em branco
     conhecidos (ver EDA em reports/tables/eda_*.csv).
     """
-    path = Path(data_dir) / RAW_CSV_NAME
-    if not path.exists():
-        raise FileNotFoundError(
-            f"CSV bruto nao encontrado em {path}. Baixe o dataset do Kaggle "
-            "'customers-churned-in-telecom-services' (ou o mirror publico "
-            "do IBM Telco Customer Churn, mesmo schema) e salve nesse caminho."
-        )
+    data_dir = Path(data_dir)
+    path = data_dir / RAW_CSV_NAME
+    if force_download or not path.exists():
+        data_dir.mkdir(parents=True, exist_ok=True)
+        import urllib.request
+        print(f"Baixando CSV de {RAW_CSV_URL} ...")
+        try:
+            urllib.request.urlretrieve(RAW_CSV_URL, path)
+        except Exception as exc:
+            raise FileNotFoundError(
+                f"CSV bruto nao encontrado em {path} e o download automatico de "
+                f"{RAW_CSV_URL} falhou ({exc}). Baixe manualmente o dataset do "
+                "Kaggle 'customers-churned-in-telecom-services' (ou o mirror "
+                "publico do IBM Telco Customer Churn, mesmo schema) e salve "
+                "nesse caminho."
+            ) from exc
+        print(f"CSV salvo em {path}")
     return pd.read_csv(path)
 
 
