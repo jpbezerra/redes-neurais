@@ -1,0 +1,46 @@
+{
+  "model_id": "mlp_churn_optuna_leva1",
+  "framework": "Scikit-learn (MLPClassifier) + Optuna",
+  "timestamp": "2026-10-01T15:15:48.586566",
+  "hyperparameters": {
+    "hidden_layer_sizes": [
+      20,
+      10
+    ],
+    "activation": "relu",
+    "solver": "sgd",
+    "learning_rate_init": 0.018504280758921684,
+    "alpha": 0.0005612560318955935,
+    "batch_size": 128,
+    "max_epochs": 10000,
+    "patience": 10,
+    "loss_metric": "cross_entropy",
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.5072828048466099,
+    "mse": 0.16916644390780763,
+    "cross_entropy": 0.5040674635347381,
+    "auroc": 0.8295316331859255,
+    "threshold": 0.5,
+    "tp": 350,
+    "tn": 961,
+    "fp": 332,
+    "fn": 118,
+    "precision": 0.5131964809384164,
+    "recall": 0.7478632478632479,
+    "f1": 0.6086956521739131
+  },
+  "architecture": {
+    "hidden_layer_sizes": [
+      20,
+      10
+    ],
+    "activation": "relu"
+  },
+  "dataset": {
+    "n_trials_optuna": 30,
+    "best_val_ks": 0.5479134466769706
+  },
+  "notes": "Fase 3 — leva 1 de busca Optuna para MLP (30 trials, otimizado por KS na validacao)."
+}

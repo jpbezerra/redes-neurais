@@ -1,0 +1,35 @@
+{
+  "model_id": "gb_churn_optuna_leva1",
+  "framework": "Scikit-learn (GradientBoostingClassifier) + Optuna",
+  "timestamp": "2026-10-01T15:22:09.450063",
+  "hyperparameters": {
+    "learning_rate": 0.03750154110993485,
+    "n_estimators": 202,
+    "subsample": 0.503722487619383,
+    "min_samples_leaf": 34,
+    "max_depth": 2
+  },
+  "metrics": {
+    "ks": 0.5103912586511195,
+    "mse": 0.16401660886815383,
+    "cross_entropy": 0.488518049643579,
+    "auroc": 0.8355750226399878,
+    "threshold": 0.5,
+    "tp": 354,
+    "tn": 957,
+    "fp": 336,
+    "fn": 114,
+    "precision": 0.5130434782608696,
+    "recall": 0.7564102564102564,
+    "f1": 0.6113989637305699
+  },
+  "architecture": {
+    "n_estimators": 202,
+    "max_depth": 2
+  },
+  "dataset": {
+    "n_trials_optuna": 20,
+    "best_val_ks": 0.571097372488408
+  },
+  "notes": "Fase 3 — leva 1 de busca Optuna para Gradient Boosting (20 trials, otimizado por KS na validacao)."
+}

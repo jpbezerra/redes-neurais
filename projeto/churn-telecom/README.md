@@ -1,7 +1,7 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** Fase 2 concluída (baselines: MLP + Gradient Boosting + XGBoost).
-Próxima: Fase 3 (busca de hiperparâmetros via Optuna, em levas sucessivas).
+**Status:** Fase 3 concluída (busca de hiperparâmetros via Optuna, leva 1,
+em MLP e Gradient Boosting). Próxima: Fase 4 (engenharia de features).
 
 ## Dataset
 
@@ -55,10 +55,36 @@ artificialmente), AUROC ~0.83, convergente entre as 3 famílias de modelo —
 consistente com benchmarks publicados para este dataset, auditado contra
 vazamento (ver `notebooks/02_baselines.ipynb`, seção 3).
 
-Cada experimento salvo em `results/{model_id}/` (skill model-saver):
-`model.*` + `metadata.json` + `history.csv` quando aplicável.
-
 Notebook: `notebooks/02_baselines.ipynb`.
+
+## Busca de hiperparâmetros (Fase 3)
+
+Leva 1 via Optuna (20 trials cada), otimizando **KS na validação**, em MLP
+e Gradient Boosting. O teste só é tocado uma vez no final, para reportar a
+métrica honesta do vencedor de cada leva.
+
+**Nota de ambiente:** o storage SQLite nativo do Optuna falha com erro de
+I/O quando o arquivo `.db` fica num drive de rede montado (é o caso desta
+pasta) — SQLite precisa de locking de arquivo que o mount não garante.
+Cada estudo roda em memória e os trials são exportados para CSV
+(`reports/tables/fase3_trials_*.csv`).
+
+**Achado honesto:** o melhor trial de Gradient Boosting chegou a KS=0.571
+na *validação*, mas caiu para KS≈0.510 no *teste* — e o MLP teve o mesmo
+padrão em escala menor. Isso é overfitting de hiperparâmetro (poucos trials
++ um único split de validação). A conclusão desta leva é que **a busca não
+trouxe ganho real sobre os baselines da Fase 2** — documentado em detalhe,
+em vez de reportar só o número de validação (que pareceria um resultado
+melhor do que realmente é).
+
+Notebook: `notebooks/03_hyperparam_search.ipynb`.
+
+## Pendência de limpeza (ação manual sua)
+
+`results/_to_delete/` tem arquivos de um estudo Optuna com SQLite que
+corrompeu no mount de rede (ver nota acima) — não consigo apagar arquivos
+nesta pasta por padrão. Pode deletar essa subpasta quando quiser, ela não é
+referenciada por nenhum código.
 
 ## Estrutura
 
@@ -80,13 +106,16 @@ churn-telecom/
 ## Como rodar
 
 ```bash
-python3 scripts/eda_fase0.py              # EDA (tabelas)
-python3 scripts/make_eda_notebook.py      # gera notebooks/00_eda.ipynb
-python3 scripts/fase1_pipeline.py         # pipeline de dados (diagnósticos)
-python3 scripts/make_pipeline_notebook.py # gera notebooks/01_data_pipeline.ipynb
-python3 scripts/fase2_baselines.py        # treina e salva os baselines
-python3 scripts/make_fase2_notebook.py    # gera notebooks/02_baselines.ipynb
-python3 src/churn_telecom/metrics.py      # self-test do KS
+python3 scripts/eda_fase0.py                 # EDA (tabelas)
+python3 scripts/make_eda_notebook.py          # gera notebooks/00_eda.ipynb
+python3 scripts/fase1_pipeline.py             # pipeline de dados (diagnósticos)
+python3 scripts/make_pipeline_notebook.py     # gera notebooks/01_data_pipeline.ipynb
+python3 scripts/fase2_baselines.py            # treina e salva os baselines
+python3 scripts/make_fase2_notebook.py        # gera notebooks/02_baselines.ipynb
+python3 scripts/fase3_optuna.py mlp 20        # leva de busca Optuna (MLP)
+python3 scripts/fase3_optuna.py gb 20         # leva de busca Optuna (Gradient Boosting)
+python3 scripts/make_fase3_notebook.py        # gera notebooks/03_hyperparam_search.ipynb
+python3 src/churn_telecom/metrics.py          # self-test do KS
 ```
 
 ## Convenções
