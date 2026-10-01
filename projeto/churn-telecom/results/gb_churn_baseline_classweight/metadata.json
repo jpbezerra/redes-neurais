@@ -1,0 +1,44 @@
+{
+  "model_id": "gb_churn_baseline_classweight",
+  "framework": "Scikit-learn (GradientBoostingClassifier)",
+  "timestamp": "2026-10-01T14:49:38.088995",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "subsample": 1.0,
+    "criterion": "friedman_mse",
+    "min_samples_leaf": 1,
+    "max_depth": 3,
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.5121363555238265,
+    "mse": 0.16615936283981758,
+    "cross_entropy": 0.49336005155536433,
+    "auroc": 0.8312461578122831,
+    "threshold": 0.5,
+    "tp": 355,
+    "tn": 955,
+    "fp": 338,
+    "fn": 113,
+    "precision": 0.5122655122655123,
+    "recall": 0.7585470085470085,
+    "f1": 0.611541774332472
+  },
+  "architecture": {
+    "n_estimators": 100,
+    "max_depth": 3
+  },
+  "dataset": {
+    "train_size_oversampled": 5174,
+    "train_size_sem_oversample": 3521,
+    "val_size": 2588,
+    "test_size": 1761,
+    "prop_positiva_treino_oversampled": 0.5,
+    "prop_positiva_treino_sem_oversample": 0.26526554955978415,
+    "prop_positiva_teste": 0.2657580919931857,
+    "n_features": 40,
+    "balanceamento": "sample_weight (sem oversampling, distribuicao real no treino)"
+  },
+  "notes": "Fase 2 — baseline Gradient Boosting (sample_weight (sem oversampling, distribuicao real no treino))."
+}

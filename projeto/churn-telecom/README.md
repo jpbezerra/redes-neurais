@@ -1,8 +1,7 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** Fase 1 concluída (pipeline de dados: split em 3 etapas +
-anti-vazamento + pré-processamento). Próxima: Fase 2 (baseline MLP +
-Gradient Boosting).
+**Status:** Fase 2 concluída (baselines: MLP + Gradient Boosting + XGBoost).
+Próxima: Fase 3 (busca de hiperparâmetros via Optuna, em levas sucessivas).
 
 ## Dataset
 
@@ -30,10 +29,36 @@ uma partição.
 `src/churn_telecom/metrics.py` implementa a métrica principal (KS) e as
 secundárias (MSE, cross-entropy, matriz de confusão, AUROC, precision,
 recall, F1). O KS tem self-test embutido, validado contra `scipy.ks_2samp`
-e casos analíticos de separação perfeita/nula — rode com
-`python3 src/churn_telecom/metrics.py`.
+e casos analíticos de separação perfeita/nula.
 
-Notebook correspondente: `notebooks/01_data_pipeline.ipynb`.
+Notebook: `notebooks/01_data_pipeline.ipynb`.
+
+## Baselines (Fase 2)
+
+MLP (1 camada, 10 unidades — navalha de Occam) + Gradient Boosting + XGBoost,
+cada um nas duas estratégias de balanceamento (oversampling vs.
+class_weight/scale_pos_weight), avaliados pela métrica principal (KS, com
+curva no estilo do enunciado) e pelas secundárias.
+
+**Nota de ambiente:** o MLP usa `sklearn.neural_network.MLPClassifier` em
+vez de PyTorch — a instalação de PyTorch trava neste ambiente (as
+dependências CUDA que o pacote genérico do PyPI traz mesmo sem GPU são
+pesadas demais, e o índice CPU-only oficial do PyTorch está fora da rede
+disponível aqui). O MLPClassifier cobre os mesmos hiperparâmetros pedidos
+(camadas/unidades, ativação, otimizador, regularização L2) com early
+stopping manual por patience (`src/churn_telecom/models/mlp.py`). Se mais
+controle de arquitetura for necessário mais adiante, reavaliar PyTorch
+rodando no Kaggle.
+
+**Resultado:** KS entre 0.51 e 0.52 em teste real (nunca balanceado
+artificialmente), AUROC ~0.83, convergente entre as 3 famílias de modelo —
+consistente com benchmarks publicados para este dataset, auditado contra
+vazamento (ver `notebooks/02_baselines.ipynb`, seção 3).
+
+Cada experimento salvo em `results/{model_id}/` (skill model-saver):
+`model.*` + `metadata.json` + `history.csv` quando aplicável.
+
+Notebook: `notebooks/02_baselines.ipynb`.
 
 ## Estrutura
 
@@ -44,10 +69,11 @@ churn-telecom/
 │   ├── data.py            # carregamento bruto + split de 3 etapas
 │   ├── features.py        # pré-processamento (fit só no treino)
 │   ├── metrics.py         # KS (principal) + métricas secundárias
-│   └── models/
+│   ├── checkpointing.py   # salvamento no padrão results/{model_id}/
+│   └── models/            # mlp.py, boosting.py (GB + XGBoost)
 ├── scripts/                # geradores de notebook + runners (não versionado, ver .gitignore)
 ├── notebooks/
-├── results/                # artefatos de experimento (model-saver: pesos + metadata.json + history.csv)
+├── results/                # artefatos de experimento (model-saver)
 └── reports/{figures,tables}
 ```
 
@@ -58,6 +84,8 @@ python3 scripts/eda_fase0.py              # EDA (tabelas)
 python3 scripts/make_eda_notebook.py      # gera notebooks/00_eda.ipynb
 python3 scripts/fase1_pipeline.py         # pipeline de dados (diagnósticos)
 python3 scripts/make_pipeline_notebook.py # gera notebooks/01_data_pipeline.ipynb
+python3 scripts/fase2_baselines.py        # treina e salva os baselines
+python3 scripts/make_fase2_notebook.py    # gera notebooks/02_baselines.ipynb
 python3 src/churn_telecom/metrics.py      # self-test do KS
 ```
 

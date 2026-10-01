@@ -1,0 +1,43 @@
+{
+  "model_id": "xgb_churn_baseline_scaleposweight",
+  "framework": "XGBoost",
+  "timestamp": "2026-10-01T14:49:38.634482",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "max_depth": 3,
+    "subsample": 1.0,
+    "scale_pos_weight": 2.7698072805139184,
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.5097665932932753,
+    "mse": 0.16581962390305774,
+    "cross_entropy": 0.49118759891642816,
+    "auroc": 0.8334994149959347,
+    "threshold": 0.5,
+    "tp": 359,
+    "tn": 956,
+    "fp": 337,
+    "fn": 109,
+    "precision": 0.5158045977011494,
+    "recall": 0.7670940170940171,
+    "f1": 0.6168384879725085
+  },
+  "architecture": {
+    "n_estimators": 100,
+    "max_depth": 3
+  },
+  "dataset": {
+    "train_size_oversampled": 5174,
+    "train_size_sem_oversample": 3521,
+    "val_size": 2588,
+    "test_size": 1761,
+    "prop_positiva_treino_oversampled": 0.5,
+    "prop_positiva_treino_sem_oversample": 0.26526554955978415,
+    "prop_positiva_teste": 0.2657580919931857,
+    "n_features": 40,
+    "balanceamento": "scale_pos_weight (sem oversampling, distribuicao real no treino)"
+  },
+  "notes": "Fase 2 — baseline XGBoost (scale_pos_weight (sem oversampling, distribuicao real no treino))."
+}
