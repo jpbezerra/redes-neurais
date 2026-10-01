@@ -1,0 +1,6 @@
+partição,n_linhas,n_linhas_únicas,prop_churn_yes
+train (com oversampling),5174,3461,0.5
+val (com oversampling),2588,1726,0.5
+test (sempre real),1761,1761,0.2658
+train (sem oversampling),3521,3521,0.2653
+val (sem oversampling),1761,1761,0.2652

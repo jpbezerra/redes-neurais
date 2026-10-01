@@ -1,0 +1,41 @@
+coluna_apos_encoding
+tenure
+MonthlyCharges
+TotalCharges
+SeniorCitizen
+gender__bin
+Partner__bin
+Dependents__bin
+PhoneService__bin
+PaperlessBilling__bin
+MultipleLines__No
+MultipleLines__No phone service
+MultipleLines__Yes
+InternetService__DSL
+InternetService__Fiber optic
+InternetService__No
+OnlineSecurity__No
+OnlineSecurity__No internet service
+OnlineSecurity__Yes
+OnlineBackup__No
+OnlineBackup__No internet service
+OnlineBackup__Yes
+DeviceProtection__No
+DeviceProtection__No internet service
+DeviceProtection__Yes
+TechSupport__No
+TechSupport__No internet service
+TechSupport__Yes
+StreamingTV__No
+StreamingTV__No internet service
+StreamingTV__Yes
+StreamingMovies__No
+StreamingMovies__No internet service
+StreamingMovies__Yes
+Contract__Month-to-month
+Contract__One year
+Contract__Two year
+PaymentMethod__Bank transfer (automatic)
+PaymentMethod__Credit card (automatic)
+PaymentMethod__Electronic check
+PaymentMethod__Mailed check
