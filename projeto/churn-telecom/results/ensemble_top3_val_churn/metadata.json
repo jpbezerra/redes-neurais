@@ -1,0 +1,29 @@
+{
+  "model_id": "ensemble_top3_val_churn",
+  "framework": "media de probabilidades",
+  "timestamp": "2026-10-01T22:27:45.846094",
+  "hyperparameters": {
+    "membros": [
+      "tabpfn_churn_sem_duplicatas",
+      "xgb_churn_kaggle",
+      "gb_churn_kaggle"
+    ]
+  },
+  "metrics": {
+    "ks": 0.518858944613005,
+    "mse": 0.16056618405921466,
+    "cross_entropy": 0.4790186680188826,
+    "auroc": 0.8368392263403864,
+    "threshold": 0.5,
+    "tp": 351,
+    "tn": 984,
+    "fp": 309,
+    "fn": 117,
+    "precision": 0.5318181818181819,
+    "recall": 0.75,
+    "f1": 0.622340425531915
+  },
+  "architecture": {},
+  "dataset": {},
+  "notes": "Ensemble por media simples das probabilidades."
+}

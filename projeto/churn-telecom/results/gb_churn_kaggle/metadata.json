@@ -1,0 +1,31 @@
+{
+  "model_id": "gb_churn_kaggle",
+  "framework": "scikit-learn/xgboost",
+  "timestamp": "2026-10-01T22:25:58.420803",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "subsample": 1.0,
+    "criterion": "friedman_mse",
+    "min_samples_leaf": 1,
+    "max_depth": 3,
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.5241834731393895,
+    "mse": 0.16134814897725674,
+    "cross_entropy": 0.48358873529677565,
+    "auroc": 0.831954277139892,
+    "threshold": 0.5,
+    "tp": 348,
+    "tn": 987,
+    "fp": 306,
+    "fn": 120,
+    "precision": 0.5321100917431193,
+    "recall": 0.7435897435897436,
+    "f1": 0.6203208556149734
+  },
+  "architecture": {},
+  "dataset": {},
+  "notes": "Baseline refeito no Kaggle (para ensemble)."
+}

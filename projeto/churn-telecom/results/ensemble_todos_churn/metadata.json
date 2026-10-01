@@ -1,0 +1,36 @@
+{
+  "model_id": "ensemble_todos_churn",
+  "framework": "media de probabilidades",
+  "timestamp": "2026-10-01T22:27:45.840318",
+  "hyperparameters": {
+    "membros": [
+      "gb_churn_kaggle",
+      "kan_churn",
+      "mitra_churn",
+      "mitra_churn_sem_duplicatas",
+      "mlp_churn_kaggle",
+      "stab_churn",
+      "tabkan_churn",
+      "tabpfn_churn",
+      "tabpfn_churn_sem_duplicatas",
+      "xgb_churn_kaggle"
+    ]
+  },
+  "metrics": {
+    "ks": 0.5202520475142285,
+    "mse": 0.1550022346209622,
+    "cross_entropy": 0.464865189092617,
+    "auroc": 0.8392610440174245,
+    "threshold": 0.5,
+    "tp": 345,
+    "tn": 998,
+    "fp": 295,
+    "fn": 123,
+    "precision": 0.5390625,
+    "recall": 0.7371794871794872,
+    "f1": 0.6227436823104694
+  },
+  "architecture": {},
+  "dataset": {},
+  "notes": "Ensemble por media simples das probabilidades."
+}

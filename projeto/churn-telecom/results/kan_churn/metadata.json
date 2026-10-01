@@ -1,34 +1,37 @@
 {
   "model_id": "kan_churn",
   "framework": "pykan (KAN)",
-  "timestamp": "2026-10-01T20:06:32.042617",
+  "timestamp": "2026-10-01T22:02:38.101343",
   "hyperparameters": {
-    "hidden_width": 10,
-    "grid": 5,
+    "hidden_width": 8,
+    "grid": 3,
     "k": 3,
-    "lr": 0.01,
-    "steps": 200,
+    "lr": 0.003,
+    "batch_size": 128,
+    "max_epochs": 100,
+    "patience": 8,
+    "max_grad_norm": 1.0,
     "seed": 0
   },
   "metrics": {
-    "ks": 0.03905150018839115,
-    "mse": NaN,
-    "cross_entropy": NaN,
-    "auroc": NaN,
+    "ks": 0.5062763995478612,
+    "mse": 0.1645399794032463,
+    "cross_entropy": 0.4881639441648303,
+    "auroc": 0.8344050145094228,
     "threshold": 0.5,
-    "tp": 0,
-    "tn": 1293,
-    "fp": 0,
-    "fn": 468,
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1": 0.0
+    "tp": 348,
+    "tn": 964,
+    "fp": 329,
+    "fn": 120,
+    "precision": 0.5140324963072378,
+    "recall": 0.7435897435897436,
+    "f1": 0.6078602620087337
   },
   "architecture": {
-    "hidden_width": 10,
-    "grid": 5,
+    "hidden_width": 8,
+    "grid": 3,
     "k": 3
   },
   "dataset": {},
-  "notes": "KAN."
+  "notes": "KAN (pykan, loop de treino proprio)."
 }

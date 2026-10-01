@@ -1,12 +1,14 @@
 {
   "model_id": "tabpfn_churn",
   "framework": "TabPFN v2",
-  "timestamp": "2026-10-01T20:06:28.900086",
+  "timestamp": "2026-10-01T21:57:36.166798",
   "hyperparameters": {
     "device": "cuda",
     "n_estimators": 8,
     "versao": "v2",
-    "seed": 0
+    "seed": 0,
+    "n_linhas_contexto": 5174,
+    "prior_corrigido": null
   },
   "metrics": {
     "ks": 0.4967973506256569,
