@@ -1,10 +1,13 @@
-"""TabPFN v2 — foundation model para dados tabulares (pacote `tabpfn` do
-PyPI, confirmado como o modelo correto no smoke test da modelos avançados).
+"""TabPFN v2 — foundation model para dados tabulares (pacote `tabpfn`).
 
-So importa `tabpfn`/torch dentro da funcao (lazy import) — este modulo
-pode ser importado neste ambiente mesmo sem as dependencias instaladas;
-o treino de verdade so acontece no Kaggle (ou outro ambiente com GPU e
-rede liberada para o download do checkpoint pre-treinado do TabPFN).
+A versao do modelo e fixada explicitamente em **v2** (a pedida no
+enunciado). Isso importa por dois motivos: (1) versoes recentes do pacote
+usam por padrao checkpoints mais novos (v2.5+), e (2) esses checkpoints
+novos sao "gated" — exigem aceitar licenca e um TABPFN_TOKEN, o que quebra
+execucao nao-interativa (Kaggle "Save & Run All"). Os pesos v2 nao sao
+gated e baixam direto.
+
+Imports lazy — modulo importavel sem `tabpfn`/torch instalados.
 """
 from __future__ import annotations
 
@@ -15,19 +18,27 @@ import numpy as np
 
 @dataclass
 class TabPFNHyperparams:
-    device: str = "cuda"  # TabPFN e pesado em CPU; usar GPU no Kaggle
-    n_estimators: int = 8  # TabPFN v2 usa um pequeno ensemble interno por padrao
+    device: str = "cuda"   # TabPFN e pesado em CPU; usar GPU no Kaggle
+    n_estimators: int = 8  # ensemble interno do TabPFN
+    versao: str = "v2"
     seed: int = 0
 
 
 def treinar_tabpfn(X_train: np.ndarray, y_train: np.ndarray, hp: TabPFNHyperparams):
-    """TabPFN nao tem 'epocas' — e um modelo pre-treinado (in-context
-    learning): o 'treino' e so passar o conjunto de treino como contexto.
-    Por isso nao ha historico de curva de treino aqui (diferente de
-    MLP/STab)."""
+    """TabPFN nao tem 'epocas' — e pre-treinado (in-context learning): o
+    'treino' e passar o conjunto de treino como contexto. Sem historico."""
     from tabpfn import TabPFNClassifier
 
-    modelo = TabPFNClassifier(device=hp.device, n_estimators=hp.n_estimators, random_state=hp.seed)
+    try:
+        from tabpfn.constants import ModelVersion
+        modelo = TabPFNClassifier.create_default_for_version(
+            ModelVersion(hp.versao),
+            device=hp.device, n_estimators=hp.n_estimators, random_state=hp.seed,
+        )
+    except (ImportError, AttributeError):
+        # versoes antigas do pacote (<2.x) so tem v2 — construtor direto
+        modelo = TabPFNClassifier(device=hp.device, n_estimators=hp.n_estimators,
+                                  random_state=hp.seed)
     modelo.fit(X_train, y_train)
     return modelo
 

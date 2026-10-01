@@ -20,8 +20,8 @@ class KANHyperparams:
     hidden_width: int = 10  # navalha de Occam: comeca pequeno, igual ao MLP da baselines
     grid: int = 5
     k: int = 3
-    lr: float = 1e-3
-    steps: int = 50
+    lr: float = 1e-2
+    steps: int = 200
     seed: int = 0
 
 
