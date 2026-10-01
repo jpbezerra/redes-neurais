@@ -158,21 +158,28 @@ cada um dentro de um `try/except` — se um falhar lá (API divergente,
 pacote desatualizado), os outros continuam e o erro fica documentado, em
 vez de travar tudo.
 
-**`notebooks/06_modelos_avancados_kaggle.ipynb`** é o notebook pronto para **subir no
-Kaggle** (gerado aqui, mas não executado aqui — não roda sem PyTorch).
+**`notebooks/06_modelos_avancados_kaggle.ipynb`** é o notebook pronto para
+**subir no Kaggle** (gerado aqui, mas não executado aqui — não roda sem
+PyTorch). Segue o mesmo padrão de setup já usado em
+`miniprojeto/mp2-lstm-bitcoin`: clona o repositório do GitHub e instala o
+pacote via `pip install -e`, em vez de depender de subir `src/` como
+Kaggle Dataset separado. `load_raw` também baixa o CSV automaticamente se
+não existir em `data/` (mesma conveniência do mini-projeto 2), então não é
+preciso subir o dataset do Kaggle manualmente também.
+
 Checklist de uso:
-1. Suba `src/churn_telecom/` como Kaggle Dataset `churn-telecom-src`.
-2. Suba `data/telco_customer_churn.csv` como Kaggle Dataset
-   `churn-telecom-data`.
-3. Ative GPU (Settings → Accelerator).
-4. Rode as células na ordem — instala os pacotes que faltam
-   (`tabpfn`, `pykan`, `tabkan`, `autogluon.tabular[mitra]`), treina os 5
-   modelos e salva cada um em `results/{model_id}/` (mesmo padrão
-   model-saver de sempre).
-5. Baixe `/kaggle/working/results/` de volta e cole em `results/` aqui, e
-   `reports/tables/modelos_avancados_resumo_kaggle.csv` em `reports/tables/` — o
-   notebook de consolidação final só lê `results/`, não
-   retreina nada.
+1. Ative *Settings → Internet → On* e *Accelerator → GPU*.
+2. Rode as células na ordem — a primeira clona
+   `https://github.com/jpbezerra/redes-neurais.git` e instala o pacote
+   `churn-telecom` (ajuste `REPO_URL` na célula se o repositório remoto
+   tiver outro endereço).
+3. As células seguintes instalam os pacotes que faltam (`tabpfn`, `pykan`,
+   `tabkan`, `autogluon.tabular[mitra]`), treinam os 5 modelos e salvam
+   cada um em `results/{model_id}/` (mesmo padrão model-saver de sempre).
+4. Use "Save Version" → "Save & Run All (Commit)" para rodar em segundo
+   plano sem depender da aba ficar aberta.
+5. Baixe a pasta `results/` do commit e cole em `results/` aqui — o
+   notebook de consolidação final só lê `results/`, não retreina nada.
 
 ## Pendência de limpeza (ação manual sua)
 

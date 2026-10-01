@@ -34,6 +34,12 @@ import numpy as np
 import pandas as pd
 
 RAW_CSV_NAME = "telco_customer_churn.csv"
+# Mirror publico do IBM Telco Customer Churn — mesmo schema do dataset
+# Kaggle "customers-churned-in-telecom-services" citado no enunciado (ver
+# EDA, secao 3). Usado so como fallback de download quando o CSV nao esta
+# em `data_dir` (ex.: clone fresco do repo no Kaggle, onde `data/` nao e
+# versionado) — mesmo padrao ja usado no mini-projeto 2 (`load_tutorial`).
+RAW_CSV_URL = "https://raw.githubusercontent.com/IBM/telco-customer-churn-on-icp4d/master/data/Telco-Customer-Churn.csv"
 TARGET_COL = "Churn"
 ID_COL = "customerID"
 
