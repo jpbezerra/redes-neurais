@@ -1,26 +1,28 @@
 {
   "model_id": "mitra_churn",
   "framework": "AutoGluon (extra [mitra])",
-  "timestamp": "2026-10-01T20:17:48.450673",
+  "timestamp": "2026-10-01T22:13:51.006463",
   "hyperparameters": {
     "time_limit_segundos": 600,
     "num_gpus": 1,
     "max_memory_usage_ratio": 1.5,
-    "seed": 0
+    "seed": 0,
+    "n_linhas_contexto": 5174,
+    "prior_corrigido": null
   },
   "metrics": {
-    "ks": 0.5012047117615563,
-    "mse": 0.16216107225888426,
-    "cross_entropy": 0.4872234044526333,
-    "auroc": 0.8238080129031405,
+    "ks": 0.4981904535268804,
+    "mse": 0.1634141005400563,
+    "cross_entropy": 0.49336892261638055,
+    "auroc": 0.8199286427244664,
     "threshold": 0.5,
     "tp": 333,
-    "tn": 999,
-    "fp": 294,
+    "tn": 1002,
+    "fp": 291,
     "fn": 135,
-    "precision": 0.5311004784688995,
+    "precision": 0.5336538461538461,
     "recall": 0.7115384615384616,
-    "f1": 0.6082191780821917
+    "f1": 0.6098901098901099
   },
   "architecture": {},
   "dataset": {},

@@ -47,7 +47,9 @@ ENV/
 *.h5
 *.keras
 *.joblib
+autogluon_predictor/
 !**/results/**
+**/results/**/autogluon_predictor/
 
 # ==== Relatórios gerados ====
 # **/reports/figures/*

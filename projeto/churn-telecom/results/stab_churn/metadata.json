@@ -1,7 +1,7 @@
 {
   "model_id": "stab_churn",
   "framework": "PyTorch (STab — implementacao propria)",
-  "timestamp": "2026-10-01T20:06:07.918909",
+  "timestamp": "2026-10-01T21:57:15.251790",
   "hyperparameters": {
     "dim": 32,
     "depth": 2,

@@ -1,0 +1,30 @@
+{
+  "model_id": "tabpfn_churn_sem_duplicatas",
+  "framework": "TabPFN v2",
+  "timestamp": "2026-10-01T21:58:17.810163",
+  "hyperparameters": {
+    "device": "cuda",
+    "n_estimators": 16,
+    "versao": "v2",
+    "seed": 0,
+    "n_linhas_contexto": 3521,
+    "prior_corrigido": 0.26526554955978415
+  },
+  "metrics": {
+    "ks": 0.5192803458464711,
+    "mse": 0.16115945227401762,
+    "cross_entropy": 0.4782433863817676,
+    "auroc": 0.8396155168196932,
+    "threshold": 0.5,
+    "tp": 354,
+    "tn": 967,
+    "fp": 326,
+    "fn": 114,
+    "precision": 0.5205882352941177,
+    "recall": 0.7564102564102564,
+    "f1": 0.6167247386759583
+  },
+  "architecture": {},
+  "dataset": {},
+  "notes": "TabPFN v2 (checkpoint v2, sem token)."
+}

@@ -1,7 +1,7 @@
 {
   "model_id": "tabkan_churn",
   "framework": "tabkan (ChebyshevKAN)",
-  "timestamp": "2026-10-01T20:06:35.479357",
+  "timestamp": "2026-10-01T22:02:42.146262",
   "hyperparameters": {
     "hidden_width": 10,
     "degree": 3,
