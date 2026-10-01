@@ -27,6 +27,15 @@ MULTI_CAT_COLS = [
     "Contract", "PaymentMethod",
 ]
 
+# Fase 4 — features derivadas (opcionais, testadas isoladamente e so
+# combinadas se melhorarem a metrica na validacao; ver scripts/fase4_features.py).
+SERVICOS_ADICIONAIS_COLS = [
+    "OnlineSecurity", "OnlineBackup", "DeviceProtection",
+    "TechSupport", "StreamingTV", "StreamingMovies",
+]
+TENURE_BUCKETS = [(0, 12), (12, 24), (24, 48), (48, 73)]  # meses; limite superior exclusivo
+FEATURES_DERIVADAS_DISPONIVEIS = ("charges_per_tenure", "n_servicos_adicionais", "tenure_bucket")
+
 
 def _to_total_charges_float(series: pd.Series) -> pd.Series:
     """Converte TotalCharges (string, com brancos nos clientes tenure=0)
@@ -37,6 +46,26 @@ def _to_total_charges_float(series: pd.Series) -> pd.Series:
     return pd.to_numeric(series.astype(str).str.strip(), errors="coerce")
 
 
+
+def _computa_features_derivadas(base: pd.DataFrame) -> pd.DataFrame:
+    """Calcula as colunas derivadas candidatas (Fase 4). Nao depende de
+    nenhuma estatistica ajustada no treino (exceto a normalizacao de
+    `charges_per_tenure`, feita separadamente no Preprocessor) — e seguro
+    chamar em qualquer particao."""
+    out = pd.DataFrame(index=base.index)
+    out["charges_per_tenure"] = base["TotalCharges"] / (base["tenure"] + 1)
+    out["n_servicos_adicionais"] = sum((base[c] == "Yes").astype(int) for c in SERVICOS_ADICIONAIS_COLS)
+    bucket_labels = []
+    for lo, hi in TENURE_BUCKETS:
+        bucket_labels.append(f"{lo}-{hi}")
+    def _bucket(t):
+        for (lo, hi), label in zip(TENURE_BUCKETS, bucket_labels):
+            if lo <= t < hi:
+                return label
+        return bucket_labels[-1]
+    out["tenure_bucket"] = base["tenure"].apply(_bucket)
+    return out
+
 @dataclass
 class Preprocessor:
     """Scaler (media/desvio) ajustado so no treino; listas de categorias
@@ -46,6 +75,9 @@ class Preprocessor:
     numeric_std_: pd.Series | None = None
     cat_levels_: dict[str, list[str]] = field(default_factory=dict)
     binary_maps_: dict[str, dict[str, int]] = field(default_factory=dict)
+    extra_features: tuple[str, ...] = ()  # subconjunto de FEATURES_DERIVADAS_DISPONIVEIS
+    charges_per_tenure_mean_: float | None = None
+    charges_per_tenure_std_: float | None = None
     fitted: bool = False
 
     def _prepare_base(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -68,6 +100,12 @@ class Preprocessor:
             self.binary_maps_[col] = {v: i for i, v in enumerate(niveis)}
         for col in MULTI_CAT_COLS:
             self.cat_levels_[col] = sorted(base[col].dropna().unique().tolist())
+
+        if "charges_per_tenure" in self.extra_features:
+            derivadas = _computa_features_derivadas(base)
+            self.charges_per_tenure_mean_ = float(derivadas["charges_per_tenure"].mean())
+            self.charges_per_tenure_std_ = float(derivadas["charges_per_tenure"].std() or 1.0)
+
         self.fitted = True
         return self
 
@@ -93,6 +131,21 @@ class Preprocessor:
             for nivel in niveis:
                 blocos.append((base[col] == nivel).to_numpy(dtype=np.float64).reshape(-1, 1))
                 colunas.append(f"{col}__{nivel}")
+
+        if self.extra_features:
+            derivadas = _computa_features_derivadas(base)
+            if "charges_per_tenure" in self.extra_features:
+                valores = (derivadas["charges_per_tenure"] - self.charges_per_tenure_mean_) / self.charges_per_tenure_std_
+                blocos.append(valores.to_numpy(dtype=np.float64).reshape(-1, 1))
+                colunas.append("charges_per_tenure__num")
+            if "n_servicos_adicionais" in self.extra_features:
+                blocos.append(derivadas["n_servicos_adicionais"].to_numpy(dtype=np.float64).reshape(-1, 1))
+                colunas.append("n_servicos_adicionais__num")
+            if "tenure_bucket" in self.extra_features:
+                bucket_labels = [f"{lo}-{hi}" for lo, hi in TENURE_BUCKETS]
+                for label in bucket_labels:
+                    blocos.append((derivadas["tenure_bucket"] == label).to_numpy(dtype=np.float64).reshape(-1, 1))
+                    colunas.append(f"tenure_bucket__{label}")
 
         X = np.concatenate(blocos, axis=1)
         return X, colunas

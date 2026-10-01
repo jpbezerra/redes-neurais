@@ -1,7 +1,7 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** Fase 3 concluída (busca de hiperparâmetros via Optuna, leva 1,
-em MLP e Gradient Boosting). Próxima: Fase 4 (engenharia de features).
+**Status:** Fase 4 concluída (engenharia de features). Próxima: Fase 5
+(modelos avançados — STab, TabPFNv2, KAN, TabKAN, Mitra).
 
 ## Dataset
 
@@ -79,6 +79,23 @@ melhor do que realmente é).
 
 Notebook: `notebooks/03_hyperparam_search.ipynb`.
 
+## Engenharia de features (Fase 4)
+
+Três features derivadas (identificadas na EDA da Fase 0) testadas
+**isoladamente** contra o baseline de Gradient Boosting da Fase 2, com
+hiperparâmetros fixos para isolar o efeito de cada uma:
+`charges_per_tenure` (`TotalCharges/(tenure+1)`), `n_servicos_adicionais`
+(contagem de serviços extras) e `tenure_bucket` (faixas de tenure).
+
+**Achado honesto:** só `charges_per_tenure` teve ganho isolado positivo na
+validação (+0.0046), mas o ganho **não se confirmou no teste** — o modelo
+com a feature teve KS=0.516, abaixo do baseline puro da Fase 2 (KS=0.524).
+Mesmo padrão de ruído de validação já visto na Fase 3. Nenhuma feature
+derivada foi incorporada à referência do projeto — o baseline
+`gb_churn_baseline_oversample` da Fase 2 continua sendo o melhor resultado.
+
+Notebook: `notebooks/04_feature_engineering.ipynb`.
+
 ## Pendência de limpeza (ação manual sua)
 
 `results/_to_delete/` tem arquivos de um estudo Optuna com SQLite que
@@ -115,6 +132,8 @@ python3 scripts/make_fase2_notebook.py        # gera notebooks/02_baselines.ipyn
 python3 scripts/fase3_optuna.py mlp 20        # leva de busca Optuna (MLP)
 python3 scripts/fase3_optuna.py gb 20         # leva de busca Optuna (Gradient Boosting)
 python3 scripts/make_fase3_notebook.py        # gera notebooks/03_hyperparam_search.ipynb
+python3 scripts/fase4_features.py             # testa features derivadas (isoladas + combinação vencedora)
+python3 scripts/make_fase4_notebook.py        # gera notebooks/04_feature_engineering.ipynb
 python3 src/churn_telecom/metrics.py          # self-test do KS
 ```
 

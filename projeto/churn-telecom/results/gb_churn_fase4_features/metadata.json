@@ -1,0 +1,45 @@
+{
+  "model_id": "gb_churn_fase4_features",
+  "framework": "Scikit-learn (GradientBoostingClassifier)",
+  "timestamp": "2026-10-01T15:26:48.201086",
+  "hyperparameters": {
+    "loss": "log_loss",
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "subsample": 1.0,
+    "criterion": "friedman_mse",
+    "min_samples_leaf": 1,
+    "max_depth": 3,
+    "random_state": 0
+  },
+  "metrics": {
+    "ks": 0.5160826541336982,
+    "mse": 0.16198614645255477,
+    "cross_entropy": 0.4846898809221313,
+    "auroc": 0.8315122189832167,
+    "threshold": 0.5,
+    "tp": 350,
+    "tn": 982,
+    "fp": 311,
+    "fn": 118,
+    "precision": 0.529500756429652,
+    "recall": 0.7478632478632479,
+    "f1": 0.6200177147918513
+  },
+  "architecture": {
+    "n_estimators": 100,
+    "max_depth": 3
+  },
+  "dataset": {
+    "features_derivadas_testadas": [
+      "charges_per_tenure",
+      "n_servicos_adicionais",
+      "tenure_bucket"
+    ],
+    "features_derivadas_escolhidas": [
+      "charges_per_tenure"
+    ],
+    "n_features_final": 41
+  },
+  "notes": "Fase 4 — engenharia de features: combinacao vencedora ('charges_per_tenure',) adicionada ao baseline GB."
+}

@@ -1,0 +1,6 @@
+variante,features,ks_val,ganho_sobre_baseline
+baseline (sem features derivadas),(),0.5510046367851622,0.0
++ charges_per_tenure,"('charges_per_tenure',)",0.5556414219474498,0.004636785162287604
++ n_servicos_adicionais,"('n_servicos_adicionais',)",0.5471406491499227,-0.003863987635239541
++ tenure_bucket,"('tenure_bucket',)",0.5510046367851622,0.0
+"combinacao vencedoras ('charges_per_tenure',)","('charges_per_tenure',)",0.5556414219474498,0.004636785162287604
