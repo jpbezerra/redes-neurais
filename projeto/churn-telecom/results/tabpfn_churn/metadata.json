@@ -1,0 +1,28 @@
+{
+  "model_id": "tabpfn_churn",
+  "framework": "TabPFN v2",
+  "timestamp": "2026-10-01T20:06:28.900086",
+  "hyperparameters": {
+    "device": "cuda",
+    "n_estimators": 8,
+    "versao": "v2",
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.4967973506256569,
+    "mse": 0.15810432822477177,
+    "cross_entropy": 0.5095220307990747,
+    "auroc": 0.8166681539651377,
+    "threshold": 0.5,
+    "tp": 189,
+    "tn": 1182,
+    "fp": 111,
+    "fn": 279,
+    "precision": 0.63,
+    "recall": 0.40384615384615385,
+    "f1": 0.4921875
+  },
+  "architecture": {},
+  "dataset": {},
+  "notes": "TabPFN v2 (checkpoint v2, sem token)."
+}

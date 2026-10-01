@@ -1,0 +1,39 @@
+{
+  "model_id": "stab_churn",
+  "framework": "PyTorch (STab — implementacao propria)",
+  "timestamp": "2026-10-01T20:06:07.918909",
+  "hyperparameters": {
+    "dim": 32,
+    "depth": 2,
+    "heads": 4,
+    "attn_dropout": 0.1,
+    "ff_dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "batch_size": 64,
+    "max_epochs": 200,
+    "patience": 10,
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.52237392666627,
+    "mse": 0.16073084193386022,
+    "cross_entropy": 0.4819666143591076,
+    "auroc": 0.8395262789114297,
+    "threshold": 0.5,
+    "tp": 352,
+    "tn": 974,
+    "fp": 319,
+    "fn": 116,
+    "precision": 0.5245901639344263,
+    "recall": 0.7521367521367521,
+    "f1": 0.6180860403863037
+  },
+  "architecture": {
+    "dim": 32,
+    "depth": 2,
+    "heads": 4
+  },
+  "dataset": {},
+  "notes": "STab (implementacao propria)."
+}

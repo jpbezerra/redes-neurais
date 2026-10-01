@@ -1,0 +1,34 @@
+{
+  "model_id": "kan_churn",
+  "framework": "pykan (KAN)",
+  "timestamp": "2026-10-01T20:06:32.042617",
+  "hyperparameters": {
+    "hidden_width": 10,
+    "grid": 5,
+    "k": 3,
+    "lr": 0.01,
+    "steps": 200,
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.03905150018839115,
+    "mse": NaN,
+    "cross_entropy": NaN,
+    "auroc": NaN,
+    "threshold": 0.5,
+    "tp": 0,
+    "tn": 1293,
+    "fp": 0,
+    "fn": 468,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0
+  },
+  "architecture": {
+    "hidden_width": 10,
+    "grid": 5,
+    "k": 3
+  },
+  "dataset": {},
+  "notes": "KAN."
+}

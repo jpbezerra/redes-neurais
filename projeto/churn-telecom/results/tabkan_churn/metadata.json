@@ -1,0 +1,35 @@
+{
+  "model_id": "tabkan_churn",
+  "framework": "tabkan (ChebyshevKAN)",
+  "timestamp": "2026-10-01T20:06:35.479357",
+  "hyperparameters": {
+    "hidden_width": 10,
+    "degree": 3,
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "batch_size": 64,
+    "max_epochs": 200,
+    "patience": 10,
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.5034307018065718,
+    "mse": 0.16770722127348725,
+    "cross_entropy": 0.49603115281221277,
+    "auroc": 0.8342744627547412,
+    "threshold": 0.5,
+    "tp": 352,
+    "tn": 957,
+    "fp": 336,
+    "fn": 116,
+    "precision": 0.5116279069767442,
+    "recall": 0.7521367521367521,
+    "f1": 0.6089965397923875
+  },
+  "architecture": {
+    "hidden_width": 10,
+    "degree": 3
+  },
+  "dataset": {},
+  "notes": "TabKAN (ChebyshevKAN)."
+}
