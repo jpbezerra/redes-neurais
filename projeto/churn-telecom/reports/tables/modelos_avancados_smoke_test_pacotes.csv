@@ -1,0 +1,7 @@
+pacote,papel_esperado,existe_no_pypi,versao,resumo,depende_de_torch
+stab,candidato a STab (Transformer tabular),True,1.2.1,Start blogging with this simple static site generator,False
+tabpfn,TabPFN v2,True,9.0.0,TabPFN: Foundation model for tabular data,True
+pykan,KAN (Kolmogorov-Arnold Network),True,0.2.8,Kolmogorov Arnold Networks,False
+tabkan,TabKAN,True,1.0.2,TabKAN: A Framework for Advancing Tabular Data Analysis using Kolmogorov-Arnold Networks,True
+mitra,candidato a Mitra (Amazon),True,1.0.4,Provides basic operatons of Matrix and solve system of linear equations using Matrix. It also finds eigenvalues of Square Matrix.,False
+autogluon.tabular,Mitra via extra [mitra] do AutoGluon,True,1.6.3,Fast and Accurate ML in 3 Lines of Code,True

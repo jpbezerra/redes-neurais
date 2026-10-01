@@ -1,4 +1,4 @@
-# Fase 0 — achados da EDA (dataset real, confirmados empiricamente)
+# EDA — achados da EDA (dataset real, confirmados empiricamente)
 
 Fonte: mirror público do IBM Telco Customer Churn (mesmo schema do dataset
 Kaggle `customers-churned-in-telecom-services` citado no enunciado) —
@@ -11,7 +11,7 @@ Kaggle `customers-churned-in-telecom-services` citado no enunciado) —
 - **`customerID` existe e é único** (0 nulos, 0 duplicatas) — é o identificador
   a remover antes do primeiro modelo, conforme regra do enunciado de não
   descartar variáveis no primeiro modelo exceto identificadores. Nenhuma
-  outra coluna deve ser removida nesta fase.
+  outra coluna deve ser removida neste momento.
 - **`TotalCharges` é `object` (string), não numérica** — confirma a pegadinha
   antecipada. **11 linhas** têm `TotalCharges` em branco (`" "`), todas
   com `tenure=0` e `Churn=No` — clientes novíssimos, sem cobrança acumulada
@@ -45,7 +45,7 @@ Kaggle `customers-churned-in-telecom-services` citado no enunciado) —
 - **`MonthlyCharges`**: 18.25 a 118.75, sem valor negativo ou implausível.
 - **`SeniorCitizen`** já vem como 0/1 numérico (não precisa de encoding).
 
-## Decisão de pré-processamento recomendada para a Fase 1 (a confirmar ao implementar)
+## Decisão de pré-processamento recomendada para a pipeline de dados (a confirmar ao implementar)
 
 - Tratar as 11 linhas de `TotalCharges` em branco como **imputação por 0**
   (cliente com `tenure=0` nunca foi cobrado — é o valor logicamente correto,
@@ -55,5 +55,5 @@ Kaggle `customers-churned-in-telecom-services` citado no enunciado) —
 - Nenhuma remoção de outlier parece necessária nesta primeira passada — não
   há valores fora de faixa plausível em nenhuma coluna numérica.
 
-Tabelas completas: `eda_fase0_resumo_colunas.csv` (dtype/nulos/cardinalidade
-por coluna) e `eda_fase0_proporcao_churn.csv` (contagem e proporção do alvo).
+Tabelas completas: `eda_resumo_colunas.csv` (dtype/nulos/cardinalidade
+por coluna) e `eda_proporcao_churn.csv` (contagem e proporção do alvo).

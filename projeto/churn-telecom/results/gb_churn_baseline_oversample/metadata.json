@@ -40,5 +40,5 @@
     "n_features": 40,
     "balanceamento": "oversampling (treino balanceado 50/50)"
   },
-  "notes": "Fase 2 — baseline Gradient Boosting (oversampling (treino balanceado 50/50))."
+  "notes": "baselines — baseline Gradient Boosting (oversampling (treino balanceado 50/50))."
 }

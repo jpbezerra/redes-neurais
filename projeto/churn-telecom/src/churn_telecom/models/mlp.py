@@ -4,7 +4,7 @@ Decisao de ambiente (nao do enunciado): a instalacao de PyTorch neste
 ambiente trava por causa do peso das dependencias CUDA que o pacote
 generico do PyPI traz mesmo sem GPU, e o indice oficial CPU-only do
 PyTorch (download.pytorch.org) esta fora da allowlist de rede disponivel
-aqui. Em vez de bloquear a Fase 2 nisso, o MLP desta fase usa
+aqui. Em vez de bloquear os baselines por causa disso, o MLP usa
 `sklearn.neural_network.MLPClassifier`, que cobre os mesmos
 hiperparametros pedidos (camadas/unidades, ativacao, otimizador,
 regularizacao L2, early stopping por patience). Se mais controle de
@@ -38,7 +38,7 @@ class MLPHyperparams:
     batch_size: int = 64
     max_epochs: int = 10_000
     patience: int = 10                               # sobe para 20 se parar cedo demais
-    loss_metric: str = "cross_entropy"               # 'cross_entropy' | 'mse' — comparado na Fase 2
+    loss_metric: str = "cross_entropy"               # 'cross_entropy' | 'mse' — comparado na baselines
     seed: int = 0
 
 

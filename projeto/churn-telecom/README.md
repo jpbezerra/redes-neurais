@@ -1,7 +1,9 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** Fase 4 concluída (engenharia de features). Próxima: Fase 5
-(modelos avançados — STab, TabPFNv2, KAN, TabKAN, Mitra).
+**Status:** código da modelos avançados pronto para rodar no Kaggle (5 modelos
+avançados implementados: STab, TabPFN v2, KAN, TabKAN, Mitra). Próxima:
+rodar `notebooks/06_modelos_avancados_kaggle.ipynb` no Kaggle e trazer os resultados
+de volta para `results/`, depois para a consolidação final.
 
 ## Dataset
 
@@ -10,10 +12,10 @@ Kaggle [`customers-churned-in-telecom-services`](https://www.kaggle.com/datasets
 citado no enunciado da disciplina: 7.043 clientes, 19 variáveis independentes
 + `customerID` + `Churn` (alvo).
 
-Achados da EDA real (Fase 0): `reports/tables/eda_fase0_achados.md`,
+Achados da EDA real (EDA): `reports/tables/eda_achados.md`,
 notebook em `notebooks/00_eda.ipynb`.
 
-## Pipeline de dados (Fase 1)
+## Pipeline de dados (pipeline de dados)
 
 `src/churn_telecom/data.py` implementa o particionamento em 3 etapas exigido
 pelo enunciado: split por classe (50/25/25), reamostragem com repetição da
@@ -33,7 +35,7 @@ e casos analíticos de separação perfeita/nula.
 
 Notebook: `notebooks/01_data_pipeline.ipynb`.
 
-## Baselines (Fase 2)
+## Baselines (baselines)
 
 MLP (1 camada, 10 unidades — navalha de Occam) + Gradient Boosting + XGBoost,
 cada um nas duas estratégias de balanceamento (oversampling vs.
@@ -57,7 +59,7 @@ vazamento (ver `notebooks/02_baselines.ipynb`, seção 3).
 
 Notebook: `notebooks/02_baselines.ipynb`.
 
-## Busca de hiperparâmetros (Fase 3)
+## Busca de hiperparâmetros (busca de hiperparâmetros)
 
 Leva 1 via Optuna (20 trials cada), otimizando **KS na validação**, em MLP
 e Gradient Boosting. O teste só é tocado uma vez no final, para reportar a
@@ -67,34 +69,110 @@ métrica honesta do vencedor de cada leva.
 I/O quando o arquivo `.db` fica num drive de rede montado (é o caso desta
 pasta) — SQLite precisa de locking de arquivo que o mount não garante.
 Cada estudo roda em memória e os trials são exportados para CSV
-(`reports/tables/fase3_trials_*.csv`).
+(`reports/tables/busca_hiperparametros_trials_*.csv`).
 
 **Achado honesto:** o melhor trial de Gradient Boosting chegou a KS=0.571
 na *validação*, mas caiu para KS≈0.510 no *teste* — e o MLP teve o mesmo
 padrão em escala menor. Isso é overfitting de hiperparâmetro (poucos trials
 + um único split de validação). A conclusão desta leva é que **a busca não
-trouxe ganho real sobre os baselines da Fase 2** — documentado em detalhe,
+trouxe ganho real sobre os baselines da baselines** — documentado em detalhe,
 em vez de reportar só o número de validação (que pareceria um resultado
 melhor do que realmente é).
 
 Notebook: `notebooks/03_hyperparam_search.ipynb`.
 
-## Engenharia de features (Fase 4)
+## Engenharia de features (engenharia de features)
 
-Três features derivadas (identificadas na EDA da Fase 0) testadas
-**isoladamente** contra o baseline de Gradient Boosting da Fase 2, com
+Três features derivadas (identificadas na EDA da EDA) testadas
+**isoladamente** contra o baseline de Gradient Boosting da baselines, com
 hiperparâmetros fixos para isolar o efeito de cada uma:
 `charges_per_tenure` (`TotalCharges/(tenure+1)`), `n_servicos_adicionais`
 (contagem de serviços extras) e `tenure_bucket` (faixas de tenure).
 
 **Achado honesto:** só `charges_per_tenure` teve ganho isolado positivo na
 validação (+0.0046), mas o ganho **não se confirmou no teste** — o modelo
-com a feature teve KS=0.516, abaixo do baseline puro da Fase 2 (KS=0.524).
-Mesmo padrão de ruído de validação já visto na Fase 3. Nenhuma feature
+com a feature teve KS=0.516, abaixo do baseline puro da baselines (KS=0.524).
+Mesmo padrão de ruído de validação já visto na busca de hiperparâmetros. Nenhuma feature
 derivada foi incorporada à referência do projeto — o baseline
-`gb_churn_baseline_oversample` da Fase 2 continua sendo o melhor resultado.
+`gb_churn_baseline_oversample` da baselines continua sendo o melhor resultado.
 
 Notebook: `notebooks/04_feature_engineering.ipynb`.
+
+## Modelos avançados (modelos avançados) — smoke test
+
+Antes de treinar STab, TabPFN v2, KAN, TabKAN e Mitra, um smoke test de
+instalação (`scripts/smoke_test_modelos_avancados.py`) — **nenhum é viável neste
+ambiente**:
+
+- **PyTorch não instala aqui**: o wheel do PyPI tem 554,6 MB, o download
+  não retoma entre tentativas, e 3 tentativas de 170s não completaram. O
+  índice CPU-only oficial do PyTorch está fora da rede disponível.
+- **STab e Mitra são colisões de nome no PyPI** — os pacotes `stab` e
+  `mitra` existentes ali não são os modelos do enunciado (um gerador de
+  sites estáticos e uma lib de álgebra linear, respectivamente). O Mitra
+  real só existe via `autogluon.tabular[mitra]`, ainda mais pesado.
+- **TabPFN v2, KAN (pykan) e TabKAN** existem e são os modelos corretos,
+  mas todos dependem de PyTorch — mesmo bloqueio.
+
+**Recomendação (documentada em detalhe no notebook): migrar a modelos avançados para
+o Kaggle Notebook**, que já vem com PyTorch + GPU — o pacote
+`src/churn_telecom/` é importável lá diretamente, bastando subir o CSV
+como dataset.
+
+Notebook: `notebooks/05_modelos_avancados_smoke_test.ipynb`.
+
+## Modelos avançados — implementação (modelos avançados, para rodar no Kaggle)
+
+Cada modelo tem seu wrapper em `src/churn_telecom/models/`, no mesmo
+padrão de `mlp.py`/`boosting.py` (dataclass de hiperparâmetros +
+`treinar_*`/`prever_*`), mas com **imports pesados só dentro das funções**
+(lazy import) — por isso os módulos importam normalmente aqui mesmo sem
+PyTorch instalado; o treino de verdade só roda no Kaggle:
+
+- **`models/stab.py`** — **implementação própria** de Transformer
+  tabular. Não existe um pacote público legítimo chamado "STab" (o nome
+  `stab` no PyPI é um gerador de sites estáticos, sem relação — ver smoke
+  test). Em vez de depender de proveniência incerta, implementei um
+  encoder Transformer enxuto (feature → token, `depth` camadas de
+  self-attention, token [CLS] agregando a predição), cobrindo o espaço de
+  hiperparâmetros do enunciado (`dim`, `depth`, `heads`, `attn_dropout`,
+  `ff_dropout`, `lr`, `weight_decay`, `batch_size`). Os hiperparâmetros
+  `U`, `cases` e `sample_size` do enunciado não têm definição padrão
+  publicamente disponível — documentados como não implementados em vez de
+  inventar um significado.
+- **`models/tabpfn.py`** — wrapper do pacote `tabpfn` real (confirmado no
+  smoke test). Sem curva de treino (é in-context learning, não treino por
+  época).
+- **`models/kan.py`** — wrapper do `pykan` real, usando a API nativa
+  (`width`, `grid`, `k`).
+- **`models/tabkan.py`** — wrapper do pacote `tabkan`; a API exata não
+  pôde ser inspecionada aqui (não instala neste ambiente) — assume
+  convenção sklearn-like (`fit`/`predict_proba`), **a confirmar e ajustar
+  no Kaggle** se divergir.
+- **`models/mitra.py`** — via `autogluon.tabular[mitra]` (o Mitra real da
+  Amazon), já que o pacote `mitra` isolado do PyPI é uma lib de álgebra
+  linear não relacionada (outra colisão de nome, ver smoke test).
+
+**`scripts/treina_modelos_avancados_kaggle.py`** treina os 5 em sequência,
+cada um dentro de um `try/except` — se um falhar lá (API divergente,
+pacote desatualizado), os outros continuam e o erro fica documentado, em
+vez de travar tudo.
+
+**`notebooks/06_modelos_avancados_kaggle.ipynb`** é o notebook pronto para **subir no
+Kaggle** (gerado aqui, mas não executado aqui — não roda sem PyTorch).
+Checklist de uso:
+1. Suba `src/churn_telecom/` como Kaggle Dataset `churn-telecom-src`.
+2. Suba `data/telco_customer_churn.csv` como Kaggle Dataset
+   `churn-telecom-data`.
+3. Ative GPU (Settings → Accelerator).
+4. Rode as células na ordem — instala os pacotes que faltam
+   (`tabpfn`, `pykan`, `tabkan`, `autogluon.tabular[mitra]`), treina os 5
+   modelos e salva cada um em `results/{model_id}/` (mesmo padrão
+   model-saver de sempre).
+5. Baixe `/kaggle/working/results/` de volta e cole em `results/` aqui, e
+   `reports/tables/modelos_avancados_resumo_kaggle.csv` em `reports/tables/` — o
+   notebook de consolidação final só lê `results/`, não
+   retreina nada.
 
 ## Pendência de limpeza (ação manual sua)
 
@@ -123,24 +201,30 @@ churn-telecom/
 ## Como rodar
 
 ```bash
-python3 scripts/eda_fase0.py                 # EDA (tabelas)
+python3 scripts/eda.py                 # EDA (tabelas)
 python3 scripts/make_eda_notebook.py          # gera notebooks/00_eda.ipynb
-python3 scripts/fase1_pipeline.py             # pipeline de dados (diagnósticos)
+python3 scripts/pipeline_dados.py             # pipeline de dados (diagnósticos)
 python3 scripts/make_pipeline_notebook.py     # gera notebooks/01_data_pipeline.ipynb
-python3 scripts/fase2_baselines.py            # treina e salva os baselines
-python3 scripts/make_fase2_notebook.py        # gera notebooks/02_baselines.ipynb
-python3 scripts/fase3_optuna.py mlp 20        # leva de busca Optuna (MLP)
-python3 scripts/fase3_optuna.py gb 20         # leva de busca Optuna (Gradient Boosting)
-python3 scripts/make_fase3_notebook.py        # gera notebooks/03_hyperparam_search.ipynb
-python3 scripts/fase4_features.py             # testa features derivadas (isoladas + combinação vencedora)
-python3 scripts/make_fase4_notebook.py        # gera notebooks/04_feature_engineering.ipynb
+python3 scripts/treina_baselines.py            # treina e salva os baselines
+python3 scripts/make_baselines_notebook.py        # gera notebooks/02_baselines.ipynb
+python3 scripts/busca_hiperparametros.py mlp 20        # leva de busca Optuna (MLP)
+python3 scripts/busca_hiperparametros.py gb 20         # leva de busca Optuna (Gradient Boosting)
+python3 scripts/make_busca_hiperparametros_notebook.py        # gera notebooks/03_hyperparam_search.ipynb
+python3 scripts/engenharia_features.py             # testa features derivadas (isoladas + combinação vencedora)
+python3 scripts/make_engenharia_features_notebook.py        # gera notebooks/04_feature_engineering.ipynb
+python3 scripts/smoke_test_modelos_avancados.py           # smoke test de instalação dos modelos avançados
+python3 scripts/make_smoke_test_notebook.py        # gera notebooks/05_modelos_avancados_smoke_test.ipynb
+python3 scripts/make_kaggle_notebook.py # gera notebooks/06_modelos_avancados_kaggle.ipynb (subir no Kaggle, não rodar aqui)
 python3 src/churn_telecom/metrics.py          # self-test do KS
+
+# No Kaggle (apos subir os datasets, ver secao acima):
+python3 scripts/treina_modelos_avancados_kaggle.py   # ou rode notebooks/06_modelos_avancados_kaggle.ipynb celula a celula
 ```
 
 ## Convenções
 
 Seguindo os mesmos padrões de `miniprojeto/mp1-cifar10` e
-`miniprojeto/mp2-lstm-bitcoin`: pacote por fase em `src/`, notebooks gerados
+`miniprojeto/mp2-lstm-bitcoin`: pacote por etapa em `src/`, notebooks gerados
 por script, experimentos salvos via skill model-saver em `results/`, nada de
 jargão de sessão nos nomes (sempre descritivo), disciplina anti-vazamento
 (scaler/encoder ajustado só no treino), levas sucessivas de experimentos.

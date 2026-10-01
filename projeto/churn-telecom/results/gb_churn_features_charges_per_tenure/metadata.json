@@ -1,5 +1,5 @@
 {
-  "model_id": "gb_churn_fase4_features",
+  "model_id": "gb_churn_features_charges_per_tenure",
   "framework": "Scikit-learn (GradientBoostingClassifier)",
   "timestamp": "2026-10-01T15:26:48.201086",
   "hyperparameters": {
@@ -41,5 +41,5 @@
     ],
     "n_features_final": 41
   },
-  "notes": "Fase 4 — engenharia de features: combinacao vencedora ('charges_per_tenure',) adicionada ao baseline GB."
+  "notes": "engenharia de features — engenharia de features: combinacao vencedora ('charges_per_tenure',) adicionada ao baseline GB."
 }

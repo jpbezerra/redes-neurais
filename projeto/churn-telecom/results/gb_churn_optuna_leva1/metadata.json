@@ -31,5 +31,5 @@
     "n_trials_optuna": 20,
     "best_val_ks": 0.571097372488408
   },
-  "notes": "Fase 3 — leva 1 de busca Optuna para Gradient Boosting (20 trials, otimizado por KS na validacao)."
+  "notes": "busca de hiperparâmetros — leva 1 de busca Optuna para Gradient Boosting (20 trials, otimizado por KS na validacao)."
 }

@@ -1,9 +1,9 @@
 """Carregamento bruto e particionamento dos dados de churn.
 
-Fase 0: `load_raw` le o CSV exatamente como veio, sem nenhuma transformacao —
+EDA: `load_raw` le o CSV exatamente como veio, sem nenhuma transformacao —
 usado so para a EDA.
 
-Fase 1: `split_three_stage` implementa o procedimento de particionamento
+pipeline de dados: `split_three_stage` implementa o procedimento de particionamento
 exigido pelo enunciado da disciplina:
 
 1. Separar o dataset em duas classes (Churn=Yes / Churn=No).
@@ -23,7 +23,7 @@ O conjunto de teste reflete sempre a proporcao real de classes (~73/27).
 Como alternativa auditavel, `split_three_stage` tambem devolve os indices
 originais de cada particao ANTES da reamostragem — isso permite reconstruir
 facilmente a versao "sem oversampling" (so com `class_weight`/`scale_pos_weight`)
-para comparar as duas estrategias lado a lado, como esperado na Fase 2.
+para comparar as duas estrategias lado a lado, como esperado na baselines.
 """
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ def load_raw(data_dir: str | Path) -> pd.DataFrame:
     """Le o CSV bruto exatamente como veio (sem dtype forcado, sem dropna).
 
     `TotalCharges` propositalmente NAO e convertido para float aqui — a
-    conversao e responsabilidade do pipeline de pre-processamento (Fase 1),
+    conversao e responsabilidade do pipeline de pre-processamento (pipeline de dados),
     que deve decidir e documentar como tratar os valores em branco
     conhecidos (ver EDA em reports/tables/eda_*.csv).
     """

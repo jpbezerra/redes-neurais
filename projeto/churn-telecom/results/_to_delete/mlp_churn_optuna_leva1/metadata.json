@@ -42,5 +42,5 @@
     "n_trials_optuna": 30,
     "best_val_ks": 0.5479134466769706
   },
-  "notes": "Fase 3 — leva 1 de busca Optuna para MLP (30 trials, otimizado por KS na validacao)."
+  "notes": "busca de hiperparâmetros — leva 1 de busca Optuna para MLP (30 trials, otimizado por KS na validacao)."
 }

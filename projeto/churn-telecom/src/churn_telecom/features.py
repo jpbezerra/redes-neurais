@@ -27,8 +27,8 @@ MULTI_CAT_COLS = [
     "Contract", "PaymentMethod",
 ]
 
-# Fase 4 — features derivadas (opcionais, testadas isoladamente e so
-# combinadas se melhorarem a metrica na validacao; ver scripts/fase4_features.py).
+# engenharia de features — features derivadas (opcionais, testadas isoladamente e so
+# combinadas se melhorarem a metrica na validacao; ver scripts/engenharia_features.py).
 SERVICOS_ADICIONAIS_COLS = [
     "OnlineSecurity", "OnlineBackup", "DeviceProtection",
     "TechSupport", "StreamingTV", "StreamingMovies",
@@ -48,7 +48,7 @@ def _to_total_charges_float(series: pd.Series) -> pd.Series:
 
 
 def _computa_features_derivadas(base: pd.DataFrame) -> pd.DataFrame:
-    """Calcula as colunas derivadas candidatas (Fase 4). Nao depende de
+    """Calcula as colunas derivadas candidatas (engenharia de features). Nao depende de
     nenhuma estatistica ajustada no treino (exceto a normalizacao de
     `charges_per_tenure`, feita separadamente no Preprocessor) — e seguro
     chamar em qualquer particao."""

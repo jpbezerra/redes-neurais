@@ -40,5 +40,5 @@
     "n_features": 40,
     "balanceamento": "sample_weight (sem oversampling, distribuicao real no treino)"
   },
-  "notes": "Fase 2 — baseline Gradient Boosting (sample_weight (sem oversampling, distribuicao real no treino))."
+  "notes": "baselines — baseline Gradient Boosting (sample_weight (sem oversampling, distribuicao real no treino))."
 }
