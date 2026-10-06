@@ -1,13 +1,26 @@
 # Mini-projeto 2 — LSTM para prever o preço do Bitcoin
 
-Enunciado: empregar **LSTM** para prever o preço do Bitcoin de dezembro de
-2014 a maio de 2018, usando os primeiros 80% dos registros para treinar e os
-20% finais para teste.
+Enunciado: empregar **LSTM** para prever o preço do Bitcoin, avaliando com **MSE, RMSE e POCID**. O trabalho parte da base do tutorial do enunciado (dezembro de 2014 a maio de 2018, primeiros 80% para treino e 20% finais para teste) e usa também a base disponibilizada pelo professor no Classroom (agosto de 2017 a agosto de 2023) para os resultados finais de classificação.
 
-> **Status:** base do projeto pronta e testada de ponta a ponta; os
-> experimentos ainda não foram executados. Os resultados abaixo marcados como
-> *diagnóstico* vêm de treinos curtos de validação do pipeline, não dos
-> experimentos finais.
+> **Status:** concluído. Todos os experimentos foram executados e o relatório está em `notebooks/02_results_report.ipynb`.
+
+## Resultado em uma página
+
+O achado principal não é um modelo que acerta o preço, e sim entender por que ele não acerta.
+
+| Pergunta | Base | Resultado | Referência |
+|---|---|---|---|
+| Prever o **nível** do preço | tutorial | RMSE US$ 3.850 | baseline ingênuo US$ 607,9 |
+| Prever o **log-retorno** do dia seguinte | tutorial | melhor RMSE US$ 606,5 (POCID entre 48% e 54%) | baseline ingênuo US$ 607,9 |
+| Prever **sobe ou desce** (alvo corrigido) | professor | **48,7%** de acurácia (LSTM/GRU, média de 10 sementes) | classe majoritária do teste 53,8% |
+| Modelos clássicos (alvo corrigido) | professor | regressão logística 48,1%, random forest 49,3%, gradient boosting 51,2% | classe majoritária 53,8% |
+| **Walk-forward** (5 períodos, 2020–2023) | professor | 51,2% em média | majoritária 53,9% |
+| **GAN** como data augmentation | professor | 47,0% → 47,8% (+0,87 p.p., ±2,79 entre sementes) | indistinguível de ruído |
+| Horizontes de 3, 5 e 10 dias | professor | 10 dias: +1,1 p.p. (desvio entre sementes 0,022) | majoritária de cada horizonte |
+
+Em todos os casos, nenhum modelo supera a classe majoritária do teste de forma consistente. Séries diárias de preço do Bitcoin se aproximam de um passeio aleatório.
+
+> **Sobre os números "alvo corrigido".** Durante o trabalho foi encontrado um bug na construção do alvo de direção (ver a seção *O bug no alvo de direção*). Os resultados de classificação anteriores à correção (acurácias de 60% a 77%) são **inválidos** e não aparecem em nenhuma conclusão. Valem apenas os números marcados como "alvo corrigido".
 
 ## Estrutura
 
@@ -19,48 +32,50 @@ mp2-lstm-bitcoin/
 ├── src/lstm_bitcoin/        # código reutilizável
 │   ├── config.py            # ExperimentConfig: todos os hiperparâmetros de um experimento
 │   ├── data.py              # carga das bases, divisão temporal, escala e janelas deslizantes
+│   ├── features.py          # features adicionais (volatilidade, retornos defasados, candle)
 │   ├── model.py             # RecurrentForecaster: LSTM / GRU / RNN parametrizáveis
 │   ├── metrics.py           # regressão (RMSE/MAE/MAPE/R²) + classificação + matriz de confusão
 │   ├── train.py             # loop de treino com early stopping + avaliação em dólares
+│   ├── gan.py               # GAN recorrente para gerar sequências OHLC sintéticas
 │   ├── checkpointing.py     # skill `model-saver` + tabela de hiperparâmetros do relatório
 │   ├── tuning.py            # busca automática com Optuna (TPE + pruning + importância)
 │   └── utils.py             # seed, device e os gráficos padrão do relatório
 ├── notebooks/
-│   ├── 01_train_lstm_bitcoin.ipynb   # treina — caro, roda no Kaggle
-│   └── 02_results_report.ipynb       # só lê results/ — rápido, gera o relatório
-├── scripts/
-│   ├── make_notebook.py         # gera o notebook de treino
-│   └── make_report_notebook.py  # gera o notebook de relatório
-├── data/                    # CSVs baixados automaticamente (não versionados)
-├── reports/figures/         # gráficos do relatório
-└── results/                 # results/{model_id}/ — uma pasta por execução
+│   ├── 01_train_lstm_bitcoin.ipynb   # treina (caro, roda no Kaggle) + Optuna
+│   ├── 02_results_report.ipynb       # só lê results/ e reports/tables/: gera o relatório
+│   └── 03_gan_augmentation.ipynb     # experimento de dados sintéticos com GAN
+├── scripts/                 # geradores de notebooks e experimentos em linha de comando
+│   ├── make_notebook.py         # gera o notebook 01
+│   ├── make_report_notebook.py  # gera o notebook 02
+│   ├── make_gan_notebook.py     # gera o notebook 03
+│   ├── run_local.py             # roda levas de experimentos em CPU, em segundo plano
+│   ├── walk_forward.py          # validação temporal walk-forward
+│   ├── abstencao.py             # abstenção seletiva (zona morta)
+│   └── gan_augmentation.py      # treino do GAN e comparação real vs. real + sintético
+├── data/
+│   └── btc_prof_2023.csv    # base do professor (Classroom): 2.176 dias, 17/08/2017 a 01/08/2023
+├── reports/
+│   ├── figures/             # gráficos do relatório (PNG)
+│   └── tables/              # tabelas do relatório (CSV)
+└── results/                 # results/{model_id}/ — uma pasta por execução (metadata.json, histórico, pesos)
 ```
 
-Mesma separação do Mini-projeto 1: `src/` tem a implementação testável,
-`notebooks/` orquestra e reporta.
+A base do tutorial (`btc.csv`) é baixada automaticamente por `data.load_tutorial()` e não é versionada. A base do professor fica em `data/` e é lida por `data.load_professor()`.
 
-### Por que dois notebooks
+### Para que serve cada notebook
 
-`01_train` **treina**: é caro (horas de GPU no Kaggle) e a saída de cada célula
-é um registro que não se quer perder à toa. `02_results_report` **só lê**
-`results/`: roda em segundos, não precisa de GPU, e reconstrói todas as tabelas
-e figuras do relatório a partir dos `metadata.json` já salvos.
+- **`01_train_lstm_bitcoin.ipynb`** *treina*. É caro (horas de GPU no Kaggle), e cada execução é salva em `results/{model_id}/` com um `metadata.json`, de modo que o registro real dos resultados é a pasta `results/`, não a saída de uma célula.
+- **`02_results_report.ipynb`** *só lê* `results/` e `reports/tables/`. Roda em segundos, sem GPU, e reconstrói todas as tabelas e figuras do relatório. Pode ser refeito quantas vezes for preciso sem retreinar nada. Contém: o panorama das execuções, por que a regressão de preço colapsa, a jornada da classificação de direção, o bug no alvo e o resultado honesto depois da correção.
+- **`03_gan_augmentation.ipynb`** reporta o experimento de aumento de dados com GAN: a técnica e a expectativa, a sanidade das features sintéticas, a comparação real vs. real + sintético e a conclusão.
 
-A vantagem prática é que o relatório pode ser refeito quantas vezes for
-preciso — ajustando um gráfico, renomeando uma coluna — sem retreinar nada,
-porque o registro real dos resultados é a pasta `results/`, não a saída de uma
-célula.
+### Os geradores de notebooks são incrementais
 
-### Os geradores são incrementais
-
-Os dois notebooks são gerados por script, e os geradores **preservam as saídas
-das células cujo código não mudou** (comparação por hash do fonte). Editar uma
-célula descarta a saída só dela; as outras 18 continuam com o resultado da
-execução anterior.
+Os notebooks são gerados por script, e os geradores **preservam as saídas das células cujo código não mudou** (comparação por hash do fonte). Editar uma célula descarta a saída só dela.
 
 ```bash
-python scripts/make_notebook.py            # regenera preservando saídas
-python scripts/make_report_notebook.py
+python scripts/make_notebook.py            # regenera o notebook 01 preservando saídas
+python scripts/make_report_notebook.py     # regenera o notebook 02
+python scripts/make_gan_notebook.py        # regenera o notebook 03
 python scripts/make_notebook.py --limpar   # descarta todas as saídas
 ```
 
@@ -72,80 +87,42 @@ python scripts/make_notebook.py --limpar   # descarta todas as saídas
 cd miniprojeto/mp2-lstm-bitcoin
 python -m venv .venv && source .venv/bin/activate   # ou .venv\Scripts\activate no Windows
 pip install -e .
-jupyter notebook notebooks/01_train_lstm_bitcoin.ipynb
+jupyter notebook notebooks/02_results_report.ipynb   # relatório (não precisa treinar)
 ```
+
+Para reproduzir os experimentos, a ordem é: `01_train_lstm_bitcoin.ipynb` (ou `scripts/run_local.py` para levas em CPU), depois `scripts/walk_forward.py`, `scripts/abstencao.py` e `scripts/gan_augmentation.py` (o desenho experimental de cada um está na docstring do topo do arquivo), e por fim os geradores `make_report_notebook.py` e `make_gan_notebook.py` para reconstruir os notebooks 02 e 03.
 
 ### Colab / Kaggle
 
-Abra o notebook e rode a célula de setup — ela clona o repositório, instala o
-pacote e ajusta os caminhos. No Kaggle, ative *Settings → Internet → On* e
-prefira **"Save Version" → "Save & Run All (Commit)"**: o modo commit roda num
-kernel gerenciado em segundo plano e não depende da aba do navegador ficar
-aberta.
+Abra o notebook e rode a célula de setup: ela clona o repositório, instala o pacote e ajusta os caminhos. No Kaggle, ative *Settings → Internet → On* e prefira **"Save Version" → "Save & Run All (Commit)"**: o modo commit roda num kernel gerenciado em segundo plano e não depende da aba do navegador ficar aberta.
 
 #### Devolver os resultados ao GitHub
 
-O Kaggle tem um botão nativo *File → Link to GitHub*, mas ele versiona **apenas
-o arquivo .ipynb** — não os `results/` nem os gráficos, que é justamente o que
-interessa aqui.
+O botão *File → Link to GitHub* do Kaggle versiona só o arquivo `.ipynb`, não os `results/` nem os gráficos. Por isso a seção 9.1 do notebook 01 faz o push por código. Configuração, uma vez só: gere um *fine-grained token* no GitHub com permissão **Contents: Read and write** restrita a este repositório, e guarde no Kaggle em *Add-ons → Secrets* com o label `GITHUB_TOKEN`. O push vai para o branch `kaggle-results`, não para a `main`, e você mescla quando quiser com `git fetch origin && git merge origin/kaggle-results`. Quem preferir não configurar token tem uma célula alternativa que empacota tudo num zip na aba Output.
 
-Por isso a seção 9.1 do notebook faz o push por código. Configuração, uma vez
-só: gere um *fine-grained token* no GitHub com permissão **Contents: Read and
-write** restrita a este repositório, e guarde no Kaggle em *Add-ons → Secrets*
-com o label `GITHUB_TOKEN`. O token fica no cofre do Kaggle, nunca no código, e
-a URL com credencial é removida do `git remote` ao final da célula.
-
-O push vai para o branch `kaggle-results`, não para a `main` — assim os
-resultados chegam sem risco de conflito, e você mescla quando quiser com
-`git fetch origin && git merge origin/kaggle-results`. Quem preferir não
-configurar token tem, logo abaixo, a célula alternativa que empacota tudo num
-zip na aba Output.
-
-Este projeto é **muito mais leve que a Fase 2 do Mini-projeto 1**: a série tem
-1.273 pontos (contra 50.000 imagens), então cada treino leva segundos a poucos
-minutos em CPU. GPU só compensa para rodar o Optuna com muitos trials.
+O projeto é leve: a série tem de 1.273 a 2.176 pontos, então cada treino leva segundos a poucos minutos em CPU. GPU só compensa para rodar o Optuna com muitos trials.
 
 ---
 
 # As bases de dados
 
-O professor não disponibilizou base. Foram selecionadas duas, com papéis
-diferentes.
+Foram usadas duas bases, com papéis diferentes.
 
-## Base principal — `tutorial`
+## Base do tutorial — `tutorial`
 
-O `btc.csv` do repositório [brynmwangy/predicting-bitcoin-prices-using-LSTM](https://github.com/brynmwangy/predicting-bitcoin-prices-using-LSTM),
-que é exatamente o material creditado nos slides do enunciado. Verificado:
-**1.273 linhas, de 01/12/2014 a 26/05/2018, sem nenhum dia faltando** — bate
-com o período pedido.
+O `btc.csv` do repositório [brynmwangy/predicting-bitcoin-prices-using-LSTM](https://github.com/brynmwangy/predicting-bitcoin-prices-using-LSTM), o material creditado nos slides do enunciado. **1.273 linhas, de 01/12/2014 a 26/05/2018, sem nenhum dia faltando.** Colunas: `Date, Symbol, Open, High, Low, Close, Volume From, Volume To`. Baixada automaticamente por `data.load_tutorial()`.
 
-Colunas: `Date, Symbol, Open, High, Low, Close, Volume From, Volume To`.
-Baixada automaticamente por `data.load_tutorial()`.
+Usada para reproduzir o tutorial e para toda a parte de **regressão** (prever quanto o preço muda). Com o corte 80/20, o treino fica com 1.018 dias (US$ 120 a US$ 4.948, dos quais os 10% finais são validação) e o teste com **254 dias** (US$ 3.617 a US$ 19.650).
 
-Usar a mesma base do enunciado garante que o resultado seja comparável ao de
-referência e que a comparação com outros grupos seja justa.
+**Atenção à ordem do arquivo.** O `btc.csv` vem do dado mais recente para o mais antigo, e o tutorial **não reordena**. Seguindo o tutorial à risca, o modelo treina com 2015–2018 e é testado em dez/2014–ago/2015: ele prevê o passado, num trecho calmo (US$ 120 a US$ 378) que já estava dentro do treino, e o gráfico fica enganosamente bom. Este projeto ordena a série cronologicamente.
 
-## Base secundária — `kaggle`
+## Base do professor — `professor`
 
-[mczielinski/bitcoin-historical-data](https://www.kaggle.com/datasets/mczielinski/bitcoin-historical-data):
-BTC/USD do Bitstamp em resolução de **1 minuto desde janeiro de 2012**,
-atualizada diariamente por [GitHub Actions](https://github.com/mczielinski/kaggle-bitcoin).
-`data.load_kaggle()` reamostra para diário seguindo a convenção OHLCV.
+`data/btc_prof_2023.csv`, disponibilizada no Classroom: **2.176 dias, de 17/08/2017 a 01/08/2023**, sem lacunas (todos os intervalos entre dias consecutivos são de exatamente 1 dia). Colunas: `date, open, high, low, close, number_of_trades`, renomeadas para o padrão do projeto por `data.load_professor()`.
 
-Serve para responder à pergunta que o recorte do enunciado não responde: *o
-que funciona em 2014-2018 continua funcionando depois?* O período pós-2018 tem
-um regime de preços completamente diferente, então é um teste de
-generalização honesto.
+Usada nos **resultados finais de classificação** (sobe ou desce), no walk-forward, na abstenção, nos horizontes e no GAN. Com o corte 80/20, o teste tem **435 dias** (US$ 15.781 a US$ 31.801), inteiramente **dentro** da faixa de preço do treino (US$ 3.189 a US$ 67.526), ao contrário da base do tutorial.
 
-Baixe com `kaggle datasets download -d mczielinski/bitcoin-historical-data` e
-coloque o CSV em `data/`.
-
-### Outras consideradas
-
-[Crypto Market Data: 50+ Coins Daily OHLCV](https://www.kaggle.com/datasets/abdullahkhan70/daily-multi-year-ohlcv-crypto-market-data)
-seria interessante para usar outras criptomoedas como features adicionais, mas
-foge do escopo. As bases de 5 minutos ou 5 segundos têm granularidade fina
-demais — o enunciado é sobre previsão diária.
+Outras bases (a de 1 minuto do Kaggle, `mczielinski/bitcoin-historical-data`) continuam suportadas por `data.load_kaggle()`, mas os resultados finais deste relatório usam a base do professor.
 
 ---
 
@@ -153,208 +130,180 @@ demais — o enunciado é sobre previsão diária.
 
 ## A divisão é temporal, nunca aleatória
 
-Em série temporal, embaralhar antes de dividir faz o modelo treinar com dados
-de 2018 e ser testado em 2015 — ele aprende o futuro e prevê o passado. O
-resultado fica espetacular e completamente falso.
-
-Aqui o treino é sempre o começo da série e o teste sempre o fim, conforme o
-enunciado (80/20). O treino ainda cede seus 10% finais para validação, usada
-no early stopping e na seleção de hiperparâmetros — o teste é tocado uma única
-vez, no fim.
+Em série temporal, embaralhar antes de dividir faz o modelo treinar com dados do futuro e ser testado no passado. O resultado fica espetacular e completamente falso. O treino é sempre o começo da série e o teste sempre o fim (80/20). O treino ainda cede seus 10% finais para validação, usada no early stopping e na seleção de hiperparâmetros: o teste é tocado uma única vez, no fim.
 
 ## O scaler é ajustado só no treino
 
-Ajustar no conjunto inteiro faria o mínimo e o máximo do teste vazarem. Como o
-preço vai de ~US$ 300 a ~US$ 19.000 na série, esse vazamento seria enorme.
+Ajustar no conjunto inteiro faria o mínimo e o máximo do teste vazarem para o treino.
 
 ## O baseline ingênuo é obrigatório
 
-O palpite **"amanhã o preço será igual ao de hoje"** é difícil de bater, porque
-séries financeiras são próximas de um passeio aleatório. Qualquer modelo que
-não o supere não aprendeu nada: apenas copiou o último valor com um dia de
-atraso.
-
-Toda avaliação de regressão reporta `naive_rmse` e `beats_naive` ao lado do
-RMSE. Isso é o que separa um relatório honesto de um gráfico bonito e vazio.
+O palpite **"amanhã o preço será igual ao de hoje"** é difícil de bater, porque séries financeiras são próximas de um passeio aleatório. Qualquer modelo que não o supere não aprendeu nada. Toda avaliação de regressão reporta `naive_rmse` e `beats_naive` ao lado do RMSE. Na classificação, a referência equivalente é a **classe majoritária** do teste, e o relatório mostra também a majoritária do treino (responder sempre "alta" daria 46,2% no teste da base do professor).
 
 ---
 
-# O diagnóstico central: qual alvo é estacionário
-
-Este é o achado que orienta o projeto, e a primeira execução completa o
-refinou de forma importante.
-
-## O problema de partida
+# O diagnóstico central: qual alvo é estacionário (base do tutorial)
 
 | Partição | Faixa de preço |
 |---|---|
-| Treino (918 dias) | US$ 120 – US$ 2.698 |
+| Treino (sem a validação) | US$ 120 – US$ 2.698 |
 | Teste (254 dias) | US$ 3.617 – US$ 19.650 |
 
-**As faixas não se sobrepõem.** Prevendo o *nível*, a rede precisa extrapolar
-7× acima de tudo que viu — e redes não extrapolam bem.
+**As faixas não se sobrepõem.** Prevendo o *nível*, a rede precisa extrapolar cerca de 7× acima de tudo que viu, e redes neurais não extrapolam bem (o RMSE chega a US$ 3.850).
 
-## A correção tem dois modos, e só um funciona
+Prever a mudança em vez do nível ajuda, mas **variação em dólares** e **retorno percentual** são coisas diferentes:
 
-A solução é prever a mudança em vez do nível. Mas **variação em dólares** e
-**retorno percentual** são coisas diferentes:
+| Alvo | Razão de escala teste/treino |
+|---|---|
+| Variação em US$ | **23,2×** (não estacionária) |
+| Log-retorno | **1,23×** |
 
-| Alvo | Desvio no treino | Desvio no teste | Razão |
+A configuração usa `diff_target=True` **junto com** `log_price=True`.
+
+## As métricas que expuseram o colapso
+
+Com o log-retorno, o RMSE de todos os modelos ficou colado no do baseline ingênuo (≈ US$ 607). Duas métricas, em `train.evaluate_split`, mostram o motivo:
+
+- **`movement_ratio` (`razao_mov`)**: desvio do movimento previsto ÷ desvio do real. Perto de 0 significa que o modelo previu "amanhã ≈ hoje": ele *virou* o baseline.
+- **`movement_corr` (`corr_mov`)**: correlação entre movimento previsto e real.
+
+Numa série quase aleatória, prever "não muda" é a estratégia que *minimiza* o erro quadrático. O modelo não falhou em otimizar: otimizou perfeitamente para a métrica errada.
+
+Variar janela (3 a 60 dias), capacidade (16 a 128 unidades), camadas (1 a 3) e célula (LSTM, GRU, RNN) manteve o RMSE dentro de 1% do baseline. O teto está nos dados, não na arquitetura.
+
+## Métricas de regressão (teste de 254 dias)
+
+| Modelo | RMSE (US$) | MAE (US$) | POCID |
 |---|---|---|---|
-| Variação em US$ | 26,2 | 608,2 | **23,2×** |
-| Log-retorno | 0,044 | 0,055 | **1,23×** |
+| Baseline ingênuo | 607,9 | 405,7 | — |
+| LSTM, nível do preço | 3.850,6 | 2.851,4 | 48,4% |
+| LSTM, log do nível | 1.217,5 | 835,1 | 50,4% |
+| LSTM, log-retorno | 608,0 | 406,0 | 50,0% |
+| LSTM (janela 10, 64 un.) | 606,5 | 406,2 | 52,8% |
+| GRU (janela 10, 64 un.) | 607,2 | 406,5 | 51,6% |
+| RNN simples (janela 10, 64 un.) | 608,7 | 407,6 | 53,1% |
 
-A variação em dólares **não é estacionária**: um movimento de 3% valia US$ 20
-em 2015 e US$ 500 em 2018. Como o scaler é ajustado só no treino, o modelo
-aprende numa escala 23× menor que a do teste.
+O melhor modelo vence o ingênuo por US$ 1,4 de RMSE e perde no MAE. Um RMSE baixo não garante um modelo útil: o POCID, entre 48% e 54%, é praticamente cara ou coroa.
 
-Foi exatamente o que aconteceu na primeira execução: **as 14 execuções de
-regressão empataram em RMSE ≈ 607**, o valor do baseline ingênuo. Variar
-janela (5 a 90), capacidade (16 a 128) e célula (LSTM/GRU/RNN) produziu uma
-faixa de 0,1%. Com o alvo errado, nenhum hiperparâmetro conseguia importar.
+---
 
-A configuração agora usa `diff_target=True` **junto com** `log_price=True`.
+# Classificação de direção
 
-## As métricas que expuseram o problema
+Previsão de preço é regressão e não produz matriz de confusão. Por isso o projeto tem uma **tarefa de classificação**: prever se o preço sobe ou desce no dia seguinte (`task="direction"`). Usa o mesmo pipeline e a mesma arquitetura; mudam só a última camada (sigmoide) e a função de perda (entropia cruzada binária).
 
-Um RMSE de 607 parecia ótimo e escondia um modelo que não aprendeu nada. Duas
-métricas novas em `train.evaluate_split` tornam isso visível:
+`metrics.confusion_matrix` dá a contagem absoluta e `metrics.confusion_matrix_percent` converte nas três leituras: `normalize="true"` (cada linha soma 100%, o recall), `normalize="pred"` (cada coluna soma 100%, a precisão) e `normalize="all"`.
 
-- **`movement_ratio`** — desvio do movimento previsto ÷ desvio do real. Perto
-  de 0 significa que o modelo previu "amanhã ≈ hoje": ele *virou* o baseline.
-  Na primeira execução deu **0,015** (movimentos 67× menores que os reais).
-- **`movement_corr`** — correlação entre movimento previsto e real. Era
-  **negativa**.
+## O bug no alvo de direção
 
-O motivo é conceitual: numa série quase aleatória, prever "não muda" é a
-estratégia que *minimiza* o erro quadrático. O modelo não falhou em otimizar —
-otimizou perfeitamente para a métrica errada.
+O primeiro resultado parecia excelente: **72,9%** (GRU, média de 10 sementes) na base do tutorial e **72,6%** na base do professor, contra uma majoritária de cerca de 53%. Mas os modelos clássicos (regressão logística, random forest, gradient boosting) ficavam em cerca de 50% no mesmo alvo: uma diferença de mais de 20 p.p. entre famílias de modelos é suspeita.
 
-Por isso a seleção do melhor modelo não usa RMSE. O critério é: entre os
-modelos com `movement_ratio` entre 0,2 e 2,0 e R² > 0,5, o de maior
-`movement_corr`. As duas guardas são necessárias — sem o piso vence quem
-colapsou, sem o teto vence o `baseline_nivel`, que tem razão 4,4 e correlação
-0,12 mas RMSE de 3.940 e R² negativo.
+A auditoria encontrou o erro em `make_windows`: a condição `futuro > último`, aplicada sobre arrays **já diferenciados**, respondia *"a variação de amanhã é maior que a de hoje?"* em vez de *"o preço sobe de D para D+1?"*. A primeira é fácil (depois de uma variação grande, o Bitcoin tende a ter uma variação menor); a segunda não tem padrão. A correção lê o sinal da variação na **escala original**, antes do escalador, em `data.py`.
 
-## Regressão e direção têm dificuldades muito diferentes
+## Resultado depois da correção (base do professor)
 
-O contraste é o achado mais interessante do projeto:
+Com a pergunta certa, a rede não encontra padrão e tende a responder "alta" todos os dias. Numa execução em que isso acontece, a acurácia é **46,2%**, exatamente a proporção de dias de alta no teste (201 de 435).
 
-| Tarefa | Resultado | Baseline | Ganho |
-|---|---|---|---|
-| Regressão (quanto muda) | RMSE 603 | 607,9 | marginal |
-| **Direção (para onde vai)** | **~74% de acurácia** | 52,8% | **+21 p.p.** |
+| Modelo | Acurácia |
+|---|---|
+| Classe majoritária do teste | 53,8% |
+| Gradient boosting | 51,2% |
+| Random forest | 49,3% |
+| **LSTM/GRU (alvo corrigido, média de 10 sementes)** | **48,7%** |
+| Regressão logística | 48,1% |
+| Dummy (maioria do treino, "alta") | 46,2% |
 
-Prever *quanto* o preço muda é dominado por ruído; prever *para onde* ele vai é
-tratável. A autocorrelação do log-retorno no treino é **−0,22 no lag 1** —
-existe estrutura, mas pouca, e ela aparece no sinal, não na magnitude.
+Por que abaixo de 50%? No treino, 53% dos dias são de alta; no teste, 54% são de queda. O modelo aprende "responda alta" e o mercado muda justamente no teste.
 
-# As três coisas pedidas para o relatório
+## O que foi tentado para sair do teto
 
-## 1. Tabela de hiperparâmetros variados
+| Tentativa | Resultado |
+|---|---|
+| Mudar o alvo (nível → log-retorno) | Resolveu a extrapolação, mas o modelo passou a prever "não muda" |
+| 19 configurações manuais (janela, unidades, camadas, célula, learning rate, perda) | Todas a menos de 1% do ingênuo |
+| Optuna | Ver abaixo |
+| Mais features (OHLC, volatilidade, retornos defasados) | Ganho aparente de +7 p.p., mas era o bug |
+| Horizontes de 3, 5 e 10 dias | Nenhum bate a majoritária de forma consistente (10 dias: +1,1 p.p., dentro do ruído) |
+| Zona morta / abstenção | Ganho instável; 49,3% |
+| Walk-forward (retreinar em 5 períodos, 2020–2023) | 51,2% em média, 2,7 p.p. abaixo da majoritária (53,9%); em 3 das 5 dobras o modelo só repete uma classe |
+| GAN (dados sintéticos) | +0,87 p.p. (±2,79), dentro do ruído |
 
-`checkpointing.hyperparameter_table(results_dir)` monta a tabela do relatório
-lendo todos os `metadata.json` salvos. Com `only_varied=True` (padrão), ela
-**omite as colunas constantes** e mostra só o que de fato foi investigado,
-junto das métricas de teste, ordenada pelo RMSE.
+## GAN como data augmentation
 
-A célula da seção 9 do notebook também exporta em
-`results/tabela_hiperparametros.csv`.
+`gan.py` treina um GAN recorrente que gera sequências OHLC em log-retorno. Os dados sintéticos acertam a escala das médias, mas são menos dispersos que os reais e só 6,5% dos dias gerados são de alta (contra 53% no real). As perdas do gerador e do discriminador se estabilizam sem que nenhuma vá a zero: não há colapso do GAN. Comparando 10 sementes, a acurácia vai de 47,0% (real) para 47,8% (real + sintético); o ganho médio de +0,87 p.p. é puxado pela semente 3 (+7,6 p.p.) e é indistinguível de ruído. Sem GAN, 9 das 10 sementes colapsam em 46,2%.
 
-## 2. Matriz de confusão em número e em percentual
+O classificador desse experimento é uma **LSTM menor (2 camadas × 32 unidades, janela de 3 dias)**, diferente da GRU de 64 unidades usada nos resultados da tabela acima. Por isso a referência do experimento é 47,0%, e não 48,7%.
 
-Previsão de preço é regressão e não produz matriz de confusão. Por isso o
-projeto tem uma **tarefa secundária de classificação**: prever se o preço sobe
-ou desce no dia seguinte (`task="direction"`). Ela usa o mesmo pipeline e a
-mesma arquitetura — mudam só a última camada e a função de perda.
+---
 
-`metrics.confusion_matrix` dá a contagem absoluta e
-`metrics.confusion_matrix_percent` converte nas três leituras:
+# Optuna
 
-- `normalize="true"` — cada linha soma 100%: *"das vezes que o preço realmente subiu, em quantas o modelo acertou?"* (recall)
-- `normalize="pred"` — cada coluna soma 100%: *"das vezes que o modelo disse alta, em quantas ele acertou?"* (precision)
-- `normalize="all"` — a matriz inteira soma 100%
-
-`utils.plot_confusion` desenha as duas leituras na mesma figura: cada célula
-mostra o número absoluto em cima e o percentual da linha embaixo. E o
-`metadata.json` de cada execução de direção já guarda as três versões, então o
-relatório não depende de recalcular nada.
-
-Exemplo real do teste de validação do pipeline (LSTM, janela 30, 20 épocas):
-
-```
-CONTAGEM  (linha = real, coluna = previsto)
-                      baixa        alta
-  real baixa           104          29
-  real alta             39          82
-
-PERCENTUAL POR LINHA  (cada linha soma 100%)
-  real baixa         78,2%       21,8%
-  real alta          32,2%       67,8%
-```
-
-Acurácia 73,2% contra uma classe majoritária de 52,4%. A assimetria entre as
-linhas (78,2% contra 67,8%) já mostra que o modelo é mais confiável quando
-prevê baixa — exatamente o tipo de leitura que só a matriz de confusão dá.
-
-## 3. Optuna
-
-`tuning.run_study()` roda a busca automática. Detalhes da implementação:
+`tuning.run_study()` roda a busca automática:
 
 - **Amostrador TPE**: modela a distribuição dos bons e maus resultados e concentra as propostas onde a razão entre elas é alta.
-- **Pruning** (`MedianPruner`): aborta trials que vão claramente mal, multiplicando quantas configurações cabem no mesmo tempo.
-- **Otimiza a validação, nunca o teste.** Otimizar no teste seria escolher o modelo que teve sorte com aquele conjunto.
-- **Persistência opcional em SQLite** (`storage="sqlite:///optuna.db"`), para o estudo sobreviver à queda da sessão do Kaggle e ser retomado.
-- **`importance_table()`** dá o ranking fANOVA — o análogo automático da análise "o que a busca revelou sobre cada hiperparâmetro" feita à mão no Mini-projeto 1.
-- **`run_name` dinâmico.** `best_config()` gera um nome no formato `optuna_{tarefa}_{n_trials}t_{hash}` (ex.: `optuna_regression_50t_a3f9c1`). O hash deriva dos hiperparâmetros vencedores, então dois estudos que chegam à mesma configuração recebem o mesmo nome e estudos diferentes recebem nomes diferentes. Isso não é cosmético: `fit_or_load` reaproveita qualquer execução com o mesmo `run_name`, então um nome fixo faria um segundo estudo — com mais trials ou outra tarefa — carregar silenciosamente o resultado do primeiro.
+- **Pruning** (`MedianPruner`): aborta trials que vão claramente mal.
+- **Otimiza a validação, nunca o teste.**
+- **Persistência opcional em SQLite** (`storage="sqlite:///optuna.db"`), para o estudo sobreviver à queda da sessão do Kaggle.
+- **`importance_table()`** dá o ranking fANOVA dos hiperparâmetros.
+- **`run_name` dinâmico**, no formato `optuna_{tarefa}_{n_trials}t_{hash}`: o hash deriva dos hiperparâmetros vencedores, para que estudos diferentes não reaproveitem o resultado um do outro (`fit_or_load` reutiliza qualquer execução com o mesmo `run_name`).
 
-O espaço padrão (`DEFAULT_SPACE`) cobre janela, tamanho e número de camadas,
-dropout, learning rate, batch size, weight decay, tipo de célula (LSTM/GRU),
-scaler e grad clipping.
+Foram feitos dois estudos para classificação de direção, **ambos antes da correção do bug** (portanto otimizaram a pergunta errada):
 
-**As duas buscas são complementares e o relatório deve ter as duas:** levas
-manuais para entender o efeito isolado de cada alavanca, Optuna para achar a
-melhor combinação dentro da região promissora.
+| Estudo | Trials | Resultado |
+|---|---|---|
+| Base do tutorial | 15 | GRU, janela 10, 64 unidades, 1 camada, OHLC, lr ≈ 0,0039 |
+| Base do professor | 33 | GRU, janela 2, 64 unidades, 1 camada, 9 features, lr ≈ 0,0058 |
+
+**Três configurações aparecem nos resultados**, e não devem ser confundidas:
+
+1. **GRU, janela 10, OHLC** (Optuna de 15 trials): é a dos resultados da tabela de classificação corrigida (48,7%).
+2. **GRU, janela 2, 9 features** (Optuna de 33 trials): não entrou nos resultados finais.
+3. **LSTM 2 × 32, janela 3**: usada no GAN e no walk-forward.
 
 ---
 
 # Hiperparâmetros investigados
 
-Específicos de série temporal, sem equivalente no Mini-projeto 1:
+Específicos de série temporal:
 
-- **`window`** — quantos dias de passado o modelo enxerga. É o hiperparâmetro mais característico do problema.
-- **`horizon`** — quantos dias à frente prever.
-- **`diff_target`** / **`log_price`** — a formulação do alvo, discutida acima.
-- **`scaler`** — MinMax, Standard ou nenhum.
+- **`window`**: quantos dias de passado o modelo enxerga.
+- **`horizon`**: quantos dias à frente prever.
+- **`diff_target`** / **`log_price`**: a formulação do alvo.
+- **`scaler`**: MinMax, Standard ou nenhum.
 
 De arquitetura e otimização:
 
-- **`model_type`** — LSTM, GRU ou RNN simples. Comparar as três é interessante: a LSTM foi inventada para resolver o esquecimento da RNN, e a GRU é uma simplificação dela.
+- **`model_type`**: LSTM, GRU ou RNN simples.
 - **`hidden_size`**, **`num_layers`**, **`dropout`**, **`bidirectional`**, **`fc_layers`**
 - **`optimizer`**, **`learning_rate`**, **`weight_decay`**, **`lr_schedule`**
-- **`grad_clip`** — redes recorrentes reaplicam os mesmos pesos a cada passo de tempo, então o gradiente pode crescer geometricamente ao longo da janela. Cortar a norma evita a explosão.
+- **`grad_clip`**: redes recorrentes reaplicam os mesmos pesos a cada passo de tempo, então o gradiente pode crescer geometricamente ao longo da janela. Cortar a norma evita a explosão.
+
+`checkpointing.hyperparameter_table(results_dir)` monta a tabela do relatório lendo todos os `metadata.json`; com `only_varied=True` (padrão), omite as colunas constantes. A tabela também é exportada em `reports/tables/tabela_hiperparametros.csv`.
 
 ---
 
-# Roteiro sugerido
+# Tabelas do relatório (`reports/tables/`)
 
-1. Inspecionar a série e constatar a não sobreposição das faixas (seção 1)
-2. Fixar o baseline ingênuo (seção 2)
-3. Rodar o baseline do tutorial e ver que ele não bate o ingênuo (seção 3)
-4. Corrigir a formulação do alvo (seção 4)
-5. Levas manuais: janela, capacidade, LSTM vs GRU vs RNN, OHLCV vs só fechamento (seção 5)
-6. Optuna sobre a região promissora (seção 6)
-7. Classificação de direção + matriz de confusão (seção 7)
-8. Repetir o melhor na base do Kaggle (seção 8)
-9. Tabela de hiperparâmetros e conclusões (seções 9 e 10)
+| Arquivo | Conteúdo | Status |
+|---|---|---|
+| `resumo_regressao.csv` | métricas de todas as execuções de regressão | válido |
+| `tabela_hiperparametros.csv` | hiperparâmetros variados × métricas de teste | válido |
+| `baselines_classicos_alvo_corrigido.csv` | acurácia dos modelos clássicos e da rede, alvo corrigido | válido |
+| `abstencao_alvo_corrigido.csv` | abstenção seletiva com o alvo corrigido | válido |
+| `zona_morta_retorno.csv` | abstenção por zona morta de retorno | válido |
+| `horizonte_previsao.csv` | acurácia por horizonte (1, 3, 5 e 10 dias) | válido |
+| `walk_forward_professor.csv` | walk-forward na base do professor, alvo corrigido | válido (`walk_forward_prof.csv` é uma cópia idêntica) |
+| `gan_real_vs_aumentado.csv` | 10 sementes, real vs. real + sintético | válido |
+| `gan_sanidade.csv` | média e desvio das features reais vs. sintéticas | válido |
+| `gan_curva_treino.csv` | perdas do gerador e do discriminador | válido |
+| `resumo_direcao.csv` | execuções de direção | **parcialmente inválido**: as linhas `dir*`, `feat_*` e `fx_*` são anteriores à correção do bug |
+| `walk_forward.csv`, `walk_forward_final.csv`, `abstencao_wf.csv`, `ensemble_abstencao_wf.csv` | validações anteriores à correção | **inválidos** (alvo com bug, acurácias de 65% a 88%); mantidos apenas como histórico, não usar |
 
-## Uma expectativa honesta sobre os resultados
+---
 
-Séries de preço de ativos financeiros são próximas de um passeio aleatório.
-**Ganhos pequenos sobre o baseline ingênuo são o resultado esperado e
-correto** — e uma acurácia direcional de 55-60% já seria um bom resultado.
+# Expectativa honesta sobre os resultados
 
-Se algum experimento produzir uma previsão quase perfeita, a primeira hipótese
-deve ser vazamento temporal, não sucesso. Os três lugares onde isso costuma
-acontecer, e que este código evita explicitamente: divisão aleatória, scaler
-ajustado no conjunto inteiro, e janelas recortadas antes da divisão.
+Séries de preço de ativos financeiros são próximas de um passeio aleatório. Ganhos pequenos sobre o baseline ingênuo são o resultado esperado e correto. Se algum experimento produzir uma previsão quase perfeita, a primeira hipótese deve ser vazamento temporal ou erro na construção do alvo, não sucesso. Foi exatamente o que aconteceu com os 72–73% de acurácia, que eram um bug.
+
+Os lugares onde isso costuma acontecer, e que este código evita explicitamente: divisão aleatória, scaler ajustado no conjunto inteiro, janelas recortadas antes da divisão e alvo mal construído.
+
+Ideias para continuar: incluir informação externa (volume, notícias, dados on-chain, outros ativos), testar dados intradiários, refazer o Optuna com o alvo corrigido e avaliar com uma métrica de retorno financeiro.
