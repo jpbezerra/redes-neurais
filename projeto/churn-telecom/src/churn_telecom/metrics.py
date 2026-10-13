@@ -96,6 +96,20 @@ def auroc(y_true: np.ndarray, y_score: np.ndarray) -> float:
     return float(auc)
 
 
+def criterio_parada(nome: str, y_true: np.ndarray, y_score: np.ndarray) -> float:
+    """Pontuacao de validacao para early stopping — MENOR e melhor.
+
+    'val_loss'  -> cross-entropy (o criterio usado nas execucoes originais).
+    'val_auroc' -> -AUROC: ranking puro, alinhado ao KS (que so depende da
+                   ordem dos scores) e menos ruidoso que o proprio KS, que
+                   olha um unico ponto da curva."""
+    if nome == "val_loss":
+        return cross_entropy(y_true, y_score)
+    if nome == "val_auroc":
+        return -auroc(y_true, y_score)
+    raise ValueError(f"criterio de parada desconhecido: {nome!r}")
+
+
 def full_report(y_true: np.ndarray, y_score: np.ndarray, threshold: float = 0.5) -> dict:
     """Pacote completo de metricas para um conjunto (val ou teste)."""
     y_pred = (np.asarray(y_score) >= threshold).astype(int)

@@ -1,5 +1,5 @@
 {
-  "model_id": "stab_churn",
+  "model_id": "stab_churn_dim32_depth2_heads4_oversample",
   "framework": "PyTorch (STab — implementacao propria)",
   "timestamp": "2026-10-01T21:57:15.251790",
   "hyperparameters": {

@@ -1,12 +1,12 @@
 {
-  "model_id": "ensemble_top3_val_churn",
+  "model_id": "ensemble_media_prob_top3_validacao_churn",
   "framework": "media de probabilidades",
   "timestamp": "2026-10-01T22:27:45.846094",
   "hyperparameters": {
     "membros": [
-      "tabpfn_churn_sem_duplicatas",
-      "xgb_churn_kaggle",
-      "gb_churn_kaggle"
+      "tabpfn_v2_churn_contexto_original_prior_corrigido",
+      "xgb_churn_baseline_oversample_com_predicoes",
+      "gb_churn_baseline_oversample_com_predicoes"
     ]
   },
   "metrics": {

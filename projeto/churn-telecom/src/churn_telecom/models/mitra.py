@@ -20,6 +20,11 @@ class MitraHyperparams:
     num_gpus: int = 1                 # 0 para CPU (muito lento)
     max_memory_usage_ratio: float = 1.5  # AutoGluon e conservador demais na estimativa de RAM do Mitra
     seed: int = 0
+    # Opcionais. None = nao passa o parametro ao AutoGluon, que usa os padroes
+    # do Mitra (n_estimators=1, fine_tune=True, fine_tune_steps=50) — ou seja,
+    # identico as execucoes ja registradas.
+    n_estimators: int | None = None      # ensemble interno (permutacoes de features/classes)
+    fine_tune_steps: int | None = None
 
 
 def treinar_mitra(X_train: np.ndarray, y_train: np.ndarray, colunas: list[str],
@@ -35,7 +40,9 @@ def treinar_mitra(X_train: np.ndarray, y_train: np.ndarray, colunas: list[str],
                                 eval_metric="roc_auc", path=path)
     preditor.fit(
         df_train,
-        hyperparameters={"MITRA": {"seed": hp.seed}},
+        hyperparameters={"MITRA": {"seed": hp.seed, **{k: v for k, v in
+                                   (("n_estimators", hp.n_estimators), ("fine_tune_steps", hp.fine_tune_steps))
+                                   if v is not None}}},
         time_limit=hp.time_limit_segundos,
         num_gpus=hp.num_gpus,
         ag_args_fit={"ag.max_memory_usage_ratio": hp.max_memory_usage_ratio},

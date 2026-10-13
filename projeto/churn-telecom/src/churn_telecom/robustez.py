@@ -16,10 +16,13 @@ from .metrics import auroc, ks_statistic
 
 
 def avaliar_multiplas_particoes(df, fabricas: dict, seeds=range(5), incluir_ensemble: bool = True,
-                                verbose: bool = True) -> pd.DataFrame:
+                                verbose: bool = True, ensembles: dict | None = None) -> pd.DataFrame:
     """`fabricas`: {nome: fn(Xtr, ytr, Xva, yva, seed) -> (p_val, p_test_fn)}.
     Na pratica cada fabrica recebe os dados e devolve uma funcao `prever(X)`.
-    Retorna DataFrame longo: seed, modelo, ks, auroc (+ linha 'ensemble')."""
+    Retorna DataFrame longo: seed, modelo, ks, auroc (+ linha 'ensemble').
+
+    `ensembles` (opcional): {nome: (lista_de_membros, fn_combina)} — ensembles
+    nomeados sobre subconjuntos das fabricas, alem do 'ensemble_media' geral."""
     linhas = []
     for seed in seeds:
         split = split_three_stage(df, seed=seed)
@@ -44,6 +47,13 @@ def avaliar_multiplas_particoes(df, fabricas: dict, seeds=range(5), incluir_ense
             pm = np.mean(np.vstack(list(preds.values())), axis=0)
             linhas.append({"seed": seed, "modelo": "ensemble_media",
                            "ks": ks_statistic(yte, pm)["ks"], "auroc": auroc(yte, pm)})
+        for nome, (membros, combina) in (ensembles or {}).items():
+            presentes = [m for m in membros if m in preds]
+            if len(presentes) < 2:
+                continue
+            pe = combina([preds[m] for m in presentes])
+            linhas.append({"seed": seed, "modelo": nome,
+                           "ks": ks_statistic(yte, pe)["ks"], "auroc": auroc(yte, pe)})
     return pd.DataFrame(linhas)
 
 

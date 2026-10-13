@@ -7,6 +7,10 @@ com um loop proprio — mini-batch, Adam, gradient clipping e early stopping
 na loss de validacao, o mesmo protocolo de STab/TabKAN/MLP — e o NaN e
 tratado como falha explicita em vez de virar metrica silenciosa.
 
+Opcoes de melhoria (desligadas por padrao — com os valores padrao o treino
+e identico ao das execucoes ja registradas): `early_stop_metric="val_auroc"`,
+`scheduler="plateau"` e `weight_decay` (mesma semantica de `stab.py`).
+
 Imports lazy (torch/kan) — modulo importavel sem as dependencias.
 """
 from __future__ import annotations
@@ -27,6 +31,9 @@ class KANHyperparams:
     patience: int = 8
     max_grad_norm: float = 1.0
     seed: int = 0
+    weight_decay: float = 0.0
+    early_stop_metric: str = "val_loss"    # 'val_loss' | 'val_auroc'
+    scheduler: str = "none"                # 'none' | 'plateau'
 
 
 def treinar_kan(X_train: np.ndarray, y_train: np.ndarray,
@@ -36,14 +43,16 @@ def treinar_kan(X_train: np.ndarray, y_train: np.ndarray,
     import tempfile
     import torch
     from kan import KAN
-    from ..metrics import cross_entropy
+    from ..metrics import auroc, criterio_parada, cross_entropy
 
     torch.manual_seed(hp.seed)
     np.random.seed(hp.seed)
     modelo = KAN(width=[X_train.shape[1], hp.hidden_width, 1], grid=hp.grid, k=hp.k,
                  seed=hp.seed, device=device, save_act=False,
                  ckpt_path=tempfile.mkdtemp(prefix="kan_ckpt_"))
-    opt = torch.optim.Adam(modelo.parameters(), lr=hp.lr)
+    opt = torch.optim.Adam(modelo.parameters(), lr=hp.lr, weight_decay=hp.weight_decay)
+    sched = (torch.optim.lr_scheduler.ReduceLROnPlateau(opt, factor=0.5, patience=max(hp.patience // 3, 1))
+             if hp.scheduler == "plateau" else None)
     bce = torch.nn.BCEWithLogitsLoss()
 
     Xt = torch.from_numpy(X_train.astype(np.float32)).to(device)
@@ -69,9 +78,13 @@ def treinar_kan(X_train: np.ndarray, y_train: np.ndarray,
         val_loss = cross_entropy(y_val, p_val)
         if not np.isfinite(val_loss):
             raise FloatingPointError(f"KAN divergiu (val_loss={val_loss}) na epoca {epoca}")
-        historico.append({"epoch": epoca, "train_loss": soma / len(Xt), "val_loss": val_loss})
-        if val_loss < melhor - 1e-6:
-            melhor, melhor_estado, falhas = val_loss, copy.deepcopy(modelo.state_dict()), 0
+        score = criterio_parada(hp.early_stop_metric, y_val, p_val)
+        historico.append({"epoch": epoca, "train_loss": soma / len(Xt), "val_loss": val_loss,
+                          "val_auroc": auroc(y_val, p_val), "lr": opt.param_groups[0]["lr"]})
+        if sched is not None:
+            sched.step(score)
+        if score < melhor - 1e-6:
+            melhor, melhor_estado, falhas = score, copy.deepcopy(modelo.state_dict()), 0
         else:
             falhas += 1
         if verbose and epoca % 10 == 0:

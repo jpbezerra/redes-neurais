@@ -1,5 +1,5 @@
 {
-  "model_id": "kan_churn",
+  "model_id": "kan_churn_largura8_grid3_k3_oversample",
   "framework": "pykan (KAN)",
   "timestamp": "2026-10-01T22:02:38.101343",
   "hyperparameters": {

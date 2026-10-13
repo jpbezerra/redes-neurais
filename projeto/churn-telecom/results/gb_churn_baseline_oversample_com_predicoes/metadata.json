@@ -1,6 +1,6 @@
 {
-  "model_id": "gb_churn_kaggle",
-  "framework": "scikit-learn/xgboost",
+  "model_id": "gb_churn_baseline_oversample_com_predicoes",
+  "framework": "Scikit-learn (GradientBoostingClassifier)",
   "timestamp": "2026-10-01T22:25:58.420803",
   "hyperparameters": {
     "learning_rate": 0.1,
@@ -27,5 +27,5 @@
   },
   "architecture": {},
   "dataset": {},
-  "notes": "Baseline refeito no Kaggle (para ensemble)."
+  "notes": "Baseline re-treinado na mesma particao dos modelos avancados, para salvar as probabilidades de validacao/teste (predicoes.npz) usadas nos ensembles."
 }

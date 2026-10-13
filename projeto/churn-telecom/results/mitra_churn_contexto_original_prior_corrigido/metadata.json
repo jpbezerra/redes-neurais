@@ -1,5 +1,5 @@
 {
-  "model_id": "mitra_churn_sem_duplicatas",
+  "model_id": "mitra_churn_contexto_original_prior_corrigido",
   "framework": "AutoGluon (extra [mitra])",
   "timestamp": "2026-10-01T22:25:30.055468",
   "hyperparameters": {

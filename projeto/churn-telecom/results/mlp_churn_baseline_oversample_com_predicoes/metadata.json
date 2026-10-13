@@ -1,6 +1,6 @@
 {
-  "model_id": "mlp_churn_kaggle",
-  "framework": "scikit-learn/xgboost",
+  "model_id": "mlp_churn_baseline_oversample_com_predicoes",
+  "framework": "Scikit-learn (MLPClassifier)",
   "timestamp": "2026-10-01T22:25:58.528924",
   "hyperparameters": {
     "hidden_layer_sizes": [
@@ -32,5 +32,5 @@
   },
   "architecture": {},
   "dataset": {},
-  "notes": "Baseline refeito no Kaggle (para ensemble)."
+  "notes": "Baseline re-treinado na mesma particao dos modelos avancados, para salvar as probabilidades de validacao/teste (predicoes.npz) usadas nos ensembles."
 }

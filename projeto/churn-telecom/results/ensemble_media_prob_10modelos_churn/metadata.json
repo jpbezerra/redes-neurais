@@ -1,19 +1,19 @@
 {
-  "model_id": "ensemble_todos_churn",
+  "model_id": "ensemble_media_prob_10modelos_churn",
   "framework": "media de probabilidades",
   "timestamp": "2026-10-01T22:27:45.840318",
   "hyperparameters": {
     "membros": [
-      "gb_churn_kaggle",
-      "kan_churn",
-      "mitra_churn",
-      "mitra_churn_sem_duplicatas",
-      "mlp_churn_kaggle",
-      "stab_churn",
-      "tabkan_churn",
-      "tabpfn_churn",
-      "tabpfn_churn_sem_duplicatas",
-      "xgb_churn_kaggle"
+      "gb_churn_baseline_oversample_com_predicoes",
+      "kan_churn_largura8_grid3_k3_oversample",
+      "mitra_churn_contexto_oversample",
+      "mitra_churn_contexto_original_prior_corrigido",
+      "mlp_churn_baseline_oversample_com_predicoes",
+      "stab_churn_dim32_depth2_heads4_oversample",
+      "tabkan_churn_chebyshev_largura10_grau3_oversample",
+      "tabpfn_v2_churn_contexto_oversample",
+      "tabpfn_v2_churn_contexto_original_prior_corrigido",
+      "xgb_churn_baseline_oversample_com_predicoes"
     ]
   },
   "metrics": {

@@ -1,9 +1,9 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** código da modelos avançados pronto para rodar no Kaggle (5 modelos
-avançados implementados: STab, TabPFN v2, KAN, TabKAN, Mitra). Próxima:
-rodar `notebooks/06_modelos_avancados_kaggle.ipynb` no Kaggle e trazer os resultados
-de volta para `results/`, depois para a consolidação final.
+**Status:** primeira rodada de modelos avançados executada no Kaggle
+(`notebooks/05_modelos_avancados_kaggle.ipynb`, resultados em `results/`).
+Próxima: rodar `notebooks/06_modelos_melhorados.ipynb` no Kaggle (rodada de
+melhorias — ver seção "Modelos avançados — rodada de melhorias").
 
 ## Dataset
 
@@ -158,7 +158,7 @@ cada um dentro de um `try/except` — se um falhar lá (API divergente,
 pacote desatualizado), os outros continuam e o erro fica documentado, em
 vez de travar tudo.
 
-**`notebooks/06_modelos_avancados_kaggle.ipynb`** é o notebook pronto para
+**`notebooks/05_modelos_avancados_kaggle.ipynb`** é o notebook pronto para
 **subir no Kaggle** (gerado aqui, mas não executado aqui — não roda sem
 PyTorch). Segue o mesmo padrão de setup já usado em
 `miniprojeto/mp2-lstm-bitcoin`: clona o repositório do GitHub e instala o
@@ -180,6 +180,37 @@ Checklist de uso:
    plano sem depender da aba ficar aberta.
 5. Baixe a pasta `results/` do commit e cole em `results/` aqui — o
    notebook de consolidação final só lê `results/`, não retreina nada.
+
+## Modelos avançados — rodada de melhorias (para rodar no Kaggle)
+
+`notebooks/06_modelos_melhorados.ipynb` (gerado por
+`scripts/make_modelos_melhorados_notebook.py`). Parte do que a rodada
+anterior mostrou — na avaliação em 5 partições STab e TabKAN lideraram, e
+TabPFN/Mitra só foram bem com contexto sem duplicatas:
+
+- **STab**: embedding por feature (FT-Transformer), parada/escolha da época
+  pelo AUROC de validação, ReduceLROnPlateau, clipping; duas capacidades,
+  a melhor (na validação) re-treinada com 5 sementes (bagging);
+- **TabKAN / KAN**: mesmo critério de parada + scheduler; mais largura
+  (TabKAN) e grade mais fina + weight decay (KAN);
+- **TabPFN v2**: contexto sem duplicatas com 32 estimadores internos;
+- **Mitra**: contexto sem duplicatas, 4 estimadores internos e 100 passos de
+  fine-tuning (o padrão do AutoGluon é 1 estimador e 50 passos);
+- **XGBoost**: configuração regularizada com o nº de árvores escolhido por
+  early stopping no AUROC de validação (sem busca — a busca Optuna anterior
+  sobreajustou à validação);
+- **Ensembles**: média no espaço logit, membros escolhidos pelo AUROC de
+  validação, incluindo as predições já salvas da rodada anterior;
+- **Avaliação robusta pareada** (5 partições) de original vs. melhorado.
+
+**Auditoria:** nada é reexecutado nem sobrescrito. As melhorias são opções
+novas nos wrappers de `src/churn_telecom/models/`, com padrões que
+reproduzem exatamente a rodada anterior; cada experimento grava um
+`model_id` novo e o notebook aborta se o ID já existir em `results/`. Os
+resultados vão para a branch `results/churn-modelos-melhorados`.
+
+Os IDs da rodada anterior foram renomeados para nomes descritivos (sem
+"kaggle"/"leva1"); o mapa antigo → novo está em `results/RENOMEACOES.md`.
 
 ## Pendência de limpeza (ação manual sua)
 
@@ -221,7 +252,7 @@ python3 scripts/engenharia_features.py             # testa features derivadas (i
 python3 scripts/make_engenharia_features_notebook.py        # gera notebooks/04_feature_engineering.ipynb
 python3 scripts/smoke_test_modelos_avancados.py           # smoke test de instalação dos modelos avançados
 python3 scripts/make_smoke_test_notebook.py        # gera notebooks/05_modelos_avancados_smoke_test.ipynb
-python3 scripts/make_kaggle_notebook.py # gera notebooks/06_modelos_avancados_kaggle.ipynb (subir no Kaggle, não rodar aqui)
+python3 scripts/make_kaggle_notebook.py # gera notebooks/05_modelos_avancados_kaggle.ipynb (subir no Kaggle, não rodar aqui)
 python3 src/churn_telecom/metrics.py          # self-test do KS
 
 # No Kaggle (apos subir os datasets, ver secao acima):

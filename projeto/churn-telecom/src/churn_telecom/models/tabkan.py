@@ -11,6 +11,10 @@ proprio com Adam + BCEWithLogits + early stopping na validacao — o
 `.fit()` nativo do pacote usa L-BFGS em full-batch e reporta sqrt(loss),
 o que nao combina com a metrica de classificacao usada no resto do projeto.
 
+Opcoes de melhoria (desligadas por padrao — com os valores padrao o treino
+e identico ao das execucoes ja registradas): `early_stop_metric="val_auroc"`,
+`scheduler="plateau"` e `max_grad_norm` (mesma semantica de `stab.py`).
+
 Imports de torch/tabkan sao lazy — modulo importavel sem as dependencias.
 """
 from __future__ import annotations
@@ -30,6 +34,9 @@ class TabKANHyperparams:
     max_epochs: int = 200
     patience: int = 10
     seed: int = 0
+    early_stop_metric: str = "val_loss"    # 'val_loss' | 'val_auroc'
+    scheduler: str = "none"                # 'none' | 'plateau'
+    max_grad_norm: float | None = None
 
 
 def treinar_tabkan(X_train: np.ndarray, y_train: np.ndarray,
@@ -38,12 +45,15 @@ def treinar_tabkan(X_train: np.ndarray, y_train: np.ndarray,
     import copy
     import torch
     from tabkan import ChebyshevKAN
+    from ..metrics import auroc, criterio_parada
 
     torch.manual_seed(hp.seed)
     np.random.seed(hp.seed)
     modelo = ChebyshevKAN(layers=[X_train.shape[1], hp.hidden_width, 1],
                           orders=[hp.degree]).to(device)
     opt = torch.optim.Adam(modelo.parameters(), lr=hp.lr, weight_decay=hp.weight_decay)
+    sched = (torch.optim.lr_scheduler.ReduceLROnPlateau(opt, factor=0.5, patience=max(hp.patience // 3, 1))
+             if hp.scheduler == "plateau" else None)
     loss_fn = torch.nn.BCEWithLogitsLoss()
 
     Xt = torch.from_numpy(X_train.astype(np.float32)).to(device)
@@ -61,14 +71,23 @@ def treinar_tabkan(X_train: np.ndarray, y_train: np.ndarray,
             opt.zero_grad()
             loss = loss_fn(modelo(Xt[idx]), yt[idx])
             loss.backward()
+            if hp.max_grad_norm is not None:
+                torch.nn.utils.clip_grad_norm_(modelo.parameters(), hp.max_grad_norm)
             opt.step()
             soma += loss.item() * len(idx)
         modelo.eval()
         with torch.no_grad():
-            val_loss = loss_fn(modelo(Xv), yv).item()
-        historico.append({"epoca": epoca, "train_loss": soma / len(Xt), "val_loss": val_loss})
-        if val_loss < melhor - 1e-6:
-            melhor, melhor_estado, falhas = val_loss, copy.deepcopy(modelo.state_dict()), 0
+            logit_val = modelo(Xv)
+            val_loss = loss_fn(logit_val, yv).item()
+            p_val = torch.sigmoid(logit_val).cpu().numpy().reshape(-1)
+        # val_loss continua vindo da BCE sobre logits (como nas execucoes originais)
+        score = val_loss if hp.early_stop_metric == "val_loss" else criterio_parada(hp.early_stop_metric, y_val, p_val)
+        historico.append({"epoca": epoca, "train_loss": soma / len(Xt), "val_loss": val_loss,
+                          "val_auroc": auroc(y_val, p_val), "lr": opt.param_groups[0]["lr"]})
+        if sched is not None:
+            sched.step(score)
+        if score < melhor - 1e-6:
+            melhor, melhor_estado, falhas = score, copy.deepcopy(modelo.state_dict()), 0
         else:
             falhas += 1
         if verbose and epoca % 10 == 0:

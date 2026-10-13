@@ -1,5 +1,5 @@
 {
-  "model_id": "tabpfn_churn",
+  "model_id": "tabpfn_v2_churn_contexto_oversample",
   "framework": "TabPFN v2",
   "timestamp": "2026-10-01T21:57:36.166798",
   "hyperparameters": {

@@ -24,6 +24,16 @@ def media_probabilidades(lista: list[np.ndarray]) -> np.ndarray:
     return np.mean(np.vstack(lista), axis=0)
 
 
+def media_logits(lista: list[np.ndarray]) -> np.ndarray:
+    """Media no espaco logit (media geometrica das odds): um modelo muito
+    confiante pesa mais, e modelos com escalas de probabilidade diferentes
+    (ex.: TabPFN com prior corrigido vs. redes treinadas balanceadas) nao
+    sao achatados como na media de probabilidades."""
+    p = np.clip(np.vstack(lista).astype(float), 1e-9, 1 - 1e-9)
+    z = np.mean(np.log(p / (1 - p)), axis=0)
+    return 1 / (1 + np.exp(-z))
+
+
 def salvar_predicoes(results_dir: str | Path, model_id: str, p_val, p_test) -> Path:
     """Grava `predicoes.npz` (probabilidades de validacao e teste) dentro de
     results/{model_id}/ — pequeno (poucos KB), vai junto no push."""
