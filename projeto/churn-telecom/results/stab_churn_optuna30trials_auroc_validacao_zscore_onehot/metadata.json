@@ -1,0 +1,61 @@
+{
+  "model_id": "stab_churn_optuna30trials_auroc_validacao_zscore_onehot",
+  "framework": "PyTorch (STab — implementacao propria) + Optuna",
+  "timestamp": "2026-10-15T18:07:52.304981",
+  "hyperparameters": {
+    "dim": 64,
+    "depth": 2,
+    "heads": 2,
+    "attn_dropout": 0.08948469778680923,
+    "ff_dropout": 0.17098947321037947,
+    "lr": 0.0007460891331053295,
+    "weight_decay": 5.28415741238381e-05,
+    "batch_size": 64,
+    "max_epochs": 150,
+    "patience": 15,
+    "seed": 0,
+    "embedding": "compartilhada",
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau",
+    "max_grad_norm": 1.0,
+    "pos_weight": null
+  },
+  "metrics": {
+    "ks": 0.4967973506256569,
+    "mse": 0.1797561713686451,
+    "cross_entropy": 0.5259630884782681,
+    "auroc": 0.8333986092106742,
+    "threshold": 0.5,
+    "tp": 380,
+    "tn": 875,
+    "fp": 418,
+    "fn": 88,
+    "precision": 0.47619047619047616,
+    "recall": 0.811965811965812,
+    "f1": 0.6003159557661928
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5610510046367851,
+      "auroc_validacao": 0.8540866894882815
+    },
+    "codificacao": "zscore_onehot",
+    "n_trials": 30,
+    "objetivo_busca": "auroc_validacao",
+    "melhor_trial": 7,
+    "importancia_parametros": {
+      "lr": 0.42373927822069796,
+      "weight_decay": 0.2561510820314871,
+      "batch_size": 0.1072263211680207,
+      "depth": 0.08914980849746579,
+      "dim": 0.049754506287189755,
+      "heads": 0.029924372399199223,
+      "attn_dropout": 0.02441639109529136,
+      "ff_dropout": 0.011318532023724636,
+      "scheduler": 0.006674987602019482,
+      "embedding": 0.0016447206749039159
+    }
+  },
+  "notes": "Melhor de 30 trials Optuna (TPE, objetivo AUROC de validacao), codificacao zscore_onehot."
+}

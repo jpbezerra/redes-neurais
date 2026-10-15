@@ -1,0 +1,6 @@
+parametro,importancia
+subsample,0.6373849646878196
+learning_rate,0.1394596765490069
+n_estimators,0.12020025294983627
+max_depth,0.09713678876222079
+min_samples_leaf,0.005818317051116533
