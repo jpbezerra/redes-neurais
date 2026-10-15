@@ -1,0 +1,54 @@
+{
+  "model_id": "kan_churn_optuna30trials_auroc_validacao_zscore_onehot",
+  "framework": "pykan (KAN) + Optuna",
+  "timestamp": "2026-10-15T20:05:19.821730",
+  "hyperparameters": {
+    "hidden_width": 6,
+    "grid": 6,
+    "k": 4,
+    "lr": 0.008837109766646733,
+    "batch_size": 128,
+    "max_epochs": 150,
+    "patience": 15,
+    "max_grad_norm": 1.0,
+    "seed": 0,
+    "weight_decay": 9.282830101382836e-05,
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau"
+  },
+  "metrics": {
+    "ks": 0.5079818351280069,
+    "mse": 0.177119191289405,
+    "cross_entropy": 0.5248259042245782,
+    "auroc": 0.8299662548502456,
+    "threshold": 0.5,
+    "tp": 361,
+    "tn": 933,
+    "fp": 360,
+    "fn": 107,
+    "precision": 0.5006934812760055,
+    "recall": 0.7713675213675214,
+    "f1": 0.6072329688814129
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5502318392581144,
+      "auroc_validacao": 0.8522180005685497
+    },
+    "codificacao": "zscore_onehot",
+    "n_trials": 30,
+    "objetivo_busca": "auroc_validacao",
+    "melhor_trial": 21,
+    "importancia_parametros": {
+      "hidden_width": 0.31375084011053994,
+      "k": 0.22064813039947576,
+      "lr": 0.20223271132528825,
+      "grid": 0.16592402901519185,
+      "weight_decay": 0.08290647697724365,
+      "batch_size": 0.0115606043496051,
+      "scheduler": 0.0029772078226553674
+    }
+  },
+  "notes": "Melhor de 30 trials Optuna (TPE, objetivo AUROC de validacao), codificacao zscore_onehot."
+}

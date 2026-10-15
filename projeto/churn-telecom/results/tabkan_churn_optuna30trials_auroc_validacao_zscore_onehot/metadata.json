@@ -1,0 +1,52 @@
+{
+  "model_id": "tabkan_churn_optuna30trials_auroc_validacao_zscore_onehot",
+  "framework": "tabkan (ChebyshevKAN) + Optuna",
+  "timestamp": "2026-10-15T18:13:50.747744",
+  "hyperparameters": {
+    "hidden_width": 60,
+    "degree": 4,
+    "lr": 0.0026414161232816338,
+    "weight_decay": 2.5447894346134837e-06,
+    "batch_size": 32,
+    "max_epochs": 300,
+    "patience": 15,
+    "seed": 0,
+    "early_stop_metric": "val_auroc",
+    "scheduler": "none",
+    "max_grad_norm": 1.0
+  },
+  "metrics": {
+    "ks": 0.5065242826263707,
+    "mse": 0.15533747675992057,
+    "cross_entropy": 0.4639604644489645,
+    "auroc": 0.8360873143355741,
+    "threshold": 0.5,
+    "tp": 333,
+    "tn": 1014,
+    "fp": 279,
+    "fn": 135,
+    "precision": 0.5441176470588235,
+    "recall": 0.7115384615384616,
+    "f1": 0.6166666666666666
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5525502318392581,
+      "auroc_validacao": 0.8491817543339967
+    },
+    "codificacao": "zscore_onehot",
+    "n_trials": 30,
+    "objetivo_busca": "auroc_validacao",
+    "melhor_trial": 14,
+    "importancia_parametros": {
+      "weight_decay": 0.4972113068128279,
+      "lr": 0.29852198486653864,
+      "degree": 0.11388460523714761,
+      "hidden_width": 0.07239506726126303,
+      "scheduler": 0.01720175096935738,
+      "batch_size": 0.0007852848528655006
+    }
+  },
+  "notes": "Melhor de 30 trials Optuna (TPE, objetivo AUROC de validacao), codificacao zscore_onehot."
+}

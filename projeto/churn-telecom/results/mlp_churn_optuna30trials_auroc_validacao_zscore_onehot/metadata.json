@@ -1,0 +1,55 @@
+{
+  "model_id": "mlp_churn_optuna30trials_auroc_validacao_zscore_onehot",
+  "framework": "Scikit-learn (MLPClassifier) + Optuna",
+  "timestamp": "2026-10-15T17:57:59.474477",
+  "hyperparameters": {
+    "hidden_layer_sizes": [
+      116,
+      116
+    ],
+    "activation": "relu",
+    "solver": "adam",
+    "learning_rate_init": 0.0002646706661774509,
+    "alpha": 0.0020898235166154863,
+    "batch_size": 32,
+    "max_epochs": 10000,
+    "patience": 10,
+    "loss_metric": "cross_entropy",
+    "seed": 0,
+    "early_stop_metric": "val_auroc"
+  },
+  "metrics": {
+    "ks": 0.5050171535090329,
+    "mse": 0.1658199479110811,
+    "cross_entropy": 0.49309264245921275,
+    "auroc": 0.8352098082376505,
+    "threshold": 0.5,
+    "tp": 351,
+    "tn": 973,
+    "fp": 320,
+    "fn": 117,
+    "precision": 0.5230998509687034,
+    "recall": 0.75,
+    "f1": 0.6163301141352063
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5409582689335395,
+      "auroc_validacao": 0.8473518844554226
+    },
+    "codificacao": "zscore_onehot",
+    "n_trials": 30,
+    "objetivo_busca": "auroc_validacao",
+    "melhor_trial": 27,
+    "importancia_parametros": {
+      "n_camadas": 0.3925461665270236,
+      "alpha": 0.2901923121836188,
+      "largura": 0.18049654637773146,
+      "batch_size": 0.08349726049238095,
+      "learning_rate_init": 0.04781308728870012,
+      "activation": 0.005454627130545074
+    }
+  },
+  "notes": "Melhor de 30 trials Optuna (TPE, objetivo AUROC de validacao), codificacao zscore_onehot."
+}

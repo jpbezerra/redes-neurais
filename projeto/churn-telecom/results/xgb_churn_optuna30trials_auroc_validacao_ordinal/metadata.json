@@ -1,0 +1,52 @@
+{
+  "model_id": "xgb_churn_optuna30trials_auroc_validacao_ordinal",
+  "framework": "XGBoost + Optuna",
+  "timestamp": "2026-10-15T17:59:10.156829",
+  "hyperparameters": {
+    "learning_rate": 0.015640444791549198,
+    "n_estimators": 2000,
+    "max_depth": 4,
+    "subsample": 0.5134001218541187,
+    "scale_pos_weight": 1.0,
+    "seed": 0,
+    "colsample_bytree": 0.5099376320529461,
+    "min_child_weight": 9.662012411244048,
+    "reg_lambda": 0.0074359514986456175,
+    "eval_metric": "auc",
+    "early_stopping_rounds": 100
+  },
+  "metrics": {
+    "ks": 0.5179021159299582,
+    "mse": 0.16211155074813788,
+    "cross_entropy": 0.4879827990096822,
+    "auroc": 0.8378737250546995,
+    "threshold": 0.5,
+    "tp": 351,
+    "tn": 959,
+    "fp": 334,
+    "fn": 117,
+    "precision": 0.5124087591240876,
+    "recall": 0.75,
+    "f1": 0.608846487424111
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5602782071097372,
+      "auroc_validacao": 0.8552007959695085
+    },
+    "codificacao": "ordinal",
+    "n_trials": 30,
+    "objetivo_busca": "auroc_validacao",
+    "melhor_trial": 23,
+    "importancia_parametros": {
+      "max_depth": 0.649808644787445,
+      "colsample_bytree": 0.14749451049841858,
+      "subsample": 0.09240661921134652,
+      "learning_rate": 0.08638554613219032,
+      "reg_lambda": 0.013620553539427314,
+      "min_child_weight": 0.010284125831172228
+    }
+  },
+  "notes": "Melhor de 30 trials Optuna (TPE, objetivo AUROC de validacao), codificacao ordinal."
+}
