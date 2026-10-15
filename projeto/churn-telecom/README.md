@@ -232,12 +232,119 @@ TabPFN/Mitra ficam fora da busca (pré-treinados, sem hiperparâmetros de treino
 Num novo "Run All", o notebook pula as etapas já versionadas (rodada 2 e
 buscas já salvas); os resultados vão para a branch `results/churn-otimizacao-optuna`.
 
-## Pendência de limpeza (ação manual sua)
+### Rodada 4 — o que influenciou de verdade (células no fim do notebook 06)
 
-`results/_to_delete/` tem arquivos de um estudo Optuna com SQLite que
-corrompeu no mount de rede (ver nota acima) — não consigo apagar arquivos
-nesta pasta por padrão. Pode deletar essa subpasta quando quiser, ela não é
-referenciada por nenhum código.
+A rodada 3 deu ganhos pequenos, e os trials variam pouco (TabKAN/KAN: ~0.003 de
+AUROC), então a importância fANOVA sozinha pode estar repartindo ruído. A
+rodada 4 mede cada efeito contra a régua certa:
+`ruido_semente_vs_hiperparametros.csv/.png` (variação entre trials vs. só por
+semente), TabPFN com/sem duplicatas em 5 partições e
+`fatores_que_influenciam_ks.csv/.png` — todos os fatores testados nas rodadas,
+com diferença de KS **pareada** por partição e IC 95% (t, 4 g.l.).
+
+## Pontos de melhoria possíveis
+
+Levantamento do que ainda pode ser feito, a partir dos resultados das rodadas
+1–4 e de uma pesquisa na literatura. Nada desta seção foi implementado
+ainda.
+
+### Onde estamos (o teto atual)
+
+- Todos os modelos convergem para **AUROC ≈ 0.84 e KS ≈ 0.53** (5 partições),
+  de árvores a transformers e modelos pré-treinados (TabPFN, Mitra).
+- **Acurácia no teste** (distribuição real, 73,4% de não-churn):
+  - **73,4%** chutando sempre "não cancela";
+  - **71–78%** no limiar 0.5 — baixo de propósito, porque o treino
+    balanceado faz os modelos marcarem muito churn (recall ~75%);
+  - **~80,5%** com o limiar escolhido na validação para maximizar acurácia
+    (MLP Optuna, Mitra, TabKAN e ensembles empatados);
+  - **80,6%** de teto escolhendo o limiar no próprio teste (só referência).
+- Quinze configurações diferentes empatando no mesmo lugar indicam que o
+  limite está na **informação das 19 variáveis**, não na escolha do modelo.
+  Como o projeto se mantém no dataset do enunciado (ver "Dados externos"),
+  as melhorias abaixo trabalham dentro desse limite.
+
+### Cuidado com os 92–96% citados para este dataset
+
+Resultados muito acima de ~82% de acurácia neste problema costumam ter
+uma destas origens, e nenhuma é um modelo melhor no mesmo problema:
+
+1. **Oversampling (SMOTE etc.) antes de separar o teste.** As linhas
+   sintéticas são geradas a partir de linhas que vão parar no teste, e o
+   modelo é avaliado em quase-cópias do que viu no treino. Em uma
+   reanálise de um estudo médico, a acurácia caiu de ~99% para ~80% ao
+   restringir o SMOTE ao treino
+   ([PMC12842384](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12842384/));
+   o efeito é reproduzido em experimentos controlados
+   ([arXiv 2401.13796](https://arxiv.org/pdf/2401.13796)) e documentado em
+   vários estudos publicados
+   ([Princeton](https://reproducible.cs.princeton.edu/predicting-hits.html)).
+   Trabalhos com 96% ([TEM Journal](https://temjournal.com/content/133/TEMJournalAugust2024_1927_1936.pdf))
+   e 92,8% ([UMN](https://kc.umn.ac.id/id/eprint/47375/)) usam SMOTE sem
+   deixar claro onde ele foi aplicado. Este pipeline aplica oversampling
+   **só em treino/validação**, com o teste sempre na distribuição real.
+2. **Versão expandida do dataset da IBM com colunas que vazam o alvo**
+   ([11.1.3](https://community.ibm.com/community/user/blogs/steven-macko/2019/07/11/telco-customer-churn-1113)):
+   ela traz, entre outras, o **Churn Score** (saída de um modelo da IBM
+   construído com os fatores de churn), Satisfaction Score, CLTV e Churn
+   Reason (só preenchido para quem saiu). Com essas colunas o modelo
+   praticamente recebe a resposta.
+3. **Kaggle Playground (março/2026)**: vencida com um stack de 4 níveis e
+   150 modelos ([NVIDIA](https://developer.nvidia.com/blog/winning-a-kaggle-competition-with-generative-ai-assisted-coding/)),
+   com soluções simples em AUROC ~0.91
+   ([Hugging Face](https://huggingface.co/NathanSJSU01/xgboost_churn_detection)).
+   Mas as séries Playground usam dados **gerados sinteticamente** a partir
+   do original, maiores e com outra distribuição — não comparável.
+
+### Melhorias com ganho esperado (da maior para a menor evidência)
+
+| Técnica | Ganho esperado | Observação |
+|---|---|---|
+| **Ajustar o limiar de decisão** (escolhido na validação) | **+3 pontos de acurácia** (77% → 80,5%) | Já medido nas predições salvas. Maior alavanca de acurácia disponível; não muda KS/AUROC. Basta reportar a acurácia neste limiar ao lado do KS |
+| **Stacking** (meta-modelo treinado nas predições fora da amostra dos outros) | +0.002–0.005 de AUROC | É o que vence competições, mas exige modelos que erram em clientes diferentes. Os nossos são muito correlacionados: a média em ensemble não ganhou nada no teste pareado (+0.0001) |
+| **Interações explícitas** (contrato × forma de pagamento, fibra × sem suporte técnico, etc.) | pequeno | Ajudam principalmente as redes; GB/XGBoost já aprendem interações sozinhos. As 3 features derivadas já testadas (`charges_per_tenure`, `n_servicos_adicionais`, `tenure_bucket`) não ajudaram |
+
+### Ideias avaliadas, com baixa expectativa de ganho
+
+- **Um modelo especializado em churn=Não e outro em churn=Sim, combinados.**
+  Num problema binário, um classificador que separa Não de Sim já é bom nas
+  duas classes; treinar cada classe separadamente (modelos generativos ou de
+  uma classe só) costuma ser pior que o discriminativo direto. As variantes
+  que fazem sentido são:
+  - **especialistas por segmento** (ex.: um modelo por tipo de contrato — o
+    churn é muito diferente entre mensal e bianual), mas árvores já dividem
+    por contrato sozinhas;
+  - **cascata** (o 1º modelo descarta os casos fáceis, o 2º decide os
+    difíceis), que raramente supera um GBDT em dados deste tamanho — árvores
+    continuam o estado da arte em dados tabulares médios (~10 mil linhas;
+    [Grinsztajn et al., NeurIPS 2022](https://arxiv.org/abs/2207.08815v1)).
+- **Dados artificiais** (SMOTE, CTGAN, TabDDPM, aplicados só no treino).
+  Na literatura, dado sintético raramente supera o real, o SMOTE é um
+  baseline difícil de bater ([TabDDPM](https://arxiv.org/pdf/2209.15421)) e
+  o CTGAN gera dados de baixa qualidade em avaliação sistemática
+  ([arXiv 2402.06806](https://arxiv.org/pdf/2402.06806)). Gerar linhas novas
+  não cria informação que as variáveis não têm. O mini-projeto 2
+  (`03_gan_augmentation`) já explorou GAN para aumento de dados.
+- **Mais busca de hiperparâmetros.** A rodada 4 mostrou que os ganhos da
+  busca são da ordem do ruído de semente (exceção: GB, +0.010 de KS).
+
+### Dados externos — considerado e descartado
+
+Os clientes são **fictícios** (a IBM descreve o dataset como uma
+[empresa de telecom fictícia com 7.043 clientes na Califórnia](https://www.ibm.com/docs/SSEP7J_11.1.0/com.ibm.swg.ba.cognos.ig_smples.doc/c_telco_dm_sam.html)),
+então não há base externa real com esses clientes. A única opção seria a
+versão expandida da própria IBM (idade, indicações, uso de dados, CEP etc.,
+descartando as colunas que vazam o alvo). **Decisão: não usar** — mudaria o
+problema em relação ao dataset de 21 colunas do enunciado, e a comparação
+com o resto do projeto deixaria de valer.
+
+### Experimentos propostos (próxima rodada no notebook 06)
+
+1. Acurácia com limiar escolhido na validação, reportada para todos os modelos.
+2. Stacking e especialistas por segmento, no procedimento pareado de 5 partições.
+3. **Demonstração controlada do vazamento**: o mesmo modelo com SMOTE antes da
+   separação (com vazamento) vs. depois (correto), mostrando de onde vêm os
+   "95%".
 
 ## Estrutura
 
