@@ -16,23 +16,30 @@ from .metrics import auroc, ks_statistic
 
 
 def avaliar_multiplas_particoes(df, fabricas: dict, seeds=range(5), incluir_ensemble: bool = True,
-                                verbose: bool = True, ensembles: dict | None = None) -> pd.DataFrame:
+                                verbose: bool = True, ensembles: dict | None = None,
+                                modos: dict | None = None) -> pd.DataFrame:
     """`fabricas`: {nome: fn(Xtr, ytr, Xva, yva, seed) -> (p_val, p_test_fn)}.
     Na pratica cada fabrica recebe os dados e devolve uma funcao `prever(X)`.
     Retorna DataFrame longo: seed, modelo, ks, auroc (+ linha 'ensemble').
 
     `ensembles` (opcional): {nome: (lista_de_membros, fn_combina)} — ensembles
-    nomeados sobre subconjuntos das fabricas, alem do 'ensemble_media' geral."""
+    nomeados sobre subconjuntos das fabricas, alem do 'ensemble_media' geral.
+
+    `modos` (opcional): {nome_fabrica: 'arvores'} — codificacao do
+    Preprocessor por fabrica (padrao 'neural'), ajustada em cada particao."""
     linhas = []
     for seed in seeds:
         split = split_three_stage(df, seed=seed)
         assert_sem_vazamento(split)
         tr, va, te = df.iloc[split.train_idx], df.iloc[split.val_idx], df.iloc[split.test_idx]
-        prep = Preprocessor().fit(tr)
-        Xtr, _ = prep.transform(tr); Xva, _ = prep.transform(va); Xte, _ = prep.transform(te)
+        X = {}
+        for modo in {"neural", *(modos or {}).values()}:
+            prep = Preprocessor(modo=modo).fit(tr)
+            X[modo] = tuple(prep.transform(d)[0] for d in (tr, va, te))
         ytr, yva, yte = prep.transform_target(tr), prep.transform_target(va), prep.transform_target(te)
         preds = {}
         for nome, fab in fabricas.items():
+            Xtr, Xva, Xte = X[(modos or {}).get(nome, "neural")]
             try:
                 prever = fab(Xtr, ytr, Xva, yva, seed)
                 preds[nome] = prever(Xte)

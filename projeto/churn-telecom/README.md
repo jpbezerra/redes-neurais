@@ -212,6 +212,26 @@ resultados vão para a branch `results/churn-modelos-melhorados`.
 Os IDs da rodada anterior foram renomeados para nomes descritivos (sem
 "kaggle"/"leva1"); o mapa antigo → novo está em `results/RENOMEACOES.md`.
 
+### Rodada 3 — Optuna com procedimento único (células no fim do notebook 06)
+
+A rodada 2 não trouxe ganho mensurável (5 partições: tudo entre KS 0.528 e
+0.535, desvio ≈ 0.015). A rodada 3 aplica o **mesmo procedimento** a MLP, GB,
+XGBoost, STab, TabKAN e KAN: Optuna (TPE, mesma semente, mesmo nº de trials),
+objetivo AUROC de validação, early stopping pelo mesmo critério nas redes,
+teste usado uma vez. Saídas: importância de cada hiperparâmetro (fANOVA,
+`reports/tables/optuna_importancia_*.csv` +
+`reports/figures/optuna_importancia_hiperparametros.png`) e avaliação em 5
+partições padrão vs. Optuna (`reports/tables/efeito_otimizacao_e_codificacao.csv`).
+
+**Codificação por família:** GB/XGBoost usam `Preprocessor(modo="arvores")`
+(numéricas na escala original + código ordinal por categórica, 19 colunas);
+as redes seguem com z-score + one-hot (40 colunas). As rodadas 1–2 usaram
+one-hot também nas árvores — a avaliação robusta mede esse efeito isolado.
+TabPFN/Mitra ficam fora da busca (pré-treinados, sem hiperparâmetros de treino).
+
+Num novo "Run All", o notebook pula as etapas já versionadas (rodada 2 e
+buscas já salvas); os resultados vão para a branch `results/churn-otimizacao-optuna`.
+
 ## Pendência de limpeza (ação manual sua)
 
 `results/_to_delete/` tem arquivos de um estudo Optuna com SQLite que

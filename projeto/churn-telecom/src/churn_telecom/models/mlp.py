@@ -25,7 +25,7 @@ from dataclasses import dataclass, field
 import numpy as np
 from sklearn.neural_network import MLPClassifier
 
-from ..metrics import cross_entropy, mse
+from ..metrics import criterio_parada, cross_entropy, mse
 
 
 @dataclass
@@ -40,6 +40,7 @@ class MLPHyperparams:
     patience: int = 10                               # sobe para 20 se parar cedo demais
     loss_metric: str = "cross_entropy"               # 'cross_entropy' | 'mse' — comparado na baselines
     seed: int = 0
+    early_stop_metric: str | None = None             # None = usa loss_metric (execucoes originais) | 'val_auroc'
 
 
 def treinar_mlp(X_train: np.ndarray, y_train: np.ndarray,
@@ -79,9 +80,10 @@ def treinar_mlp(X_train: np.ndarray, y_train: np.ndarray,
         val_loss = loss_fn(y_val, p_val)
 
         historico.append({"epoch": epoca, "train_loss": train_loss, "val_loss": val_loss})
+        score = val_loss if hp.early_stop_metric is None else criterio_parada(hp.early_stop_metric, y_val, p_val)
 
-        if val_loss < melhor_val_loss - 1e-6:
-            melhor_val_loss = val_loss
+        if score < melhor_val_loss - 1e-6:
+            melhor_val_loss = score
             melhor_estado = {
                 "coefs_": [c.copy() for c in modelo.coefs_],
                 "intercepts_": [b.copy() for b in modelo.intercepts_],

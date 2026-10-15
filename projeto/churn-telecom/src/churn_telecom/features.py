@@ -70,12 +70,23 @@ def _computa_features_derivadas(base: pd.DataFrame) -> pd.DataFrame:
 class Preprocessor:
     """Scaler (media/desvio) ajustado so no treino; listas de categorias
     dos one-hots tambem fixadas no treino (categoria nova em val/teste cai
-    em todas as colunas = 0, nunca quebra o pipeline nem cria coluna nova)."""
+    em todas as colunas = 0, nunca quebra o pipeline nem cria coluna nova).
+
+    `modo`:
+    - 'neural' (padrao): z-score nas numericas + one-hot nas categoricas —
+      redes precisam de entradas na mesma escala e sem ordem artificial.
+    - 'arvores': numericas na escala original (arvores sao invariantes a
+      transformacoes monotonicas, normalizar nao muda nada) e cada
+      categorica vira UMA coluna de codigo ordinal (niveis do treino em
+      ordem alfabetica; nivel nao visto -> -1). O one-hot fragmenta a
+      variavel em varias colunas binarias esparsas, e cada arvore so
+      consegue usar um nivel por divisao."""
     numeric_mean_: pd.Series | None = None
     numeric_std_: pd.Series | None = None
     cat_levels_: dict[str, list[str]] = field(default_factory=dict)
     binary_maps_: dict[str, dict[str, int]] = field(default_factory=dict)
     extra_features: tuple[str, ...] = ()  # subconjunto de FEATURES_DERIVADAS_DISPONIVEIS
+    modo: str = "neural"                  # 'neural' | 'arvores'
     charges_per_tenure_mean_: float | None = None
     charges_per_tenure_std_: float | None = None
     fitted: bool = False
@@ -114,7 +125,9 @@ class Preprocessor:
             raise RuntimeError("Preprocessor.fit() precisa ser chamado antes de transform().")
         base = self._prepare_base(df)
 
-        numeric = (base[NUMERIC_COLS] - self.numeric_mean_) / self.numeric_std_
+        numeric = base[NUMERIC_COLS]
+        if self.modo == "neural":
+            numeric = (numeric - self.numeric_mean_) / self.numeric_std_
         colunas = list(NUMERIC_COLS)
         blocos = [numeric.to_numpy(dtype=np.float64)]
 
@@ -128,6 +141,11 @@ class Preprocessor:
 
         for col in MULTI_CAT_COLS:
             niveis = self.cat_levels_[col]
+            if self.modo == "arvores":
+                codigos = base[col].map({n: i for i, n in enumerate(niveis)}).fillna(-1)
+                blocos.append(codigos.to_numpy(dtype=np.float64).reshape(-1, 1))
+                colunas.append(f"{col}__ord")
+                continue
             for nivel in niveis:
                 blocos.append((base[col] == nivel).to_numpy(dtype=np.float64).reshape(-1, 1))
                 colunas.append(f"{col}__{nivel}")
