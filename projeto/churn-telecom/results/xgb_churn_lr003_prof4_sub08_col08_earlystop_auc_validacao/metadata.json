@@ -1,0 +1,41 @@
+{
+  "model_id": "xgb_churn_lr003_prof4_sub08_col08_earlystop_auc_validacao",
+  "framework": "XGBoost",
+  "timestamp": "2026-10-15T15:42:25.090836",
+  "hyperparameters": {
+    "learning_rate": 0.03,
+    "n_estimators": 2000,
+    "max_depth": 4,
+    "subsample": 0.8,
+    "scale_pos_weight": 1.0,
+    "seed": 0,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 5,
+    "reg_lambda": 5.0,
+    "eval_metric": "auc",
+    "early_stopping_rounds": 100,
+    "n_arvores_escolhidas": 118
+  },
+  "metrics": {
+    "ks": 0.5144962024312372,
+    "mse": 0.16100600068828602,
+    "cross_entropy": 0.4816743600170933,
+    "auroc": 0.8371887414810849,
+    "threshold": 0.5,
+    "tp": 354,
+    "tn": 967,
+    "fp": 326,
+    "fn": 114,
+    "precision": 0.5205882352941177,
+    "recall": 0.7564102564102564,
+    "f1": 0.6167247386759583
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5502318392581144,
+      "auroc_validacao": 0.8531693656849232
+    }
+  },
+  "notes": "XGBoost regularizado; numero de arvores por early stopping no AUROC de validacao."
+}

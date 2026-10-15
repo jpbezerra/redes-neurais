@@ -1,0 +1,50 @@
+{
+  "model_id": "stab_churn_dim32_depth2_heads4_embfeature_parada_auroc_plateau",
+  "framework": "PyTorch (STab — implementacao propria)",
+  "timestamp": "2026-10-15T14:10:24.008434",
+  "hyperparameters": {
+    "dim": 32,
+    "depth": 2,
+    "heads": 4,
+    "attn_dropout": 0.1,
+    "ff_dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 64,
+    "max_epochs": 200,
+    "patience": 20,
+    "seed": 0,
+    "embedding": "por_feature",
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau",
+    "max_grad_norm": 1.0,
+    "pos_weight": null
+  },
+  "metrics": {
+    "ks": 0.5051609256945684,
+    "mse": 0.1570844877394467,
+    "cross_entropy": 0.46979313335410944,
+    "auroc": 0.8325574592975985,
+    "threshold": 0.5,
+    "tp": 337,
+    "tn": 1002,
+    "fp": 291,
+    "fn": 131,
+    "precision": 0.5366242038216561,
+    "recall": 0.7200854700854701,
+    "f1": 0.614963503649635
+  },
+  "architecture": {
+    "dim": 32,
+    "depth": 2,
+    "heads": 4,
+    "embedding": "por_feature"
+  },
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5502318392581144,
+      "auroc_validacao": 0.8511812335616291
+    }
+  },
+  "notes": "STab com embedding por feature, parada pelo AUROC de validacao e ReduceLROnPlateau."
+}

@@ -1,0 +1,35 @@
+{
+  "model_id": "tabpfn_v2_churn_contexto_original_prior_corrigido_32estimadores",
+  "framework": "TabPFN v2",
+  "timestamp": "2026-10-15T14:17:14.188074",
+  "hyperparameters": {
+    "device": "cuda",
+    "n_estimators": 32,
+    "versao": "v2",
+    "seed": 0,
+    "n_linhas_contexto": 3521,
+    "prior_corrigido": 0.26526554955978415
+  },
+  "metrics": {
+    "ks": 0.5140103515973586,
+    "mse": 0.16152794982665805,
+    "cross_entropy": 0.4790232159720471,
+    "auroc": 0.8391875053708,
+    "threshold": 0.5,
+    "tp": 355,
+    "tn": 970,
+    "fp": 323,
+    "fn": 113,
+    "precision": 0.523598820058997,
+    "recall": 0.7585470085470085,
+    "f1": 0.6195462478184991
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5687789799072642,
+      "auroc_validacao": 0.8559930030171353
+    }
+  },
+  "notes": "TabPFN v2, contexto sem duplicatas, 32 estimadores internos."
+}

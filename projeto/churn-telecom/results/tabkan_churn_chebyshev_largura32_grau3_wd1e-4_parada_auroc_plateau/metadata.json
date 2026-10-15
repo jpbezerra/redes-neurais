@@ -1,0 +1,43 @@
+{
+  "model_id": "tabkan_churn_chebyshev_largura32_grau3_wd1e-4_parada_auroc_plateau",
+  "framework": "tabkan (ChebyshevKAN)",
+  "timestamp": "2026-10-15T14:12:15.595055",
+  "hyperparameters": {
+    "hidden_width": 32,
+    "degree": 3,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 64,
+    "max_epochs": 300,
+    "patience": 20,
+    "seed": 0,
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau",
+    "max_grad_norm": 1.0
+  },
+  "metrics": {
+    "ks": 0.5026176453090607,
+    "mse": 0.15759149961202262,
+    "cross_entropy": 0.47056184930839046,
+    "auroc": 0.8360096443043079,
+    "threshold": 0.5,
+    "tp": 339,
+    "tn": 1003,
+    "fp": 290,
+    "fn": 129,
+    "precision": 0.5389507154213037,
+    "recall": 0.7243589743589743,
+    "f1": 0.618049225159526
+  },
+  "architecture": {
+    "hidden_width": 32,
+    "degree": 3
+  },
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5517774343122102,
+      "auroc_validacao": 0.8482662221786919
+    }
+  },
+  "notes": "TabKAN com parada pelo AUROC de validacao e ReduceLROnPlateau."
+}

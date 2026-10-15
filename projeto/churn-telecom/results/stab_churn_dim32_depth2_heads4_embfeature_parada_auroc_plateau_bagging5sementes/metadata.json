@@ -1,0 +1,54 @@
+{
+  "model_id": "stab_churn_dim32_depth2_heads4_embfeature_parada_auroc_plateau_bagging5sementes",
+  "framework": "PyTorch (STab — implementacao propria)",
+  "timestamp": "2026-10-15T14:11:53.390144",
+  "hyperparameters": {
+    "dim": 32,
+    "depth": 2,
+    "heads": 4,
+    "attn_dropout": 0.1,
+    "ff_dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch_size": 64,
+    "max_epochs": 200,
+    "patience": 20,
+    "seed": 0,
+    "embedding": "por_feature",
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau",
+    "max_grad_norm": 1.0,
+    "pos_weight": null,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "metrics": {
+    "ks": 0.510118587264759,
+    "mse": 0.16940611823058394,
+    "cross_entropy": 0.5023347269234887,
+    "auroc": 0.8343289970320132,
+    "threshold": 0.5,
+    "tp": 357,
+    "tn": 957,
+    "fp": 336,
+    "fn": 111,
+    "precision": 0.5151515151515151,
+    "recall": 0.7628205128205128,
+    "f1": 0.6149870801033591
+  },
+  "architecture": {
+    "config_base": "stab_churn_dim32_depth2_heads4_embfeature_parada_auroc_plateau"
+  },
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5517774343122102,
+      "auroc_validacao": 0.8523571519006997
+    }
+  },
+  "notes": "Media das probabilidades de 5 sementes da config stab_churn_dim32_depth2_heads4_embfeature_parada_auroc_plateau (escolhida pelo AUROC de validacao)."
+}

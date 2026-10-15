@@ -1,0 +1,37 @@
+{
+  "model_id": "mitra_churn_contexto_original_prior_corrigido_4estimadores_finetune100",
+  "framework": "AutoGluon (extra [mitra])",
+  "timestamp": "2026-10-15T15:42:24.390402",
+  "hyperparameters": {
+    "time_limit_segundos": 1200,
+    "num_gpus": 1,
+    "max_memory_usage_ratio": 1.5,
+    "seed": 0,
+    "n_estimators": 4,
+    "fine_tune_steps": 100,
+    "n_linhas_contexto": 3521,
+    "prior_corrigido": 0.26526554955978415
+  },
+  "metrics": {
+    "ks": 0.524431356217899,
+    "mse": 0.16603278107996475,
+    "cross_entropy": 0.4924042265423574,
+    "auroc": 0.8405863922105221,
+    "threshold": 0.5,
+    "tp": 369,
+    "tn": 935,
+    "fp": 358,
+    "fn": 99,
+    "precision": 0.5075653370013755,
+    "recall": 0.7884615384615384,
+    "f1": 0.6175732217573221
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5571870170015456,
+      "auroc_validacao": 0.8545369903657112
+    }
+  },
+  "notes": "Mitra, contexto sem duplicatas, 4 estimadores internos, 100 passos de fine-tuning."
+}

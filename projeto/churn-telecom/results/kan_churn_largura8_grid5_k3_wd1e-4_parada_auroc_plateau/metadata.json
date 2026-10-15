@@ -1,0 +1,45 @@
+{
+  "model_id": "kan_churn_largura8_grid5_k3_wd1e-4_parada_auroc_plateau",
+  "framework": "pykan (KAN)",
+  "timestamp": "2026-10-15T14:15:52.236954",
+  "hyperparameters": {
+    "hidden_width": 8,
+    "grid": 5,
+    "k": 3,
+    "lr": 0.003,
+    "batch_size": 128,
+    "max_epochs": 150,
+    "patience": 15,
+    "max_grad_norm": 1.0,
+    "seed": 0,
+    "weight_decay": 0.0001,
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau"
+  },
+  "metrics": {
+    "ks": 0.5071687786304955,
+    "mse": 0.16397484619872568,
+    "cross_entropy": 0.48727495965607037,
+    "auroc": 0.8355419715628533,
+    "threshold": 0.5,
+    "tp": 343,
+    "tn": 977,
+    "fp": 316,
+    "fn": 125,
+    "precision": 0.5204855842185129,
+    "recall": 0.7329059829059829,
+    "f1": 0.608695652173913
+  },
+  "architecture": {
+    "hidden_width": 8,
+    "grid": 5,
+    "k": 3
+  },
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5409582689335395,
+      "auroc_validacao": 0.8490390197057397
+    }
+  },
+  "notes": "KAN com grid=5, weight decay e parada pelo AUROC de validacao."
+}

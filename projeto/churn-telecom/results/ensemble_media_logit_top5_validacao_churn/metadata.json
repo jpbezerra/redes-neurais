@@ -1,0 +1,36 @@
+{
+  "model_id": "ensemble_media_logit_top5_validacao_churn",
+  "framework": "media no espaco logit",
+  "timestamp": "2026-10-15T15:42:25.167485",
+  "hyperparameters": {
+    "membros": [
+      "tabpfn_v2_churn_contexto_original_prior_corrigido_32estimadores",
+      "tabpfn_v2_churn_contexto_original_prior_corrigido",
+      "mitra_churn_contexto_original_prior_corrigido_4estimadores_finetune100",
+      "xgb_churn_lr003_prof4_sub08_col08_earlystop_auc_validacao",
+      "stab_churn_dim32_depth2_heads4_embfeature_parada_auroc_plateau_bagging5sementes"
+    ]
+  },
+  "metrics": {
+    "ks": 0.5163553255200588,
+    "mse": 0.16278967062919023,
+    "cross_entropy": 0.4831863284485784,
+    "auroc": 0.8398906670368387,
+    "threshold": 0.5,
+    "tp": 359,
+    "tn": 955,
+    "fp": 338,
+    "fn": 109,
+    "precision": 0.5150645624103299,
+    "recall": 0.7670940170940171,
+    "f1": 0.6163090128755365
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5595054095826892,
+      "auroc_validacao": 0.85585803219711
+    }
+  },
+  "notes": "Ensemble por media dos logits; membros escolhidos pelo AUROC de validacao."
+}
