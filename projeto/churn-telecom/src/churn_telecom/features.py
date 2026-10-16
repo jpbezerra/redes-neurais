@@ -36,6 +36,12 @@ SERVICOS_ADICIONAIS_COLS = [
 TENURE_BUCKETS = [(0, 12), (12, 24), (24, 48), (48, 73)]  # meses; limite superior exclusivo
 FEATURES_DERIVADAS_DISPONIVEIS = ("charges_per_tenure", "n_servicos_adicionais", "tenure_bucket")
 
+# Interacoes explicitas (opcional, `interacoes=True`): cada par vira uma
+# categorica nova (cruzamento dos niveis), tratada como as de MULTI_CAT_COLS.
+INTERACOES = [("Contract", "PaymentMethod"), ("InternetService", "TechSupport"),
+              ("InternetService", "OnlineSecurity")]
+INTERACAO_COLS = [f"{a}_x_{b}" for a, b in INTERACOES]
+
 
 def _to_total_charges_float(series: pd.Series) -> pd.Series:
     """Converte TotalCharges (string, com brancos nos clientes tenure=0)
@@ -87,6 +93,7 @@ class Preprocessor:
     binary_maps_: dict[str, dict[str, int]] = field(default_factory=dict)
     extra_features: tuple[str, ...] = ()  # subconjunto de FEATURES_DERIVADAS_DISPONIVEIS
     modo: str = "neural"                  # 'neural' | 'arvores'
+    interacoes: bool = False              # acrescenta INTERACAO_COLS (padrao: desligado)
     charges_per_tenure_mean_: float | None = None
     charges_per_tenure_std_: float | None = None
     fitted: bool = False
@@ -98,7 +105,13 @@ class Preprocessor:
         # logicamente correto, nao uma estimativa). Nao depende de
         # estatistica de treino, entao e seguro aplicar em qualquer particao.
         out.loc[out["tenure"] == 0, "TotalCharges"] = out.loc[out["tenure"] == 0, "TotalCharges"].fillna(0.0)
+        if self.interacoes:
+            for (a, b), col in zip(INTERACOES, INTERACAO_COLS):
+                out[col] = out[a].astype(str) + "|" + out[b].astype(str)
         return out
+
+    def _cat_cols(self) -> list[str]:
+        return MULTI_CAT_COLS + (INTERACAO_COLS if self.interacoes else [])
 
     def fit(self, df_train: pd.DataFrame) -> "Preprocessor":
         base = self._prepare_base(df_train)
@@ -109,7 +122,7 @@ class Preprocessor:
             # Mapeia o PRIMEIRO nivel (ordem alfabetica) para 0 e o segundo para 1
             # — deterministico, nao depende da ordem de aparicao nos dados.
             self.binary_maps_[col] = {v: i for i, v in enumerate(niveis)}
-        for col in MULTI_CAT_COLS:
+        for col in self._cat_cols():
             self.cat_levels_[col] = sorted(base[col].dropna().unique().tolist())
 
         if "charges_per_tenure" in self.extra_features:
@@ -139,7 +152,7 @@ class Preprocessor:
             blocos.append(valores.reshape(-1, 1))
             colunas.append(f"{col}__bin")
 
-        for col in MULTI_CAT_COLS:
+        for col in self._cat_cols():
             niveis = self.cat_levels_[col]
             if self.modo == "arvores":
                 codigos = base[col].map({n: i for i, n in enumerate(niveis)}).fillna(-1)

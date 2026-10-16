@@ -268,6 +268,30 @@ vazamento, com SMOTE/duplicação antes vs. depois da separação
 (`demonstracao_vazamento_*.csv`, `demonstracao_vazamento.png`). As
 probabilidades de todos os modelos ficam em `predicoes_5particoes_rodada5.csv`.
 
+Resultados (branch `results/churn-limiar-stacking-vazamento`):
+
+- **Limiar escolhido na validação: +3,7 a +8 pontos de acurácia** sobre o
+  limiar 0.5 (efeito real em todos os modelos treinados balanceados). Todos
+  chegam a **80,0–80,5%** (piso 73,4%, teto 80,4–80,9%). O TabPFN sem cópias
+  já fica em 80,4% no 0.5, porque treina com a proporção real.
+- **Stacking, média de logits e especialistas por contrato: dentro do ruído**
+  em KS e em acurácia (ganhos de −0,001 a +0,003 de KS).
+- **Vazamento:** com SMOTE antes da separação, o mesmo XGBoost vai de
+  AUROC 0,845 / KS 0,54 para **AUROC 0,932 / KS 0,70**, com 84,9% de acurácia
+  num teste 50/50. Com duplicação antes da separação, KS 0,57. Aplicado só no
+  treino, o SMOTE não difere da duplicação.
+
+### Rodada 6 — balanceamento do treino, interações e TabPFN
+
+Com referências re-treinadas na mesma execução e teste pareado:
+(1) XGB/GB/MLP/STab treinados com duplicação vs. **sem cópias** vs. SMOTE,
+motivado pelo maior efeito do projeto (tirar as cópias do contexto do TabPFN);
+(2) **interações explícitas** (`Preprocessor(interacoes=True)`: contrato ×
+pagamento, internet × suporte técnico, internet × segurança online);
+(3) TabPFN com 32 estimadores e com codificação ordinal. Saídas:
+`rodada6_resumo.csv`, `fatores_rodada6_balanceamento_interacoes_tabpfn.csv/.png`,
+`predicoes_5particoes_rodada6.csv`.
+
 ## Pontos de melhoria possíveis
 
 Levantamento do que ainda pode ser feito, a partir dos resultados das rodadas
