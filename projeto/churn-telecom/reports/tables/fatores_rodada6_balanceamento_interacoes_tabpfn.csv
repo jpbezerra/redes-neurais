@@ -1,0 +1,14 @@
+fator,config_a,config_b,metrica,valor_a,valor_b,ganho,ic95_inf,ic95_sup,n_particoes,veredito
+treino sem copias vs. duplicacao: xgb,xgb_optuna_duplicacao,xgb_optuna_sem_copias,ks,0.5354383564360362,0.5387441251710394,0.0033057687350031006,-0.002637570961029426,0.009249108431035626,5,dentro do ruido
+treino sem copias vs. duplicacao: gb,gb_optuna_duplicacao,gb_optuna_sem_copias,ks,0.5288972177603268,0.5307186626212148,0.0018214448608879774,-0.005292263397736841,0.008935153119512797,5,dentro do ruido
+treino sem copias vs. duplicacao: mlp,mlp_optuna_duplicacao,mlp_optuna_sem_copias,ks,0.5294891625518077,0.5215182342792553,-0.00797092827255239,-0.020708197036562747,0.0047663404914579655,5,dentro do ruido
+treino sem copias vs. duplicacao: stab,stab_optuna_duplicacao,stab_optuna_sem_copias,ks,0.5324488865092114,0.5339986515160529,0.0015497650068415857,-0.00903513919702409,0.012134669210707263,5,dentro do ruido
+SMOTE vs. duplicacao: xgb,xgb_optuna_duplicacao,xgb_optuna_smote,ks,0.5354383564360362,0.5307969936740239,-0.004641362762012391,-0.024916631866318036,0.015633906342293256,5,dentro do ruido
+SMOTE vs. duplicacao: gb,gb_optuna_duplicacao,gb_optuna_smote,ks,0.5288972177603268,0.5191891248735796,-0.00970809288674721,-0.02540701506155677,0.00599082928806235,5,dentro do ruido
+SMOTE vs. duplicacao: mlp,mlp_optuna_duplicacao,mlp_optuna_smote,ks,0.5294891625518077,0.5208311023856267,-0.008658060166180804,-0.016231825007957456,-0.0010842953244041519,5,efeito real
+SMOTE vs. duplicacao: stab,stab_optuna_duplicacao,stab_optuna_smote,ks,0.5324488865092114,0.5267485672358062,-0.005700319273405108,-0.015207427480757837,0.003806788933947621,5,dentro do ruido
+interacoes explicitas: xgb,xgb_optuna_duplicacao,xgb_optuna_duplicacao_interacoes,ks,0.5354383564360362,0.5347720467210026,-0.0006663097150336084,-0.015191207972407526,0.013858588542340308,5,dentro do ruido
+interacoes explicitas: mlp,mlp_optuna_duplicacao,mlp_optuna_duplicacao_interacoes,ks,0.5294891625518077,0.5246861800226069,-0.004802982529200639,-0.012109276015035688,0.0025033109566344105,5,dentro do ruido
+interacoes explicitas: stab,stab_optuna_duplicacao,stab_optuna_duplicacao_interacoes,ks,0.5324488865092114,0.5326561167628453,0.00020723025363398318,-0.0119811672693425,0.012395627776610466,5,dentro do ruido
+TabPFN: 8 -> 32 estimadores,tabpfn_v2_8est_onehot,tabpfn_v2_32est_onehot,ks,0.536420964959248,0.5362375314811509,-0.00018343347809701704,-0.004818067275633977,0.004451200319439943,5,dentro do ruido
+TabPFN: one-hot -> ordinal,tabpfn_v2_8est_onehot,tabpfn_v2_8est_ordinal,ks,0.536420964959248,0.5359311479961132,-0.0004898169631348149,-0.0024779497878330376,0.0014983158615634081,5,dentro do ruido
