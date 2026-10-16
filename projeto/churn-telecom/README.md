@@ -242,11 +242,37 @@ semente), TabPFN com/sem duplicatas em 5 partições e
 `fatores_que_influenciam_ks.csv/.png` — todos os fatores testados nas rodadas,
 com diferença de KS **pareada** por partição e IC 95% (t, 4 g.l.).
 
+Resultados (branch `results/churn-fatores-influencia`):
+
+- **Contexto do TabPFN sem as duplicatas do oversampling: +0.038 de KS**
+  (IC 95% [+0.027, +0.050]) — o maior efeito do projeto. Nesse modo o TabPFN
+  chega a KS 0.538 em 5 partições, o melhor modelo isolado.
+- **GB com Optuna: +0.010** (IC [+0.002, +0.018]) — único ganho de busca de
+  hiperparâmetros fora do ruído.
+- Ajuste manual do TabKAN: −0.002 com IC estreito (treino quase determinístico),
+  irrelevante na prática.
+- Os outros 13 fatores (algoritmo, codificação, Optuna nas redes, bagging,
+  ensemble) ficam **dentro do ruído**. Com 16 testes, ~1 falso positivo é esperado.
+- Ruído de semente: nas árvores, a variação entre trials é 11–14× a de semente
+  (os hiperparâmetros importam); em MLP/STab ~2× e no KAN 0.6× (a busca varia
+  o resultado tanto quanto trocar a semente).
+
+### Rodada 5 — limiar, stacking, especialistas e vazamento (células no fim do notebook 06)
+
+Implementa os "Experimentos propostos" abaixo, nas mesmas 5 partições:
+acurácia com o limiar escolhido na validação natural
+(`acuracia_limiar_validacao_*.csv/.png`), stacking por regressão logística e
+um XGBoost por tipo de contrato com teste pareado
+(`fatores_rodada5_stacking_especialistas.csv/.png`), e a demonstração de
+vazamento, com SMOTE/duplicação antes vs. depois da separação
+(`demonstracao_vazamento_*.csv`, `demonstracao_vazamento.png`). As
+probabilidades de todos os modelos ficam em `predicoes_5particoes_rodada5.csv`.
+
 ## Pontos de melhoria possíveis
 
 Levantamento do que ainda pode ser feito, a partir dos resultados das rodadas
-1–4 e de uma pesquisa na literatura. Nada desta seção foi implementado
-ainda.
+1–4 e de uma pesquisa na literatura. Os experimentos propostos no fim da
+seção estão na rodada 5.
 
 ### Onde estamos (o teto atual)
 
@@ -338,7 +364,7 @@ descartando as colunas que vazam o alvo). **Decisão: não usar** — mudaria o
 problema em relação ao dataset de 21 colunas do enunciado, e a comparação
 com o resto do projeto deixaria de valer.
 
-### Experimentos propostos (próxima rodada no notebook 06)
+### Experimentos propostos (implementados na rodada 5)
 
 1. Acurácia com limiar escolhido na validação, reportada para todos os modelos.
 2. Stacking e especialistas por segmento, no procedimento pareado de 5 partições.
