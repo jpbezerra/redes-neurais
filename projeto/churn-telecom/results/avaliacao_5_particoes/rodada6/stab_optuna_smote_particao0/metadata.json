@@ -1,0 +1,60 @@
+{
+  "model_id": "stab_optuna_smote_particao0",
+  "framework": "PyTorch (STab — implementacao propria) + Optuna",
+  "timestamp": "2026-10-16T20:21:05.120976",
+  "hyperparameters": {
+    "dim": 64,
+    "depth": 2,
+    "heads": 2,
+    "attn_dropout": 0.08948469778680923,
+    "ff_dropout": 0.17098947321037947,
+    "lr": 0.0007460891331053295,
+    "weight_decay": 5.28415741238381e-05,
+    "batch_size": 64,
+    "max_epochs": 150,
+    "patience": 15,
+    "seed": 0,
+    "embedding": "compartilhada",
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau",
+    "max_grad_norm": 1.0,
+    "pos_weight": null
+  },
+  "metrics": {
+    "ks": 0.5026969678941837,
+    "mse": 0.15838139984366206,
+    "cross_entropy": 0.4745484565962287,
+    "auroc": 0.8325062301280399,
+    "threshold": 0.5,
+    "tp": 338,
+    "tn": 998,
+    "fp": 295,
+    "fn": 130,
+    "precision": 0.5339652448657188,
+    "recall": 0.7222222222222222,
+    "f1": 0.6139872842870119,
+    "acuracia_limiar_05": 0.7586598523566156,
+    "limiar_validacao": 0.7100000000000001,
+    "acuracia_limiar_validacao": 0.8018171493469619
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.5501639919377526,
+      "auroc": 0.8463059616282033
+    },
+    "codificacao": "zscore_onehot",
+    "balanceamento_treino": "smote",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada6",
+    "nome_na_tabela": "stab_optuna_smote",
+    "ks_registrado_na_tabela": 0.5026969678941837,
+    "metricas_validacao": {
+      "ks_validacao": 0.5680061823802165,
+      "auroc_validacao": 0.8476510896803461
+    }
+  },
+  "notes": "rodada6: stab_optuna_smote, particao 0 (re-treino da avaliacao em 5 particoes)."
+}

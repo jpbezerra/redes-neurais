@@ -1,0 +1,56 @@
+{
+  "model_id": "kan_padrao_particao4",
+  "framework": "pykan (KAN) + Optuna",
+  "timestamp": "2026-10-16T21:16:13.243523",
+  "hyperparameters": {
+    "hidden_width": 8,
+    "grid": 3,
+    "k": 3,
+    "lr": 0.003,
+    "batch_size": 128,
+    "max_epochs": 100,
+    "patience": 8,
+    "max_grad_norm": 1.0,
+    "seed": 4,
+    "weight_decay": 0.0,
+    "early_stop_metric": "val_loss",
+    "scheduler": "none"
+  },
+  "metrics": {
+    "ks": 0.520732940686537,
+    "mse": 0.16783086260971894,
+    "cross_entropy": 0.497870126506687,
+    "auroc": 0.8425347532076071,
+    "threshold": 0.5,
+    "tp": 370,
+    "tn": 931,
+    "fp": 362,
+    "fn": 98,
+    "precision": 0.505464480874317,
+    "recall": 0.7905982905982906,
+    "f1": 0.6166666666666667,
+    "acuracia_limiar_05": 0.7387847813742192,
+    "limiar_validacao": 0.74,
+    "acuracia_limiar_validacao": 0.8040885860306644
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 4,
+    "metricas_validacao_natural": {
+      "ks": 0.5398280318650732,
+      "auroc": 0.84716729163426
+    },
+    "codificacao": "zscore_onehot",
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada3",
+    "nome_na_tabela": "kan_padrao",
+    "ks_registrado_na_tabela": 0.520732940686537,
+    "metricas_validacao": {
+      "ks_validacao": 0.5432766615146831,
+      "auroc_validacao": 0.8493585302752688
+    }
+  },
+  "notes": "rodada3: kan_padrao, particao 4 (re-treino da avaliacao em 5 particoes)."
+}

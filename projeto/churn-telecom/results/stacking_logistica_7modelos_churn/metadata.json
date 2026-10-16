@@ -1,0 +1,61 @@
+{
+  "model_id": "stacking_logistica_7modelos_churn",
+  "framework": "Scikit-learn (LogisticRegression sobre logits)",
+  "timestamp": "2026-10-16T20:12:05.030410",
+  "hyperparameters": {
+    "meta_modelo": "LogisticRegression(max_iter=1000)",
+    "entrada": "logit das probabilidades",
+    "membros": {
+      "mlp_optuna": "mlp_churn_optuna30trials_auroc_validacao_zscore_onehot",
+      "gb_optuna": "gb_churn_optuna30trials_auroc_validacao_ordinal",
+      "xgb_optuna": "xgb_churn_optuna30trials_auroc_validacao_ordinal",
+      "stab_optuna": "stab_churn_optuna30trials_auroc_validacao_zscore_onehot",
+      "tabkan_optuna": "tabkan_churn_optuna30trials_auroc_validacao_zscore_onehot",
+      "kan_optuna": "kan_churn_optuna30trials_auroc_validacao_zscore_onehot",
+      "tabpfn_sem_duplicatas": "tabpfn_v2_churn_contexto_sem_copias_exatas_8estimadores"
+    },
+    "coeficientes": {
+      "mlp_optuna": -0.1165,
+      "gb_optuna": -0.1097,
+      "xgb_optuna": 0.2091,
+      "stab_optuna": 0.1202,
+      "tabkan_optuna": -0.0762,
+      "kan_optuna": 0.1973,
+      "tabpfn_sem_duplicatas": 0.7032
+    },
+    "intercepto": -0.20963946695051994
+  },
+  "metrics": {
+    "ks": 0.5163701985047693,
+    "mse": 0.13724567632429072,
+    "cross_entropy": 0.42292042298997545,
+    "auroc": 0.8397873824207931,
+    "threshold": 0.5,
+    "tp": 250,
+    "tn": 1163,
+    "fp": 130,
+    "fn": 218,
+    "precision": 0.6578947368421053,
+    "recall": 0.5341880341880342,
+    "f1": 0.589622641509434,
+    "acuracia_limiar_05": 0.8023850085178875,
+    "limiar_validacao": 0.49,
+    "acuracia_limiar_validacao": 0.7984099943214082
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.5454461209535693,
+      "auroc": 0.8523435457340583
+    },
+    "avaliacao_5_particoes": {
+      "nome_na_tabela": "stacking_logistica",
+      "tabela": "acuracia_limiar_validacao_resumo.csv",
+      "ks": 0.535717968548595,
+      "auroc": 0.846755871523853,
+      "acuracia_limiar_validacao": 0.8013628620102213
+    }
+  },
+  "notes": "Stacking ajustado na validacao natural (predicoes fora da amostra dos membros); p_val_natural vem de validacao cruzada 5 folds. Rodada 5."
+}

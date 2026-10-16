@@ -1,0 +1,42 @@
+{
+  "model_id": "duplicacao_so_no_treino_correto_semente0",
+  "framework": "XGBoost",
+  "timestamp": "2026-10-16T21:23:04.618048",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "max_depth": 3,
+    "subsample": 1.0,
+    "scale_pos_weight": 1.0,
+    "seed": 0,
+    "colsample_bytree": 1.0,
+    "min_child_weight": 1.0,
+    "reg_lambda": 1.0,
+    "eval_metric": "logloss",
+    "early_stopping_rounds": null
+  },
+  "metrics": {
+    "ks": 0.5287507157064891,
+    "mse": 0.16068674802602442,
+    "cross_entropy": 0.478378318342493,
+    "auroc": 0.8437542404575226,
+    "threshold": 0.5,
+    "tp": 362,
+    "tn": 966,
+    "fp": 328,
+    "fn": 105,
+    "precision": 0.5246376811594203,
+    "recall": 0.7751605995717344,
+    "f1": 0.6257562662057045,
+    "acuracia_limiar_05": 0.7541169789892107
+  },
+  "architecture": {},
+  "dataset": {
+    "cenario": "duplicacao so no treino (correto)",
+    "semente": 0,
+    "n_treino": 7760,
+    "n_teste": 1761,
+    "ks_registrado_na_tabela": 0.5287507157064891
+  },
+  "notes": "Demonstracao de vazamento (rodada 5): duplicacao so no treino (correto)."
+}

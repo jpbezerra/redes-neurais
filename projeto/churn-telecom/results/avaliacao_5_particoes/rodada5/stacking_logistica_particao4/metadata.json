@@ -1,0 +1,56 @@
+{
+  "model_id": "stacking_logistica_particao4",
+  "framework": "Scikit-learn (LogisticRegression sobre logits)",
+  "timestamp": "2026-10-16T21:19:36.818377",
+  "hyperparameters": {
+    "meta_modelo": "LogisticRegression(max_iter=1000)",
+    "membros": [
+      "avaliacao_5_particoes/rodada3/mlp_optuna_particao4",
+      "avaliacao_5_particoes/rodada3/gb_optuna_particao4",
+      "avaliacao_5_particoes/rodada3/xgb_optuna_particao4",
+      "avaliacao_5_particoes/rodada3/stab_optuna_particao4",
+      "avaliacao_5_particoes/rodada3/tabkan_optuna_particao4",
+      "avaliacao_5_particoes/rodada3/kan_optuna_particao4",
+      "avaliacao_5_particoes/rodada5/tabpfn_sem_duplicatas_particao4"
+    ],
+    "coeficientes": [
+      -0.003,
+      -0.2138,
+      1.0473,
+      -0.0679,
+      0.4449,
+      -0.0268,
+      0.3943
+    ],
+    "intercepto": -0.6030810043230469
+  },
+  "metrics": {
+    "ks": 0.5309853848136911,
+    "mse": 0.13405831703022897,
+    "cross_entropy": 0.41419184939374404,
+    "auroc": 0.8464265175402066,
+    "threshold": 0.5,
+    "tp": 244,
+    "tn": 1172,
+    "fp": 121,
+    "fn": 224,
+    "precision": 0.6684931506849315,
+    "recall": 0.5213675213675214,
+    "f1": 0.5858343337334935,
+    "acuracia_limiar_05": 0.8040885860306644,
+    "limiar_validacao": 0.45,
+    "acuracia_limiar_validacao": 0.797274275979557
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 4,
+    "metricas_validacao_natural": {
+      "ks": 0.5541256135218054,
+      "auroc": 0.8487021304058594
+    },
+    "rodada": "rodada5",
+    "nome_na_tabela": "stacking_logistica",
+    "ks_registrado_na_tabela": 0.5309853848136911
+  },
+  "notes": "rodada5: stacking_logistica, particao 4 (re-treino da avaliacao em 5 particoes)."
+}

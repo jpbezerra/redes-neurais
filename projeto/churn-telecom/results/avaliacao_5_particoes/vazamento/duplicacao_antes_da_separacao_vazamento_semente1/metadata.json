@@ -1,0 +1,42 @@
+{
+  "model_id": "duplicacao_antes_da_separacao_vazamento_semente1",
+  "framework": "XGBoost",
+  "timestamp": "2026-10-16T21:23:05.457391",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "max_depth": 3,
+    "subsample": 1.0,
+    "scale_pos_weight": 1.0,
+    "seed": 1,
+    "colsample_bytree": 1.0,
+    "min_child_weight": 1.0,
+    "reg_lambda": 1.0,
+    "eval_metric": "logloss",
+    "early_stopping_rounds": null
+  },
+  "metrics": {
+    "ks": 0.5732645525603923,
+    "mse": 0.1460502100221254,
+    "cross_entropy": 0.44657192494970266,
+    "auroc": 0.8714523333942965,
+    "threshold": 0.5,
+    "tp": 1088,
+    "tn": 936,
+    "fp": 357,
+    "fn": 206,
+    "precision": 0.7529411764705882,
+    "recall": 0.8408037094281299,
+    "f1": 0.7944505293902885,
+    "acuracia_limiar_05": 0.7823734054889834
+  },
+  "architecture": {},
+  "dataset": {
+    "cenario": "duplicacao antes da separacao (vazamento)",
+    "semente": 1,
+    "n_treino": 7761,
+    "n_teste": 2587,
+    "ks_registrado_na_tabela": 0.5732645525603923
+  },
+  "notes": "Demonstracao de vazamento (rodada 5): duplicacao antes da separacao (vazamento). Modelo avaliado com vazamento de proposito."
+}

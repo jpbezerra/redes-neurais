@@ -1,0 +1,50 @@
+{
+  "model_id": "ensemble_media_logit_7modelos_churn",
+  "framework": "media de logits (sem parametros)",
+  "timestamp": "2026-10-16T20:12:05.042522",
+  "hyperparameters": {
+    "combinacao": "media dos logits",
+    "membros": {
+      "mlp_optuna": "mlp_churn_optuna30trials_auroc_validacao_zscore_onehot",
+      "gb_optuna": "gb_churn_optuna30trials_auroc_validacao_ordinal",
+      "xgb_optuna": "xgb_churn_optuna30trials_auroc_validacao_ordinal",
+      "stab_optuna": "stab_churn_optuna30trials_auroc_validacao_zscore_onehot",
+      "tabkan_optuna": "tabkan_churn_optuna30trials_auroc_validacao_zscore_onehot",
+      "kan_optuna": "kan_churn_optuna30trials_auroc_validacao_zscore_onehot",
+      "tabpfn_sem_duplicatas": "tabpfn_v2_churn_contexto_sem_copias_exatas_8estimadores"
+    }
+  },
+  "metrics": {
+    "ks": 0.5119380490610188,
+    "mse": 0.15557065734852513,
+    "cross_entropy": 0.46527310300783153,
+    "auroc": 0.8393973797106048,
+    "threshold": 0.5,
+    "tp": 344,
+    "tn": 1000,
+    "fp": 293,
+    "fn": 124,
+    "precision": 0.5400313971742543,
+    "recall": 0.7350427350427351,
+    "f1": 0.6226244343891403,
+    "acuracia_limiar_05": 0.7632027257240205,
+    "limiar_validacao": 0.7000000000000001,
+    "acuracia_limiar_validacao": 0.8057921635434412
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.545221066427491,
+      "auroc": 0.8551128747737043
+    },
+    "avaliacao_5_particoes": {
+      "nome_na_tabela": "ensemble_media_logit",
+      "tabela": "acuracia_limiar_validacao_resumo.csv",
+      "ks": 0.5351706427112459,
+      "auroc": 0.8469591356482308,
+      "acuracia_limiar_validacao": 0.8036342986939239
+    }
+  },
+  "notes": "Media dos logits dos 7 membros; sem parametros treinados. Rodada 5."
+}

@@ -1,0 +1,55 @@
+{
+  "model_id": "tabkan_optuna_particao1",
+  "framework": "tabkan (ChebyshevKAN) + Optuna",
+  "timestamp": "2026-10-16T20:41:03.610557",
+  "hyperparameters": {
+    "hidden_width": 60,
+    "degree": 4,
+    "lr": 0.0026414161232816338,
+    "weight_decay": 2.5447894346134837e-06,
+    "batch_size": 32,
+    "max_epochs": 300,
+    "patience": 15,
+    "seed": 1,
+    "early_stop_metric": "val_auroc",
+    "scheduler": "none",
+    "max_grad_norm": 1.0
+  },
+  "metrics": {
+    "ks": 0.5432803855077637,
+    "mse": 0.1857865801881276,
+    "cross_entropy": 0.5438172884051277,
+    "auroc": 0.8451119109471777,
+    "threshold": 0.5,
+    "tp": 399,
+    "tn": 841,
+    "fp": 452,
+    "fn": 69,
+    "precision": 0.4688601645123384,
+    "recall": 0.8525641025641025,
+    "f1": 0.6050037907505686,
+    "acuracia_limiar_05": 0.704145371947757,
+    "limiar_validacao": 0.77,
+    "acuracia_limiar_validacao": 0.8109028960817717
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 1,
+    "metricas_validacao_natural": {
+      "ks": 0.5336142102075465,
+      "auroc": 0.8440165282691652
+    },
+    "codificacao": "zscore_onehot",
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada3",
+    "nome_na_tabela": "tabkan_optuna",
+    "ks_registrado_na_tabela": 0.5432803855077637,
+    "metricas_validacao": {
+      "ks_validacao": 0.5510046367851623,
+      "auroc_validacao": 0.8481306541426487
+    }
+  },
+  "notes": "rodada3: tabkan_optuna, particao 1 (re-treino da avaliacao em 5 particoes)."
+}

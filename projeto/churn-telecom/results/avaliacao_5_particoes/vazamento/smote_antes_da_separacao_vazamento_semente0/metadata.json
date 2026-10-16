@@ -1,0 +1,42 @@
+{
+  "model_id": "smote_antes_da_separacao_vazamento_semente0",
+  "framework": "XGBoost",
+  "timestamp": "2026-10-16T21:23:04.784175",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "max_depth": 3,
+    "subsample": 1.0,
+    "scale_pos_weight": 1.0,
+    "seed": 0,
+    "colsample_bytree": 1.0,
+    "min_child_weight": 1.0,
+    "reg_lambda": 1.0,
+    "eval_metric": "logloss",
+    "early_stopping_rounds": null
+  },
+  "metrics": {
+    "ks": 0.6900197353243179,
+    "mse": 0.10841716524929221,
+    "cross_entropy": 0.34420597213789866,
+    "auroc": 0.9305280125655802,
+    "threshold": 0.5,
+    "tp": 1115,
+    "tn": 1066,
+    "fp": 228,
+    "fn": 178,
+    "precision": 0.8302308265078183,
+    "recall": 0.8623356535189481,
+    "f1": 0.84597875569044,
+    "acuracia_limiar_05": 0.8430614611519134
+  },
+  "architecture": {},
+  "dataset": {
+    "cenario": "SMOTE antes da separacao (vazamento)",
+    "semente": 0,
+    "n_treino": 7761,
+    "n_teste": 2587,
+    "ks_registrado_na_tabela": 0.6900197353243179
+  },
+  "notes": "Demonstracao de vazamento (rodada 5): SMOTE antes da separacao (vazamento). Modelo avaliado com vazamento de proposito."
+}

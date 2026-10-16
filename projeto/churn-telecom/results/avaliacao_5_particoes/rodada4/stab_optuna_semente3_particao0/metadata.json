@@ -1,0 +1,60 @@
+{
+  "model_id": "stab_optuna_semente3_particao0",
+  "framework": "PyTorch (STab — implementacao propria) + Optuna",
+  "timestamp": "2026-10-16T20:25:47.415750",
+  "hyperparameters": {
+    "dim": 64,
+    "depth": 2,
+    "heads": 2,
+    "attn_dropout": 0.08948469778680923,
+    "ff_dropout": 0.17098947321037947,
+    "lr": 0.0007460891331053295,
+    "weight_decay": 5.28415741238381e-05,
+    "batch_size": 64,
+    "max_epochs": 150,
+    "patience": 15,
+    "seed": 3,
+    "embedding": "compartilhada",
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau",
+    "max_grad_norm": 1.0,
+    "pos_weight": null
+  },
+  "metrics": {
+    "ks": 0.5184672893489599,
+    "mse": 0.16203282998217305,
+    "cross_entropy": 0.48286503848353696,
+    "auroc": 0.8344050145094228,
+    "threshold": 0.5,
+    "tp": 345,
+    "tn": 993,
+    "fp": 300,
+    "fn": 123,
+    "precision": 0.5348837209302325,
+    "recall": 0.7371794871794872,
+    "f1": 0.6199460916442048,
+    "acuracia_limiar_05": 0.7597955706984668,
+    "limiar_validacao": 0.73,
+    "acuracia_limiar_validacao": 0.7978421351504826
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.5516301559826443,
+      "auroc": 0.8526141076091597
+    },
+    "codificacao": "zscore_onehot",
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada4",
+    "nome_na_tabela": "stab_optuna_semente3",
+    "ks_registrado_na_tabela": null,
+    "metricas_validacao": {
+      "ks_validacao": 0.5610510046367851,
+      "auroc_validacao": 0.85366684662776
+    }
+  },
+  "notes": "rodada4: stab_optuna_semente3, particao 0 (re-treino da avaliacao em 5 particoes)."
+}

@@ -1,0 +1,42 @@
+{
+  "model_id": "smote_so_no_treino_correto_semente0",
+  "framework": "XGBoost",
+  "timestamp": "2026-10-16T21:23:04.535677",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "max_depth": 3,
+    "subsample": 1.0,
+    "scale_pos_weight": 1.0,
+    "seed": 0,
+    "colsample_bytree": 1.0,
+    "min_child_weight": 1.0,
+    "reg_lambda": 1.0,
+    "eval_metric": "logloss",
+    "early_stopping_rounds": null
+  },
+  "metrics": {
+    "ks": 0.5444499237131348,
+    "mse": 0.14536342986367445,
+    "cross_entropy": 0.4370146097235399,
+    "auroc": 0.8400358763391572,
+    "threshold": 0.5,
+    "tp": 303,
+    "tn": 1065,
+    "fp": 229,
+    "fn": 164,
+    "precision": 0.5695488721804511,
+    "recall": 0.6488222698072805,
+    "f1": 0.6066066066066066,
+    "acuracia_limiar_05": 0.7768313458262351
+  },
+  "architecture": {},
+  "dataset": {
+    "cenario": "SMOTE so no treino (correto)",
+    "semente": 0,
+    "n_treino": 7760,
+    "n_teste": 1761,
+    "ks_registrado_na_tabela": 0.5444499237131348
+  },
+  "notes": "Demonstracao de vazamento (rodada 5): SMOTE so no treino (correto)."
+}

@@ -1,0 +1,60 @@
+{
+  "model_id": "xgb_churn_optuna30trials_treino_sem_copias_ordinal",
+  "framework": "XGBoost + Optuna",
+  "timestamp": "2026-10-16T20:10:04.786030",
+  "hyperparameters": {
+    "learning_rate": 0.015640444791549198,
+    "n_estimators": 2000,
+    "max_depth": 4,
+    "subsample": 0.5134001218541187,
+    "scale_pos_weight": 1.0,
+    "seed": 0,
+    "colsample_bytree": 0.5099376320529461,
+    "min_child_weight": 9.662012411244048,
+    "reg_lambda": 0.0074359514986456175,
+    "eval_metric": "auc",
+    "early_stopping_rounds": 100
+  },
+  "metrics": {
+    "ks": 0.5209213318262043,
+    "mse": 0.13856568028922125,
+    "cross_entropy": 0.4261176668603894,
+    "auroc": 0.8379026447471923,
+    "threshold": 0.5,
+    "tp": 220,
+    "tn": 1180,
+    "fp": 113,
+    "fn": 248,
+    "precision": 0.6606606606606606,
+    "recall": 0.4700854700854701,
+    "f1": 0.5493133583021225,
+    "acuracia_limiar_05": 0.7950028392958546,
+    "limiar_validacao": 0.48000000000000004,
+    "acuracia_limiar_validacao": 0.7938671209540034
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.5462520147344522,
+      "auroc": 0.8528945983604116
+    },
+    "avaliacao_5_particoes": {
+      "nome_na_tabela": "xgb_optuna_sem_copias",
+      "tabela": "rodada6_resumo.csv",
+      "ks_mean": 0.5387441251710394,
+      "ks_std": 0.0113969420578418,
+      "auroc_mean": 0.8460933626826899,
+      "acuracia_limiar_validacao_mean": 0.8030664395229982
+    },
+    "balanceamento_treino": "sem_copias",
+    "interacoes": [],
+    "codificacao": "ordinal",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.5602782071097372,
+      "auroc_validacao": 0.8535644240807054
+    }
+  },
+  "notes": "Melhor config Optuna (rodada 3); treino com sem_copias. Rodada 6."
+}
