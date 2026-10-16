@@ -1,0 +1,8 @@
+fator,config_a,config_b,metrica,valor_a,valor_b,ganho,ic95_inf,ic95_sup,n_particoes,veredito
+"stacking (reg. logistica, 7 modelos) vs. XGB Optuna",xgb_optuna,stacking_logistica,ks,0.5354383564360362,0.535717968548595,0.00027961211255875804,-0.01589740380041165,0.01645662802552917,5,dentro do ruido
+stacking vs. media de logits (mesmos 7 modelos),ensemble_media_logit,stacking_logistica,ks,0.5351706427112459,0.535717968548595,0.0005473258373490886,-0.010236287929904194,0.011330939604602372,5,dentro do ruido
+media de logits (7 modelos) vs. XGB Optuna,xgb_optuna,ensemble_media_logit,ks,0.5354383564360362,0.5351706427112459,-0.0002677137247903305,-0.007916005676291943,0.007380578226711281,5,dentro do ruido
+especialistas por contrato vs. XGB Optuna global,xgb_optuna,xgb_optuna_especialistas_contrato,ks,0.5354383564360362,0.5348662422908362,-0.0005721141451999756,-0.009144389401822684,0.008000161111422733,5,dentro do ruido
+TabPFN sem duplicatas vs. XGB Optuna,xgb_optuna,tabpfn_sem_duplicatas,ks,0.5354383564360362,0.5380123743232792,0.002574017887242963,-0.013923858882269607,0.019071894656755534,5,dentro do ruido
+"stacking vs. XGB Optuna (acuracia, limiar da validacao)",xgb_optuna,stacking_logistica,acuracia_limiar_validacao,0.8005678591709255,0.8013628620102213,0.0007950028392958552,-0.007268961620572777,0.008858967299164487,5,dentro do ruido
+"especialistas vs. XGB global (acuracia, limiar da validacao)",xgb_optuna,xgb_optuna_especialistas_contrato,acuracia_limiar_validacao,0.8005678591709255,0.800908574673481,0.0003407155025553665,-0.004079475215265643,0.004760906220376376,5,dentro do ruido
