@@ -292,6 +292,37 @@ pagamento, internet × suporte técnico, internet × segurança online);
 `rodada6_resumo.csv`, `fatores_rodada6_balanceamento_interacoes_tabpfn.csv/.png`,
 `predicoes_5particoes_rodada6.csv`.
 
+Resultados (branch `results/churn-balanceamento-interacoes-tabpfn`): **nenhum
+ganho de KS fora do ruído**. Treinar sem cópias deu o maior KS do projeto
+(XGB 0,5387), mas o efeito é +0,003 com IC [−0,003, +0,009]. Sem cópias, os
+modelos acertam ~80% já no limiar 0.5, porque aprendem a proporção real. O
+SMOTE é sempre pior que a duplicação (no MLP, −0,009, efeito real). Interações
+explícitas e as variantes do TabPFN não mudaram o resultado (±0,005).
+
+### Modelos finais das rodadas 5–6
+
+As rodadas 4–6 guardam só probabilidades e métricas (5 partições). As
+últimas células do notebook 06 treinam cada variante nova na partição
+principal e salvam o modelo em `results/{model_id}/`, no padrão das rodadas
+1–3: `xgb|gb|mlp|stab_churn_optuna30trials_treino_sem_copias|treino_smote_*`,
+`xgb|mlp|stab_churn_optuna30trials_interacoes_*`,
+`tabpfn_v2_churn_contexto_original_8estimadores_ordinal`,
+`tabpfn_v2_churn_contexto_sem_copias_exatas_8estimadores` (membro do stacking),
+`xgb_churn_optuna30trials_especialistas_por_contrato_ordinal`,
+`stacking_logistica_7modelos_churn` e `ensemble_media_logit_7modelos_churn`.
+O `metadata.json` traz a acurácia no limiar da validação e o resumo das 5
+partições.
+
+Além disso, **todos os modelos das avaliações em 5 partições** (rodadas 3–6,
+os re-treinos com 5 sementes da rodada 4 e os XGBoost da demonstração de
+vazamento) são re-treinados e salvos em
+`results/avaliacao_5_particoes/{rodada}/{nome_da_tabela}_particao{k}/`. O índice
+`reports/tables/modelos_5_particoes_indice.csv` liga cada nome de tabela à sua
+pasta e compara o KS reproduzido com o registrado na tabela original.
+Configurações repetidas entre rodadas são treinadas uma vez só. Ficam de fora
+os ~180 trials intermediários do Optuna. Branch:
+`results/churn-modelos-salvos`.
+
 ## Pontos de melhoria possíveis
 
 Levantamento do que ainda pode ser feito, a partir dos resultados das rodadas
