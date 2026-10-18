@@ -1,0 +1,5 @@
+fator,config_a,config_b,metrica,valor_a,valor_b,ganho,ic95_inf,ic95_sup,n_particoes,veredito
+CatBoost vs. XGB Optuna (treino com duplicacao),xgb_optuna,catboost_duplicacao,ks,0.5354383564360362,0.5370129097507287,0.0015745533146925173,-0.017119359254033153,0.02026846588341819,5,dentro do ruido
+CatBoost vs. XGB Optuna (treino sem copias),xgb_optuna_sem_copias,catboost_sem_copias,ks,0.5387441251710394,0.5328276518531739,-0.005916473317865445,-0.009883104518610266,-0.001949842117120625,5,efeito real
+CatBoost: duplicacao -> sem copias,catboost_duplicacao,catboost_sem_copias,ks,0.5370129097507287,0.5328276518531739,-0.0041852578975548616,-0.019373292077623998,0.011002776282514276,5,dentro do ruido
+GB Optuna: 30 -> 100 trials,gb_optuna,gb_optuna100,ks,0.5288972177603268,0.5284044262002499,-0.0004927915600769994,-0.006871581157623043,0.005885998037469043,5,dentro do ruido

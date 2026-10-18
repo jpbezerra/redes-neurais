@@ -1,0 +1,63 @@
+{
+  "model_id": "catboost_duplicacao_particao1",
+  "framework": "CatBoost",
+  "timestamp": "2026-10-18T22:13:22.234836",
+  "hyperparameters": {
+    "iterations": 2000,
+    "learning_rate": 0.05,
+    "depth": 6,
+    "l2_leaf_reg": 3.0,
+    "early_stopping_rounds": 100,
+    "eval_metric": "AUC",
+    "cat_features": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "seed": 1
+  },
+  "metrics": {
+    "ks": 0.5376038630098956,
+    "mse": 0.1622587969816306,
+    "cross_entropy": 0.48256323793660644,
+    "auroc": 0.8400757530687926,
+    "threshold": 0.5,
+    "tp": 367,
+    "tn": 960,
+    "fp": 333,
+    "fn": 101,
+    "precision": 0.5242857142857142,
+    "recall": 0.7841880341880342,
+    "f1": 0.6284246575342465,
+    "acuracia_limiar_05": 0.7535491198182851,
+    "limiar_validacao": 0.74,
+    "acuracia_limiar_validacao": 0.8029528676888131
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 1,
+    "metricas_validacao_natural": {
+      "ks": 0.5134552819966308,
+      "auroc": 0.8383239726095403
+    },
+    "codificacao": "ordinal",
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada7",
+    "nome_na_tabela": "catboost_duplicacao",
+    "ks_registrado_na_tabela": null,
+    "metricas_validacao": {
+      "ks_validacao": 0.5208655332302937,
+      "auroc_validacao": 0.8433606898083892
+    }
+  },
+  "notes": "rodada7: catboost_duplicacao, particao 1 (re-treino da avaliacao em 5 particoes)."
+}
