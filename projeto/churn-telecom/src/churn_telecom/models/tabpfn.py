@@ -36,6 +36,8 @@ def treinar_tabpfn(X_train: np.ndarray, y_train: np.ndarray, hp: TabPFNHyperpara
             device=hp.device, n_estimators=hp.n_estimators, random_state=hp.seed,
         )
     except (ImportError, AttributeError):
+        if hp.versao != "v2":   # o construtor direto usaria o checkpoint padrao, nao a versao pedida
+            raise
         # versoes antigas do pacote (<2.x) so tem v2 — construtor direto
         modelo = TabPFNClassifier(device=hp.device, n_estimators=hp.n_estimators,
                                   random_state=hp.seed)

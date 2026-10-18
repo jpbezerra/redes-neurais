@@ -323,6 +323,29 @@ Configurações repetidas entre rodadas são treinadas uma vez só. Ficam de for
 os ~180 trials intermediários do Optuna. Branch:
 `results/churn-modelos-salvos`.
 
+Execução (sem falhas): 16 modelos finais e 220 modelos em 5 partições
+(275 nomes de tabela, porque alguns nomes de rodadas diferentes são o mesmo
+modelo; 59 MB). A reprodução bateu com as tabelas: o KS é idêntico em 272
+de 275 entradas, e o desvio por semente da rodada 4 é idêntico nos 6
+algoritmos. A única diferença é o KAN da partição 2 (+0,003, não
+determinístico em GPU) e as duas combinações que o usam (≤ 0,001), nenhuma
+grande o bastante para mudar uma conclusão. Num novo "Run All", tudo isso é
+reaproveitado e nenhum modelo é re-treinado.
+
+### Rodada 7 — TabPFN 2.5, CatBoost e GB com 100 trials
+
+Mesmo procedimento pareado de 5 partições, testando:
+
+- **TabPFN 2.5** contra o v2, one-hot e ordinal. É gated: exige o segredo
+  `HF_TOKEN` (ou `TABPFN_TOKEN`) no Kaggle.
+- **CatBoost**, com as categóricas tratadas nativamente (`models/boosting.py`),
+  com duplicação e sem cópias, contra o XGB Optuna.
+- **GB com busca Optuna de 100 trials** (antes, 30).
+
+As referências são lidas dos modelos já salvos, e os modelos novos ficam em
+`results/avaliacao_5_particoes/rodada7/`. Saídas: `rodada7_resumo.csv` e
+`fatores_rodada7_tabpfn25_catboost_gb100.csv/.png`.
+
 ## Pontos de melhoria possíveis
 
 Levantamento do que ainda pode ser feito, a partir dos resultados das rodadas
