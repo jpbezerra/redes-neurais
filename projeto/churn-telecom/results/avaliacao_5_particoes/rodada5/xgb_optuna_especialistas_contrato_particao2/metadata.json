@@ -1,0 +1,52 @@
+{
+  "model_id": "xgb_optuna_especialistas_contrato_particao2",
+  "framework": "XGBoost (um por segmento) + Optuna",
+  "timestamp": "2026-10-16T20:59:28.444438",
+  "hyperparameters": {
+    "learning_rate": 0.015640444791549198,
+    "n_estimators": 2000,
+    "max_depth": 4,
+    "subsample": 0.5134001218541187,
+    "scale_pos_weight": 1.0,
+    "seed": 2,
+    "colsample_bytree": 0.5099376320529461,
+    "min_child_weight": 9.662012411244048,
+    "reg_lambda": 0.0074359514986456175,
+    "eval_metric": "auc",
+    "early_stopping_rounds": 100
+  },
+  "metrics": {
+    "ks": 0.5387044638784778,
+    "mse": 0.1919564025870251,
+    "cross_entropy": 0.5443767931539955,
+    "auroc": 0.8382149774261143,
+    "threshold": 0.5,
+    "tp": 408,
+    "tn": 744,
+    "fp": 549,
+    "fn": 60,
+    "precision": 0.4263322884012539,
+    "recall": 0.8717948717948718,
+    "f1": 0.5726315789473685,
+    "acuracia_limiar_05": 0.6541737649063032,
+    "limiar_validacao": 0.67,
+    "acuracia_limiar_validacao": 0.8035207268597387
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 2,
+    "metricas_validacao_natural": {
+      "ks": 0.5505032285395617,
+      "auroc": 0.8475280408010617
+    },
+    "segmentos": "Contract == 'Month-to-month' (mensal) vs. One/Two year (anual_bianual)",
+    "rodada": "rodada5",
+    "nome_na_tabela": "xgb_optuna_especialistas_contrato",
+    "ks_registrado_na_tabela": 0.5387044638784778,
+    "metricas_validacao": {
+      "ks_validacao": 0.545595054095827,
+      "auroc_validacao": 0.8461037029781968
+    }
+  },
+  "notes": "rodada5: xgb_optuna_especialistas_contrato, particao 2 (re-treino da avaliacao em 5 particoes)."
+}

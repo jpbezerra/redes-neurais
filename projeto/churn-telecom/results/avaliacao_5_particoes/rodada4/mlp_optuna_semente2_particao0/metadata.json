@@ -1,0 +1,58 @@
+{
+  "model_id": "mlp_optuna_semente2_particao0",
+  "framework": "Scikit-learn (MLPClassifier) + Optuna",
+  "timestamp": "2026-10-16T20:24:12.002228",
+  "hyperparameters": {
+    "hidden_layer_sizes": [
+      116,
+      116
+    ],
+    "activation": "relu",
+    "solver": "adam",
+    "learning_rate_init": 0.0002646706661774509,
+    "alpha": 0.0020898235166154863,
+    "batch_size": 32,
+    "max_epochs": 10000,
+    "patience": 10,
+    "loss_metric": "cross_entropy",
+    "seed": 2,
+    "early_stop_metric": "val_auroc"
+  },
+  "metrics": {
+    "ks": 0.5045858369524263,
+    "mse": 0.16422647515729918,
+    "cross_entropy": 0.4886474139225983,
+    "auroc": 0.8320377311096568,
+    "threshold": 0.5,
+    "tp": 342,
+    "tn": 988,
+    "fp": 305,
+    "fn": 126,
+    "precision": 0.5285935085007728,
+    "recall": 0.7307692307692307,
+    "f1": 0.6134529147982063,
+    "acuracia_limiar_05": 0.7552526973310619,
+    "limiar_validacao": 0.76,
+    "acuracia_limiar_validacao": 0.7950028392958546
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.5284776716123502,
+      "auroc": 0.8465897620048387
+    },
+    "codificacao": "zscore_onehot",
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada4",
+    "nome_na_tabela": "mlp_optuna_semente2",
+    "ks_registrado_na_tabela": null,
+    "metricas_validacao": {
+      "ks_validacao": 0.5324574961360123,
+      "auroc_validacao": 0.8448892642059774
+    }
+  },
+  "notes": "rodada4: mlp_optuna_semente2, particao 0 (re-treino da avaliacao em 5 particoes)."
+}

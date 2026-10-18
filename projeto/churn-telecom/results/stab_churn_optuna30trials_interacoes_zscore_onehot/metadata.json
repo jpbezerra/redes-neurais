@@ -1,0 +1,69 @@
+{
+  "model_id": "stab_churn_optuna30trials_interacoes_zscore_onehot",
+  "framework": "PyTorch (STab — implementacao propria) + Optuna",
+  "timestamp": "2026-10-16T20:11:19.835225",
+  "hyperparameters": {
+    "dim": 64,
+    "depth": 2,
+    "heads": 2,
+    "attn_dropout": 0.08948469778680923,
+    "ff_dropout": 0.17098947321037947,
+    "lr": 0.0007460891331053295,
+    "weight_decay": 5.28415741238381e-05,
+    "batch_size": 64,
+    "max_epochs": 150,
+    "patience": 15,
+    "seed": 0,
+    "embedding": "compartilhada",
+    "early_stop_metric": "val_auroc",
+    "scheduler": "plateau",
+    "max_grad_norm": 1.0,
+    "pos_weight": null
+  },
+  "metrics": {
+    "ks": 0.5111646538560692,
+    "mse": 0.18341810704273098,
+    "cross_entropy": 0.5375703992994206,
+    "auroc": 0.8367111534164898,
+    "threshold": 0.5,
+    "tp": 375,
+    "tn": 891,
+    "fp": 402,
+    "fn": 93,
+    "precision": 0.4826254826254826,
+    "recall": 0.8012820512820513,
+    "f1": 0.6024096385542169,
+    "acuracia_limiar_05": 0.7189097103918228,
+    "limiar_validacao": 0.8200000000000001,
+    "acuracia_limiar_validacao": 0.8012492901760363
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.5469122849984611,
+      "auroc": 0.8506713575090435
+    },
+    "avaliacao_5_particoes": {
+      "nome_na_tabela": "stab_optuna_duplicacao_interacoes",
+      "tabela": "rodada6_resumo.csv",
+      "ks_mean": 0.5326561167628453,
+      "ks_std": 0.0150298479111774,
+      "auroc_mean": 0.843400526173148,
+      "acuracia_limiar_validacao_mean": 0.801930721181147
+    },
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [
+      "Contract_x_PaymentMethod",
+      "InternetService_x_TechSupport",
+      "InternetService_x_OnlineSecurity"
+    ],
+    "codificacao": "zscore_onehot",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.554095826893354,
+      "auroc_validacao": 0.8507972236621764
+    }
+  },
+  "notes": "Melhor config Optuna (rodada 3); treino com duplicacao + interacoes explicitas. Rodada 6."
+}

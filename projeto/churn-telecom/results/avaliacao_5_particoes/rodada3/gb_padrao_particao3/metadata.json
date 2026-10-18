@@ -1,0 +1,51 @@
+{
+  "model_id": "gb_padrao_particao3",
+  "framework": "Scikit-learn (GradientBoostingClassifier) + Optuna",
+  "timestamp": "2026-10-16T21:02:51.640626",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "subsample": 1.0,
+    "criterion": "friedman_mse",
+    "min_samples_leaf": 1,
+    "max_depth": 3,
+    "seed": 3
+  },
+  "metrics": {
+    "ks": 0.5348275725305889,
+    "mse": 0.1601132163445585,
+    "cross_entropy": 0.474487376269456,
+    "auroc": 0.8460100739683106,
+    "threshold": 0.5,
+    "tp": 368,
+    "tn": 960,
+    "fp": 333,
+    "fn": 100,
+    "precision": 0.5249643366619116,
+    "recall": 0.7863247863247863,
+    "f1": 0.6295979469632165,
+    "acuracia_limiar_05": 0.7541169789892107,
+    "limiar_validacao": 0.8,
+    "acuracia_limiar_validacao": 0.7950028392958546
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 3,
+    "metricas_validacao_natural": {
+      "ks": 0.5158233189585271,
+      "auroc": 0.8322235056213987
+    },
+    "codificacao": "ordinal",
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada3",
+    "nome_na_tabela": "gb_padrao",
+    "ks_registrado_na_tabela": 0.5348275725305889,
+    "metricas_validacao": {
+      "ks_validacao": 0.5154559505409583,
+      "auroc_validacao": 0.8299576693286576
+    }
+  },
+  "notes": "rodada3: gb_padrao, particao 3 (re-treino da avaliacao em 5 particoes)."
+}

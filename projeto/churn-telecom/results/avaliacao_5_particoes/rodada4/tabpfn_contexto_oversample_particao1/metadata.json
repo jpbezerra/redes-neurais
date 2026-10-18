@@ -1,0 +1,46 @@
+{
+  "model_id": "tabpfn_contexto_oversample_particao1",
+  "framework": "TabPFN v2",
+  "timestamp": "2026-10-16T20:46:49.987697",
+  "hyperparameters": {
+    "device": "cuda",
+    "n_estimators": 8,
+    "versao": "v2",
+    "seed": 1,
+    "contexto": "com_copias"
+  },
+  "metrics": {
+    "ks": 0.507441450016856,
+    "mse": 0.15584431165411708,
+    "cross_entropy": 0.5197578100045896,
+    "auroc": 0.818418208499415,
+    "threshold": 0.5,
+    "tp": 192,
+    "tn": 1191,
+    "fp": 102,
+    "fn": 276,
+    "precision": 0.6530612244897959,
+    "recall": 0.41025641025641024,
+    "f1": 0.5039370078740157,
+    "acuracia_limiar_05": 0.7853492333901193,
+    "limiar_validacao": 0.34,
+    "acuracia_limiar_validacao": 0.7864849517319704
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 1,
+    "metricas_validacao_natural": {
+      "ks": 0.49123776679717623,
+      "auroc": 0.817269790732387
+    },
+    "codificacao": "zscore_onehot",
+    "rodada": "rodada4",
+    "nome_na_tabela": "tabpfn_contexto_oversample",
+    "ks_registrado_na_tabela": 0.507441450016856,
+    "metricas_validacao": {
+      "ks_validacao": 0.49922720247295205,
+      "auroc_validacao": 0.8242939712237434
+    }
+  },
+  "notes": "rodada4: tabpfn_contexto_oversample, particao 1 (re-treino da avaliacao em 5 particoes)."
+}

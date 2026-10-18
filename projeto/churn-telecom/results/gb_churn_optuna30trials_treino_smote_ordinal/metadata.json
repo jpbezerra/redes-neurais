@@ -1,0 +1,56 @@
+{
+  "model_id": "gb_churn_optuna30trials_treino_smote_ordinal",
+  "framework": "Scikit-learn (GradientBoostingClassifier) + Optuna",
+  "timestamp": "2026-10-16T20:10:08.892856",
+  "hyperparameters": {
+    "learning_rate": 0.01678721729450905,
+    "n_estimators": 209,
+    "subsample": 0.6324271152067323,
+    "criterion": "friedman_mse",
+    "min_samples_leaf": 9,
+    "max_depth": 3,
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.4875959307513832,
+    "mse": 0.15186103498423584,
+    "cross_entropy": 0.45963316778417374,
+    "auroc": 0.8206888174985623,
+    "threshold": 0.5,
+    "tp": 295,
+    "tn": 1063,
+    "fp": 230,
+    "fn": 173,
+    "precision": 0.5619047619047619,
+    "recall": 0.6303418803418803,
+    "f1": 0.594159113796576,
+    "acuracia_limiar_05": 0.771152754116979,
+    "limiar_validacao": 0.65,
+    "acuracia_limiar_validacao": 0.787052810902896
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.5258531386832325,
+      "auroc": 0.841368000556017
+    },
+    "avaliacao_5_particoes": {
+      "nome_na_tabela": "gb_optuna_smote",
+      "tabela": "rodada6_resumo.csv",
+      "ks_mean": 0.5191891248735796,
+      "ks_std": 0.0210143389972747,
+      "auroc_mean": 0.8360372419537153,
+      "acuracia_limiar_validacao_mean": 0.7937535491198182
+    },
+    "balanceamento_treino": "smote",
+    "interacoes": [],
+    "codificacao": "ordinal",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5463678516228748,
+      "auroc_validacao": 0.8424397827089241
+    }
+  },
+  "notes": "Melhor config Optuna (rodada 3); treino com smote. Rodada 6."
+}

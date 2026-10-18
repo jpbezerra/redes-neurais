@@ -1,0 +1,55 @@
+{
+  "model_id": "xgb_optuna_smote_particao4",
+  "framework": "XGBoost + Optuna",
+  "timestamp": "2026-10-16T21:19:37.428631",
+  "hyperparameters": {
+    "learning_rate": 0.015640444791549198,
+    "n_estimators": 2000,
+    "max_depth": 4,
+    "subsample": 0.5134001218541187,
+    "scale_pos_weight": 1.0,
+    "seed": 4,
+    "colsample_bytree": 0.5099376320529461,
+    "min_child_weight": 9.662012411244048,
+    "reg_lambda": 0.0074359514986456175,
+    "eval_metric": "auc",
+    "early_stopping_rounds": 100
+  },
+  "metrics": {
+    "ks": 0.5207478136712476,
+    "mse": 0.15982096284491498,
+    "cross_entropy": 0.49349780657147785,
+    "auroc": 0.8412160152299364,
+    "threshold": 0.5,
+    "tp": 338,
+    "tn": 1016,
+    "fp": 277,
+    "fn": 130,
+    "precision": 0.5495934959349593,
+    "recall": 0.7222222222222222,
+    "f1": 0.6241920590951062,
+    "acuracia_limiar_05": 0.7688813174332766,
+    "limiar_validacao": 0.59,
+    "acuracia_limiar_validacao": 0.80465644520159
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 4,
+    "metricas_validacao_natural": {
+      "ks": 0.558568785599158,
+      "auroc": 0.8443383893377109
+    },
+    "codificacao": "ordinal",
+    "balanceamento_treino": "smote",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada6",
+    "nome_na_tabela": "xgb_optuna_smote",
+    "ks_registrado_na_tabela": 0.5207478136712476,
+    "metricas_validacao": {
+      "ks_validacao": 0.5656877897990726,
+      "auroc_validacao": 0.84925998963233
+    }
+  },
+  "notes": "rodada6: xgb_optuna_smote, particao 4 (re-treino da avaliacao em 5 particoes)."
+}

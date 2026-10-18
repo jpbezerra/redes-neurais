@@ -1,0 +1,49 @@
+{
+  "model_id": "ensemble_media_logit_optuna_particao3",
+  "framework": "media de logits (sem parametros)",
+  "timestamp": "2026-10-16T21:08:12.856646",
+  "hyperparameters": {
+    "combinacao": "media dos logits",
+    "membros": [
+      "avaliacao_5_particoes/rodada3/mlp_optuna_particao3",
+      "avaliacao_5_particoes/rodada3/gb_optuna_particao3",
+      "avaliacao_5_particoes/rodada3/xgb_optuna_particao3",
+      "avaliacao_5_particoes/rodada3/stab_optuna_particao3",
+      "avaliacao_5_particoes/rodada3/tabkan_optuna_particao3",
+      "avaliacao_5_particoes/rodada3/kan_optuna_particao3"
+    ]
+  },
+  "metrics": {
+    "ks": 0.5485156761258849,
+    "mse": 0.15887794750055886,
+    "cross_entropy": 0.4706675263986854,
+    "auroc": 0.8512949412021338,
+    "threshold": 0.5,
+    "tp": 371,
+    "tn": 956,
+    "fp": 337,
+    "fn": 97,
+    "precision": 0.5240112994350282,
+    "recall": 0.7927350427350427,
+    "f1": 0.6309523809523809,
+    "acuracia_limiar_05": 0.7535491198182851,
+    "limiar_validacao": 0.6900000000000001,
+    "acuracia_limiar_validacao": 0.7904599659284497
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 3,
+    "metricas_validacao_natural": {
+      "ks": 0.5336936412167507,
+      "auroc": 0.8392663884374928
+    },
+    "rodada": "rodada3",
+    "nome_na_tabela": "ensemble_media_logit_optuna",
+    "ks_registrado_na_tabela": 0.5485156761258849,
+    "metricas_validacao": {
+      "ks_validacao": 0.5239567233384853,
+      "auroc_validacao": 0.8363616166876489
+    }
+  },
+  "notes": "rodada3: ensemble_media_logit_optuna, particao 3 (re-treino da avaliacao em 5 particoes)."
+}

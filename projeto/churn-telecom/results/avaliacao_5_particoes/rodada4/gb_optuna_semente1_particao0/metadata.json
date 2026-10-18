@@ -1,0 +1,51 @@
+{
+  "model_id": "gb_optuna_semente1_particao0",
+  "framework": "Scikit-learn (GradientBoostingClassifier) + Optuna",
+  "timestamp": "2026-10-16T20:24:22.077240",
+  "hyperparameters": {
+    "learning_rate": 0.01678721729450905,
+    "n_estimators": 209,
+    "subsample": 0.6324271152067323,
+    "criterion": "friedman_mse",
+    "min_samples_leaf": 9,
+    "max_depth": 3,
+    "seed": 1
+  },
+  "metrics": {
+    "ks": 0.5137624685188491,
+    "mse": 0.16355943202822815,
+    "cross_entropy": 0.48921982200740816,
+    "auroc": 0.835344491376974,
+    "threshold": 0.5,
+    "tp": 360,
+    "tn": 951,
+    "fp": 342,
+    "fn": 108,
+    "precision": 0.5128205128205128,
+    "recall": 0.7692307692307693,
+    "f1": 0.6153846153846154,
+    "acuracia_limiar_05": 0.7444633730834753,
+    "limiar_validacao": 0.7100000000000001,
+    "acuracia_limiar_validacao": 0.7978421351504826
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.543756557195291,
+      "auroc": 0.8517387116952232
+    },
+    "codificacao": "ordinal",
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada4",
+    "nome_na_tabela": "gb_optuna_semente1",
+    "ks_registrado_na_tabela": null,
+    "metricas_validacao": {
+      "ks_validacao": 0.5540958268933539,
+      "auroc_validacao": 0.852783862745426
+    }
+  },
+  "notes": "rodada4: gb_optuna_semente1, particao 0 (re-treino da avaliacao em 5 particoes)."
+}

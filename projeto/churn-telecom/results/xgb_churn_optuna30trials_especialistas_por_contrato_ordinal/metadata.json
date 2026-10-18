@@ -1,0 +1,56 @@
+{
+  "model_id": "xgb_churn_optuna30trials_especialistas_por_contrato_ordinal",
+  "framework": "XGBoost (um por segmento) + Optuna",
+  "timestamp": "2026-10-16T20:12:04.809202",
+  "hyperparameters": {
+    "learning_rate": 0.015640444791549198,
+    "n_estimators": 2000,
+    "max_depth": 4,
+    "subsample": 0.5134001218541187,
+    "scale_pos_weight": 1.0,
+    "seed": 0,
+    "colsample_bytree": 0.5099376320529461,
+    "min_child_weight": 9.662012411244048,
+    "reg_lambda": 0.0074359514986456175,
+    "eval_metric": "auc",
+    "early_stopping_rounds": 100
+  },
+  "metrics": {
+    "ks": 0.5227160053146132,
+    "mse": 0.16546471475595467,
+    "cross_entropy": 0.4882909296697794,
+    "auroc": 0.835439513223736,
+    "threshold": 0.5,
+    "tp": 378,
+    "tn": 921,
+    "fp": 372,
+    "fn": 90,
+    "precision": 0.504,
+    "recall": 0.8076923076923077,
+    "f1": 0.6206896551724138,
+    "acuracia_limiar_05": 0.737649063032368,
+    "limiar_validacao": 0.74,
+    "acuracia_limiar_validacao": 0.7932992617830777
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 0,
+    "metricas_validacao_natural": {
+      "ks": 0.5459293262595607,
+      "auroc": 0.8506738397280812
+    },
+    "avaliacao_5_particoes": {
+      "nome_na_tabela": "xgb_optuna_especialistas_contrato",
+      "tabela": "acuracia_limiar_validacao_resumo.csv",
+      "ks": 0.5348662422908362,
+      "auroc": 0.842715212088762,
+      "acuracia_limiar_validacao": 0.800908574673481
+    },
+    "segmentos": "Contract == 'Month-to-month' (mensal) vs. One/Two year (anual_bianual)",
+    "metricas_validacao": {
+      "ks_validacao": 0.5602782071097373,
+      "auroc_validacao": 0.8524470329113804
+    }
+  },
+  "notes": "Dois XGBoost (config Optuna), um por tipo de contrato. Rodada 5."
+}

@@ -1,0 +1,51 @@
+{
+  "model_id": "gb_optuna_particao3",
+  "framework": "Scikit-learn (GradientBoostingClassifier) + Optuna",
+  "timestamp": "2026-10-16T21:02:53.072247",
+  "hyperparameters": {
+    "learning_rate": 0.01678721729450905,
+    "n_estimators": 209,
+    "subsample": 0.6324271152067323,
+    "criterion": "friedman_mse",
+    "min_samples_leaf": 9,
+    "max_depth": 3,
+    "seed": 3
+  },
+  "metrics": {
+    "ks": 0.5433101314771849,
+    "mse": 0.1604355170076498,
+    "cross_entropy": 0.47941142189742003,
+    "auroc": 0.8519204328369061,
+    "threshold": 0.5,
+    "tp": 377,
+    "tn": 944,
+    "fp": 349,
+    "fn": 91,
+    "precision": 0.5192837465564738,
+    "recall": 0.8055555555555556,
+    "f1": 0.6314907872696817,
+    "acuracia_limiar_05": 0.7501419647927314,
+    "limiar_validacao": 0.68,
+    "acuracia_limiar_validacao": 0.8023850085178875
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 3,
+    "metricas_validacao_natural": {
+      "ks": 0.5257075151663584,
+      "auroc": 0.8337136644503209
+    },
+    "codificacao": "ordinal",
+    "balanceamento_treino": "duplicacao",
+    "interacoes": [],
+    "n_linhas_treino": 5174,
+    "rodada": "rodada3",
+    "nome_na_tabela": "gb_optuna",
+    "ks_registrado_na_tabela": 0.5433101314771849,
+    "metricas_validacao": {
+      "ks_validacao": 0.5200927357032458,
+      "auroc_validacao": 0.8307964592256736
+    }
+  },
+  "notes": "rodada3: gb_optuna, particao 3 (re-treino da avaliacao em 5 particoes)."
+}
