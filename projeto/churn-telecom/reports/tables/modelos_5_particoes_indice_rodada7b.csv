@@ -1,0 +1,11 @@
+rodada,modelo,seed,pasta,ks,ks_registrado,diferenca
+rodada7,tabpfn_v25_8est_onehot,0,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_onehot_particao0,0.5209312471493446,,
+rodada7,tabpfn_v25_8est_ordinal,0,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_ordinal_particao0,0.5169452872469114,,
+rodada7,tabpfn_v25_8est_onehot,1,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_onehot_particao1,0.5456154441073234,,
+rodada7,tabpfn_v25_8est_ordinal,1,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_ordinal_particao1,0.545655105399885,,
+rodada7,tabpfn_v25_8est_onehot,2,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_onehot_particao2,0.5540186804687965,,
+rodada7,tabpfn_v25_8est_ordinal,2,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_ordinal_particao2,0.5498492870882662,,
+rodada7,tabpfn_v25_8est_onehot,3,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_onehot_particao3,0.5408164277073789,,
+rodada7,tabpfn_v25_8est_ordinal,3,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_ordinal_particao3,0.5444751819461796,,
+rodada7,tabpfn_v25_8est_onehot,4,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_onehot_particao4,0.5167767267535249,,
+rodada7,tabpfn_v25_8est_ordinal,4,avaliacao_5_particoes/rodada7/tabpfn_v25_8est_ordinal_particao4,0.5198554345886133,,

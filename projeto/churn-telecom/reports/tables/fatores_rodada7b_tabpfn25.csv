@@ -1,0 +1,5 @@
+fator,config_a,config_b,metrica,valor_a,valor_b,ganho,ic95_inf,ic95_sup,n_particoes,veredito
+TabPFN v2 -> v2.5 (one-hot),tabpfn_v2_8est_onehot,tabpfn_v25_8est_onehot,ks,0.536420964959248,0.5356317052372737,-0.0007892597219743225,-0.005611851529263837,0.004033332085315191,5,dentro do ruido
+TabPFN v2.5: one-hot -> ordinal,tabpfn_v25_8est_onehot,tabpfn_v25_8est_ordinal,ks,0.5356317052372737,0.5353560592539711,-0.00027564598330258593,-0.004911490912678857,0.0043601989460736856,5,dentro do ruido
+TabPFN v2.5 vs. XGB Optuna sem copias (maior KS ate a rodada 7),xgb_optuna_sem_copias,tabpfn_v25_8est_onehot,ks,0.5387441251710394,0.5356317052372737,-0.0031124199337656533,-0.014950160965847793,0.008725321098316486,5,dentro do ruido
+"TabPFN v2 -> v2.5 (one-hot), acuracia no limiar da validacao",tabpfn_v2_8est_onehot,tabpfn_v25_8est_onehot,acuracia_limiar_validacao,0.8048835888699601,0.8055650198750708,0.000681431005110733,-0.004923925924815964,0.00628678793503743,5,dentro do ruido
