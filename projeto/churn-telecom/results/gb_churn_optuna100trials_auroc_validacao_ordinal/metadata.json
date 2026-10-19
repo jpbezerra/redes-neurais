@@ -1,0 +1,47 @@
+{
+  "model_id": "gb_churn_optuna100trials_auroc_validacao_ordinal",
+  "framework": "Scikit-learn (GradientBoostingClassifier) + Optuna",
+  "timestamp": "2026-10-18T22:13:08.329593",
+  "hyperparameters": {
+    "learning_rate": 0.011971892394926175,
+    "n_estimators": 270,
+    "subsample": 0.7343918706685191,
+    "criterion": "friedman_mse",
+    "min_samples_leaf": 26,
+    "max_depth": 4,
+    "seed": 0
+  },
+  "metrics": {
+    "ks": 0.5194389910167172,
+    "mse": 0.161156484679102,
+    "cross_entropy": 0.4836150299705022,
+    "auroc": 0.8363847740297856,
+    "threshold": 0.5,
+    "tp": 358,
+    "tn": 960,
+    "fp": 333,
+    "fn": 110,
+    "precision": 0.5180897250361794,
+    "recall": 0.7649572649572649,
+    "f1": 0.6177739430543573
+  },
+  "architecture": {},
+  "dataset": {
+    "metricas_validacao": {
+      "ks_validacao": 0.5579598145285936,
+      "auroc_validacao": 0.854914430888968
+    },
+    "codificacao": "ordinal",
+    "n_trials": 100,
+    "objetivo_busca": "auroc_validacao",
+    "melhor_trial": 88,
+    "importancia_parametros": {
+      "learning_rate": 0.3836544908209004,
+      "subsample": 0.21015826132209478,
+      "n_estimators": 0.16935160910540115,
+      "min_samples_leaf": 0.11845026705251174,
+      "max_depth": 0.11838537169909197
+    }
+  },
+  "notes": "Melhor de 100 trials Optuna (TPE semente 0, objetivo AUROC de validacao); os 30 primeiros trials repetem a busca da rodada 3."
+}
