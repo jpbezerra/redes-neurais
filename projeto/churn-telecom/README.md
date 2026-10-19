@@ -346,6 +346,18 @@ As referências são lidas dos modelos já salvos, e os modelos novos ficam em
 `results/avaliacao_5_particoes/rodada7/`. Saídas: `rodada7_resumo.csv` e
 `fatores_rodada7_tabpfn25_catboost_gb100.csv/.png`.
 
+Resultados (branch `results/churn-tabpfn25-catboost-gb100`):
+**nenhum ganho**.
+
+- CatBoost com duplicação vs. XGB: +0,002 (ruído).
+- CatBoost sem cópias vs. XGB sem cópias: −0,006 (efeito real, pior).
+- GB com 100 trials: o AUROC de validação subiu de 0,8541 para 0,8549, mas
+  o KS no teste mudou −0,0005 (ruído).
+- O TabPFN 2.5 não rodou: a versão atual do pacote exige o `TABPFN_TOKEN`
+  (chave de https://ux.priorlabs.ai), não o `HF_TOKEN`. Ele foi movido para
+  uma etapa própria (rodada 7b, branch `results/churn-tabpfn25`), que roda
+  quando o segredo existir.
+
 ## Pontos de melhoria possíveis
 
 Levantamento do que ainda pode ser feito, a partir dos resultados das rodadas
