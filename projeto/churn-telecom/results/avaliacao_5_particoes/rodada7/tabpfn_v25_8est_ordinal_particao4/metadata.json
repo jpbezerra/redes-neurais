@@ -1,0 +1,46 @@
+{
+  "model_id": "tabpfn_v25_8est_ordinal_particao4",
+  "framework": "TabPFN v2.5",
+  "timestamp": "2026-10-19T13:04:54.329627",
+  "hyperparameters": {
+    "device": "cuda",
+    "n_estimators": 8,
+    "versao": "v2.5",
+    "seed": 4,
+    "contexto": "sem_copias"
+  },
+  "metrics": {
+    "ks": 0.5198554345886133,
+    "mse": 0.13458163162332284,
+    "cross_entropy": 0.4152380022678858,
+    "auroc": 0.8449226935305821,
+    "threshold": 0.5,
+    "tp": 236,
+    "tn": 1178,
+    "fp": 115,
+    "fn": 232,
+    "precision": 0.6723646723646723,
+    "recall": 0.5042735042735043,
+    "f1": 0.5763125763125763,
+    "acuracia_limiar_05": 0.8029528676888131,
+    "limiar_validacao": 0.46,
+    "acuracia_limiar_validacao": 0.8012492901760363
+  },
+  "architecture": {},
+  "dataset": {
+    "particao": 4,
+    "metricas_validacao_natural": {
+      "ks": 0.5550258316261182,
+      "auroc": 0.8498398141314385
+    },
+    "codificacao": "ordinal",
+    "rodada": "rodada7",
+    "nome_na_tabela": "tabpfn_v25_8est_ordinal",
+    "ks_registrado_na_tabela": null,
+    "metricas_validacao": {
+      "ks_validacao": 0.5633693972179288,
+      "auroc_validacao": 0.8539905377094138
+    }
+  },
+  "notes": "rodada7: tabpfn_v25_8est_ordinal, particao 4 (re-treino da avaliacao em 5 particoes)."
+}
