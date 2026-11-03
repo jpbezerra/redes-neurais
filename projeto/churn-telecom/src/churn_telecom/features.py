@@ -42,6 +42,15 @@ INTERACOES = [("Contract", "PaymentMethod"), ("InternetService", "TechSupport"),
               ("InternetService", "OnlineSecurity")]
 INTERACAO_COLS = [f"{a}_x_{b}" for a, b in INTERACOES]
 
+# Transformacoes das continuas assimetricas (EDA: TotalCharges com cauda longa
+# a direita; tenure e MonthlyCharges bimodais). `transformacao` do Preprocessor:
+# - 'nenhuma' (padrao, identico as execucoes antigas);
+# - 'log': log1p(TotalCharges) antes do z-score (arvores nao mudam: monotonica);
+# - 'faixas_adiciona': acrescenta a faixa (quantis do TREINO) de cada continua;
+# - 'faixas_substitui': troca a continua pela faixa (discretizacao pura).
+CONTINUAS = ["tenure", "MonthlyCharges", "TotalCharges"]
+TRANSFORMACOES = ("nenhuma", "log", "faixas_adiciona", "faixas_substitui")
+
 
 def _to_total_charges_float(series: pd.Series) -> pd.Series:
     """Converte TotalCharges (string, com brancos nos clientes tenure=0)
@@ -94,6 +103,9 @@ class Preprocessor:
     extra_features: tuple[str, ...] = ()  # subconjunto de FEATURES_DERIVADAS_DISPONIVEIS
     modo: str = "neural"                  # 'neural' | 'arvores'
     interacoes: bool = False              # acrescenta INTERACAO_COLS (padrao: desligado)
+    transformacao: str = "nenhuma"        # ver TRANSFORMACOES
+    n_faixas: int = 5                     # faixas por quantil (so nas 'faixas_*')
+    faixas_: dict[str, np.ndarray] = field(default_factory=dict)
     charges_per_tenure_mean_: float | None = None
     charges_per_tenure_std_: float | None = None
     fitted: bool = False
@@ -105,6 +117,8 @@ class Preprocessor:
         # logicamente correto, nao uma estimativa). Nao depende de
         # estatistica de treino, entao e seguro aplicar em qualquer particao.
         out.loc[out["tenure"] == 0, "TotalCharges"] = out.loc[out["tenure"] == 0, "TotalCharges"].fillna(0.0)
+        if self.transformacao == "log":
+            out["TotalCharges"] = np.log1p(out["TotalCharges"])
         if self.interacoes:
             for (a, b), col in zip(INTERACOES, INTERACAO_COLS):
                 out[col] = out[a].astype(str) + "|" + out[b].astype(str)
@@ -114,7 +128,14 @@ class Preprocessor:
         return MULTI_CAT_COLS + (INTERACAO_COLS if self.interacoes else [])
 
     def fit(self, df_train: pd.DataFrame) -> "Preprocessor":
+        if self.transformacao not in TRANSFORMACOES:
+            raise ValueError(f"transformacao desconhecida: {self.transformacao!r}")
         base = self._prepare_base(df_train)
+        if self.transformacao.startswith("faixas"):
+            # Cortes internos pelos quantis do treino (np.unique: cortes repetidos
+            # em colunas concentradas, como tenure, viram uma faixa so).
+            q = np.linspace(0, 1, self.n_faixas + 1)[1:-1]
+            self.faixas_ = {c: np.unique(np.quantile(base[c], q)) for c in CONTINUAS}
         self.numeric_mean_ = base[NUMERIC_COLS].mean()
         self.numeric_std_ = base[NUMERIC_COLS].std().replace(0, 1.0)
         for col in BINARY_COLS:
@@ -141,8 +162,20 @@ class Preprocessor:
         numeric = base[NUMERIC_COLS]
         if self.modo == "neural":
             numeric = (numeric - self.numeric_mean_) / self.numeric_std_
-        colunas = list(NUMERIC_COLS)
+        if self.transformacao == "faixas_substitui":
+            numeric = numeric.drop(columns=CONTINUAS)
+        colunas = list(numeric.columns)
         blocos = [numeric.to_numpy(dtype=np.float64)]
+
+        for col, cortes in self.faixas_.items():
+            faixa = np.searchsorted(cortes, base[col].to_numpy(dtype=np.float64), side="right")
+            if self.modo == "arvores":
+                blocos.append(faixa.astype(np.float64).reshape(-1, 1))
+                colunas.append(f"{col}__faixa")
+                continue
+            for k in range(len(cortes) + 1):
+                blocos.append((faixa == k).astype(np.float64).reshape(-1, 1))
+                colunas.append(f"{col}__faixa{k}")
 
         for col in BINARY_COLS:
             mapa = self.binary_maps_[col]

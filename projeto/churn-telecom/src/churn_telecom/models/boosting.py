@@ -18,21 +18,48 @@ class GradientBoostingHyperparams:
     min_samples_leaf: int = 1
     max_depth: int = 3
     seed: int = 0
+    # Paciencia (opcional): com ela, `n_estimators` vira o teto e o numero de
+    # arvores e escolhido pelo AUROC de validacao — para quando passam
+    # `early_stopping_rounds` arvores sem melhora. None = numero fixo (execucoes antigas).
+    early_stopping_rounds: int | None = None
 
 
 def treinar_gradient_boosting(X_train: np.ndarray, y_train: np.ndarray,
-                               hp: GradientBoostingHyperparams) -> GradientBoostingClassifier:
-    modelo = GradientBoostingClassifier(
-        loss="log_loss",  # equivalente a 'deviance' nas versoes recentes do sklearn
-        learning_rate=hp.learning_rate,
-        n_estimators=hp.n_estimators,
-        subsample=hp.subsample,
-        criterion=hp.criterion,
-        min_samples_leaf=hp.min_samples_leaf,
-        max_depth=hp.max_depth,
-        random_state=hp.seed,
-    )
-    modelo.fit(X_train, y_train)
+                               hp: GradientBoostingHyperparams,
+                               X_val: np.ndarray | None = None,
+                               y_val: np.ndarray | None = None) -> GradientBoostingClassifier:
+    def novo(n):
+        return GradientBoostingClassifier(
+            loss="log_loss",  # equivalente a 'deviance' nas versoes recentes do sklearn
+            learning_rate=hp.learning_rate,
+            n_estimators=n,
+            subsample=hp.subsample,
+            min_samples_leaf=hp.min_samples_leaf,
+            max_depth=hp.max_depth,
+            random_state=hp.seed,
+        )
+
+    if hp.early_stopping_rounds is None:
+        return novo(hp.n_estimators).fit(X_train, y_train)
+    if X_val is None or y_val is None:
+        raise ValueError("early_stopping_rounds exige X_val e y_val.")
+    from sklearn.metrics import roc_auc_score
+    # Cresce em blocos (warm_start continua o mesmo gerador aleatorio, entao as
+    # arvores sao as mesmas de um ajuste unico) e para quando passam
+    # `early_stopping_rounds` arvores sem melhora do AUROC de validacao.
+    modelo = novo(0).set_params(warm_start=True)
+    melhor, melhor_n, n = -np.inf, 1, 0
+    while n < hp.n_estimators and n - melhor_n < hp.early_stopping_rounds:
+        n = min(n + 50, hp.n_estimators)
+        modelo.set_params(n_estimators=n).fit(X_train, y_train)
+        for k, z in enumerate(modelo.staged_decision_function(X_val), start=1):
+            if k > n - 50:   # so os estagios novos
+                a = roc_auc_score(y_val, np.ravel(z))
+                if a > melhor + 1e-6:
+                    melhor, melhor_n = a, k
+    # Re-ajuste com o numero escolhido (mesma semente -> mesmas primeiras arvores).
+    modelo = novo(melhor_n).fit(X_train, y_train)
+    modelo.melhor_iteracao_ = melhor_n
     return modelo
 
 

@@ -1,9 +1,9 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** primeira rodada de modelos avançados executada no Kaggle
-(`notebooks/05_modelos_avancados_kaggle.ipynb`, resultados em `results/`).
-Próxima: rodar `notebooks/06_modelos_melhorados.ipynb` no Kaggle (rodada de
-melhorias — ver seção "Modelos avançados — rodada de melhorias").
+**Status:** rodadas 1–7 executadas (melhor KS médio em 5 partições: 0,539).
+Próxima: rodar `notebooks/07_rodada8_paciencia_kaggle.ipynb` no Kaggle
+(rodada 8 — paciência em todos os algoritmos, ver seção "Rodada 8"). A
+comparação do melhor de cada algoritmo fica em `notebooks/08_analise_resultados.ipynb`.
 
 ## Dataset
 
@@ -358,6 +358,44 @@ Resultados (branch `results/churn-tabpfn25-catboost-gb100`):
   uma etapa própria (rodada 7b, branch `results/churn-tabpfn25`), que roda
   quando o segredo existir.
 
+### Rodada 8 — paciência em todos os algoritmos (orientação do professor)
+
+`notebooks/07_rodada8_paciencia_kaggle.ipynb` (gerado por
+`scripts/make_rodada8_notebooks.py`; lógica em `src/churn_telecom/rodada8.py`).
+
+- **Nenhum algoritmo com nº fixo de épocas/árvores.** Redes param após 30 épocas
+  sem melhora do AUROC de validação; boosting após 200 árvores sem melhora
+  (o GB sklearn ganhou paciência em `models/boosting.py`; antes usava 100–209
+  árvores fixas). Tetos de 3000 épocas / 20000 árvores só como trava,
+  registrados em `teto_atingido`.
+- **Etapas:** A) baseline com hiperparâmetros padrão + paciência, todos os
+  algoritmos e variáveis; B) Optuna com paciência (sem épocas/árvores no
+  espaço de busca); C) transformações das contínuas — faixas por quantil do
+  treino (`Preprocessor(transformacao="faixas_adiciona"|"faixas_substitui")`) e
+  `log1p(TotalCharges)`; D) XGB/GB/TabPFN re-treinados em treino+validação;
+  E) ensembles com membros escolhidos pela validação. Comparações pareadas com
+  IC 95% em `reports/tables/rodada8_comparacoes_pareadas.csv`.
+- **Retomável:** cada (configuração, partição) é salva ao terminar; se a
+  sessão do Kaggle esgotar, rodar de novo continua de onde parou (os
+  resultados parciais voltam da branch `results/churn-rodada8-paciencia`).
+- **Correção do KS:** `ks_statistic` passou a avaliar só os fins de grupos de
+  scores empatados (antes, a ordem arbitrária dentro de um empate podia inflar
+  o KS). Valores das rodadas antigas ficam como foram registrados.
+
+### Análise — melhor de cada algoritmo
+
+`notebooks/08_analise_resultados.ipynb` (roda local, não treina): lê todas as
+avaliações em 5 partições de `results/avaliacao_5_particoes/` e mostra, por
+algoritmo, a configuração de maior KS médio com hiperparâmetros, protocolo e nº
+de configurações testadas (`src/churn_telecom/relatorio.py`; saídas
+`reports/tables/melhores_por_algoritmo.csv` e
+`reports/figures/melhores_por_algoritmo_ks.png`).
+
+**Organização de `results/`:** `results/avaliacao_5_particoes/{rodada}/` é a
+fonte de verdade para comparar modelos (5 réplicas de cada configuração); as
+pastas no topo de `results/` são o modelo da partição 0 das rodadas 1–6. A
+rodada 8 grava só em `avaliacao_5_particoes/rodada8/` (a partição 0 já está lá).
+
 ## Pontos de melhoria possíveis
 
 Levantamento do que ainda pode ser feito, a partir dos resultados das rodadas
@@ -472,7 +510,9 @@ churn-telecom/
 │   ├── features.py        # pré-processamento (fit só no treino)
 │   ├── metrics.py         # KS (principal) + métricas secundárias
 │   ├── checkpointing.py   # salvamento no padrão results/{model_id}/
-│   └── models/            # mlp.py, boosting.py (GB + XGBoost)
+│   ├── rodada8.py         # rodada 8: paciencia, Optuna, transformacoes, retomada
+│   ├── relatorio.py       # melhor configuracao de cada algoritmo (tabela + figura)
+│   └── models/            # mlp, boosting (GB/XGBoost/CatBoost), stab, tabkan, kan, tabpfn, mitra
 ├── scripts/                # geradores de notebook + runners (não versionado, ver .gitignore)
 ├── notebooks/
 ├── results/                # artefatos de experimento (model-saver)
@@ -497,6 +537,8 @@ python3 scripts/smoke_test_modelos_avancados.py           # smoke test de instal
 python3 scripts/make_smoke_test_notebook.py        # gera notebooks/05_modelos_avancados_smoke_test.ipynb
 python3 scripts/make_kaggle_notebook.py # gera notebooks/05_modelos_avancados_kaggle.ipynb (subir no Kaggle, não rodar aqui)
 python3 src/churn_telecom/metrics.py          # self-test do KS
+PYTHONPATH=src python3 -m churn_telecom.rodada8  # self-check (GB com paciencia + transformacoes)
+python3 scripts/make_rodada8_notebooks.py     # gera notebooks 07 (Kaggle) e 08 (analise)
 
 # No Kaggle (apos subir os datasets, ver secao acima):
 python3 scripts/treina_modelos_avancados_kaggle.py   # ou rode notebooks/06_modelos_avancados_kaggle.ipynb celula a celula

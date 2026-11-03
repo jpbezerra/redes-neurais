@@ -37,7 +37,11 @@ def ks_statistic(y_true: np.ndarray, y_score: np.ndarray) -> dict:
     cdf_pos = np.cumsum(y_ord) / n_pos
     cdf_neg = np.cumsum(1 - y_ord) / n_neg
 
-    diffs = np.abs(cdf_pos - cdf_neg)
+    # So conta pontos no FIM de cada grupo de scores empatados: dentro de um
+    # empate nao existe limiar que separe as linhas, e a ordem do argsort ali
+    # e arbitraria (inflaria o KS de modelos com scores repetidos).
+    fim_do_grupo = np.r_[scores_ord[1:] != scores_ord[:-1], True]
+    diffs = np.where(fim_do_grupo, np.abs(cdf_pos - cdf_neg), 0.0)
     i_max = int(np.argmax(diffs))
 
     return {
@@ -152,6 +156,10 @@ def _self_test_ks() -> None:
     score_misturado = rng.uniform(0, 1, size=200)
     r2 = ks_statistic(y, score_misturado)
     assert r2["ks"] < 0.3, f"esperado KS baixo para distribuicoes iguais, obtido {r2['ks']}"
+
+    # Caso 2b: score constante (empate total) -> nenhum limiar separa -> KS = 0
+    r_emp = ks_statistic(y, np.full(200, 0.3))
+    assert r_emp["ks"] == 0.0, f"esperado KS=0 com scores empatados, obtido {r_emp['ks']}"
 
     # Caso 3: duas gaussianas com separacao moderada — compara contra
     # scipy.stats.ks_2samp quando disponivel (mesma definicao de KS).

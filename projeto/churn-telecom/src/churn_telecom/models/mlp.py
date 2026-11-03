@@ -25,7 +25,7 @@ from dataclasses import dataclass, field
 import numpy as np
 from sklearn.neural_network import MLPClassifier
 
-from ..metrics import criterio_parada, cross_entropy, mse
+from ..metrics import auroc, criterio_parada, cross_entropy, mse
 
 
 @dataclass
@@ -79,7 +79,8 @@ def treinar_mlp(X_train: np.ndarray, y_train: np.ndarray,
         train_loss = loss_fn(y_train, p_train)
         val_loss = loss_fn(y_val, p_val)
 
-        historico.append({"epoch": epoca, "train_loss": train_loss, "val_loss": val_loss})
+        historico.append({"epoch": epoca, "train_loss": train_loss, "val_loss": val_loss,
+                          "val_auroc": auroc(y_val, p_val)})
         score = val_loss if hp.early_stop_metric is None else criterio_parada(hp.early_stop_metric, y_val, p_val)
 
         if score < melhor_val_loss - 1e-6:
