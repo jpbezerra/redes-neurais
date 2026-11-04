@@ -1,0 +1,33 @@
+{
+  "params": {
+    "treino": "nat",
+    "transformacao": "log",
+    "n_camadas": 2,
+    "largura": 443,
+    "activation": "tanh",
+    "alpha": 0.007871523990905186,
+    "learning_rate_init": 3.79960613836817e-05,
+    "batch_size": 128,
+    "patience": 30,
+    "early_stop_metric": "val_auroc"
+  },
+  "auroc_cv": 0.8533641197860472,
+  "auroc_folds": [
+    0.8577928439279958,
+    0.851780082012517,
+    0.8505194334176285
+  ],
+  "n_trials": 60,
+  "importancias": {
+    "alpha": 0.6218547967313393,
+    "largura": 0.19032654935004026,
+    "learning_rate_init": 0.05273803976967806,
+    "batch_size": 0.045377087200316475,
+    "patience": 0.0331117172565559,
+    "n_camadas": 0.024406283859710824,
+    "transformacao": 0.011730103212828495,
+    "activation": 0.010750615358083698,
+    "treino": 0.009360714917814815,
+    "early_stop_metric": 0.0003440923436321823
+  }
+}

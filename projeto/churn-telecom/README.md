@@ -1,7 +1,7 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** rodadas 1–8 executadas (melhor KS médio em 5 partições: 0,541,
-empatado no ruído com 0,539 da rodada 6). Rodada 8 em
+**Status:** rodadas 1–8 executadas e rodada 9 em andamento (melhor KS médio em
+5 partições: 0,544, MLP da busca ampla). Rodada 8 em
 `notebooks/07_rodada8_paciencia_kaggle.ipynb` (ver seção "Rodada 8"). A
 comparação do melhor de cada algoritmo fica em `notebooks/08_analise_resultados.ipynb`.
 
@@ -426,6 +426,26 @@ cada hiperparâmetro categórico aparece entre os 20% melhores trials
 pareadas (`rodada9_comparacoes_pareadas.csv`). Branch de resultados:
 `results/churn-rodada9-busca-ampla`. A busca é longa (3 folds por trial): deve
 precisar de 2–3 execuções no Kaggle, cada uma continuando de onde a anterior parou.
+
+**Resultados — 1ª execução** (6 de 8 buscas completas; KAN parou em 21/25
+trials e TabPFN não começou — a próxima execução do notebook 07 continua do
+journal e recalcula os ensembles da etapa G com todos os algoritmos):
+
+- **Novo melhor KS médio do projeto: 0,5436** (MLP da busca ampla: 2 camadas de
+  443, `tanh`, `alpha` 0,008, treino sem cópias, `log1p(TotalCharges)`). Contra o
+  MLP Optuna da rodada 8: +0,017, IC 95% [+0,007, +0,026] — **efeito real**.
+  Contra o recorde anterior (MLP + log, 0,5409): +0,003, IC [−0,004, +0,009] — ruído.
+- STab 0,5396, CatBoost 0,5372, GB 0,5349, XGB 0,5346, TabKAN 0,5343: nenhum
+  difere da rodada 8 fora do ruído.
+- **Treinar sem as cópias do oversampling** foi escolhido pelas 6 buscas e é o
+  achado mais consistente: 100% dos 20% melhores trials de cada algoritmo usam
+  treino sem cópias, 0% a duplicação. Parada pelo AUROC de validação venceu a
+  cross-entropy nas 3 redes. As árvores preferem profundidade 2 (o problema é
+  quase aditivo).
+- Hiperparâmetros que mais importam (fANOVA): regularização — `alpha` no MLP
+  (62%), `weight_decay` no TabKAN (64%), `l2_leaf_reg` no CatBoost (46%); `lr`
+  no STab; `learning_rate`/`max_depth` no GB; no XGB a importância se espalha
+  (`gamma` 22%).
 
 ### Análise — melhor de cada algoritmo
 

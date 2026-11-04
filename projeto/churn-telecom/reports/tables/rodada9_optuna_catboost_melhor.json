@@ -1,0 +1,39 @@
+{
+  "params": {
+    "treino": "nat",
+    "transformacao": "faixas_adiciona",
+    "learning_rate": 0.1006158366064435,
+    "depth": 3,
+    "l2_leaf_reg": 0.22594905112299543,
+    "random_strength": 0.039784923687638404,
+    "bagging_temperature": 4.257150315762057,
+    "border_count": 128,
+    "one_hot_max_size": 2,
+    "auto_class_weights": null,
+    "grow_policy": "SymmetricTree",
+    "early_stopping_rounds": 200
+  },
+  "auroc_cv": 0.8547242580748402,
+  "auroc_folds": [
+    0.8565442877520694,
+    0.8554248069660995,
+    0.8522036795063519
+  ],
+  "n_trials": 80,
+  "importancias": {
+    "l2_leaf_reg": 0.4605058247527385,
+    "bagging_temperature": 0.1713518801642126,
+    "depth": 0.15088752449618115,
+    "random_strength": 0.0475820405312728,
+    "one_hot_max_size": 0.042789878380349165,
+    "learning_rate": 0.032821821703874585,
+    "grow_policy": 0.025988429610415722,
+    "transformacao": 0.02457343134565865,
+    "border_count": 0.021181378510971575,
+    "auto_class_weights": 0.008618857631372528,
+    "early_stopping_rounds": 0.008605149398854952,
+    "treino": 0.005093783474097751,
+    "max_leaves": 0.0,
+    "min_data_in_leaf": 0.0
+  }
+}

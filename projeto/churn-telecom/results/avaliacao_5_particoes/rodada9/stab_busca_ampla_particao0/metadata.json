@@ -1,0 +1,60 @@
+{
+  "model_id": "stab_busca_ampla_particao0",
+  "framework": "STab",
+  "hyperparameters": {
+    "treino": "nat",
+    "transformacao": "log",
+    "dim": 64,
+    "depth": 5,
+    "heads": 4,
+    "attn_dropout": 0.1374261933863056,
+    "ff_dropout": 0.24224390483273647,
+    "lr": 0.00012405548662902912,
+    "weight_decay": 0.007422642964536096,
+    "batch_size": 64,
+    "embedding": "compartilhada",
+    "scheduler": "none",
+    "max_grad_norm": 0.5,
+    "patience": 60,
+    "early_stop_metric": "val_auroc"
+  },
+  "metrics": {
+    "ks": 0.513395601562655,
+    "mse": 0.13856628344748825,
+    "cross_entropy": 0.4248475975232948,
+    "auroc": 0.8380257600095187,
+    "threshold": 0.5,
+    "tp": 244,
+    "tn": 1164,
+    "fp": 129,
+    "fn": 224,
+    "precision": 0.6541554959785523,
+    "recall": 0.5213675213675214,
+    "f1": 0.5802615933412605,
+    "acuracia_limiar_05": 0.7995457126632595,
+    "limiar_validacao": 0.51,
+    "acuracia_limiar_validacao": 0.8029528676888131
+  },
+  "dataset": {
+    "rodada": "rodada9",
+    "nome_na_tabela": "stab_busca_ampla",
+    "particao": 0,
+    "algoritmo": "stab",
+    "familia": "STab",
+    "codificacao": "neural",
+    "transformacao": "log",
+    "treino": "nat",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.551838662381805,
+      "auroc_validacao": 0.8547637092957449
+    },
+    "paciencia": {
+      "epocas_treinadas": 187,
+      "melhor_epoca": 127,
+      "teto_atingido": false,
+      "segundos": 138.8
+    },
+    "etapa": "F_busca_ampla"
+  }
+}

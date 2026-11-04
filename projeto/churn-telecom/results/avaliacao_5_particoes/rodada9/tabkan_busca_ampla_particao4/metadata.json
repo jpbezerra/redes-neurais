@@ -1,0 +1,56 @@
+{
+  "model_id": "tabkan_busca_ampla_particao4",
+  "framework": "TabKAN",
+  "hyperparameters": {
+    "treino": "nat",
+    "transformacao": "faixas_adiciona",
+    "hidden_width": 2,
+    "degree": 3,
+    "lr": 0.020260928891090473,
+    "weight_decay": 2.4072577762275653e-05,
+    "batch_size": 64,
+    "scheduler": "none",
+    "max_grad_norm": 1.0,
+    "patience": 60,
+    "early_stop_metric": "val_auroc"
+  },
+  "metrics": {
+    "ks": 0.5292948222182561,
+    "mse": 0.13600542039836538,
+    "cross_entropy": 0.4208856759138418,
+    "auroc": 0.8425958977003061,
+    "threshold": 0.5,
+    "tp": 219,
+    "tn": 1193,
+    "fp": 100,
+    "fn": 249,
+    "precision": 0.6865203761755486,
+    "recall": 0.46794871794871795,
+    "f1": 0.5565438373570522,
+    "acuracia_limiar_05": 0.8018171493469619,
+    "limiar_validacao": 0.5,
+    "acuracia_limiar_validacao": 0.8018171493469619
+  },
+  "dataset": {
+    "rodada": "rodada9",
+    "nome_na_tabela": "tabkan_busca_ampla",
+    "particao": 4,
+    "algoritmo": "tabkan",
+    "familia": "TabKAN",
+    "codificacao": "neural",
+    "transformacao": "faixas_adiciona",
+    "treino": "nat",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.5439005258994735,
+      "auroc_validacao": 0.8470845509996724
+    },
+    "paciencia": {
+      "epocas_treinadas": 61,
+      "melhor_epoca": 1,
+      "teto_atingido": false,
+      "segundos": 6.7
+    },
+    "etapa": "F_busca_ampla"
+  }
+}

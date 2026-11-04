@@ -1,0 +1,35 @@
+{
+  "params": {
+    "treino": "nat",
+    "transformacao": "faixas_adiciona",
+    "hidden_width": 2,
+    "degree": 3,
+    "lr": 0.020260928891090473,
+    "weight_decay": 2.4072577762275653e-05,
+    "batch_size": 64,
+    "scheduler": "none",
+    "max_grad_norm": 1.0,
+    "patience": 60,
+    "early_stop_metric": "val_auroc"
+  },
+  "auroc_cv": 0.8525510146224002,
+  "auroc_folds": [
+    0.8581982730374749,
+    0.8490926662011127,
+    0.850362104628613
+  ],
+  "n_trials": 50,
+  "importancias": {
+    "weight_decay": 0.6346303802349014,
+    "batch_size": 0.10020248070715755,
+    "hidden_width": 0.0762393749034888,
+    "degree": 0.06617113081270336,
+    "lr": 0.05867035038281141,
+    "scheduler": 0.027395087394300834,
+    "max_grad_norm": 0.019526930132996168,
+    "transformacao": 0.013975006626196452,
+    "treino": 0.0028910681474332007,
+    "patience": 0.00026242165995235843,
+    "early_stop_metric": 3.5768998058603035e-05
+  }
+}

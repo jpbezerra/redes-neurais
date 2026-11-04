@@ -1,0 +1,29 @@
+{
+  "params": {
+    "treino": "nat",
+    "transformacao": "nenhuma",
+    "learning_rate": 0.007253621032963717,
+    "max_depth": 2,
+    "min_samples_leaf": 1,
+    "subsample": 0.5774490467917608,
+    "max_features": "sqrt",
+    "early_stopping_rounds": 400
+  },
+  "auroc_cv": 0.8539222460007587,
+  "auroc_folds": [
+    0.8565616632853328,
+    0.8529219027698255,
+    0.8522831719471177
+  ],
+  "n_trials": 60,
+  "importancias": {
+    "learning_rate": 0.4545906123144887,
+    "max_depth": 0.3830575377416384,
+    "min_samples_leaf": 0.05596998326085338,
+    "subsample": 0.04093727353776613,
+    "early_stopping_rounds": 0.02983449844733194,
+    "max_features": 0.021266347637969772,
+    "transformacao": 0.011113926201321017,
+    "treino": 0.003229820858630599
+  }
+}
