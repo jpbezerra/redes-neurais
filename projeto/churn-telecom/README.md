@@ -447,6 +447,14 @@ journal e recalcula os ensembles da etapa G com todos os algoritmos):
   no STab; `learning_rate`/`max_depth` no GB; no XGB a importância se espalha
   (`gamma` 22%).
 
+**Etapa H — bagging de sementes** (adicionada após a 1ª execução): como a busca
+já colocou os hiperparâmetros no lugar e o que sobra é variância de treino (o
+desvio entre partições, ~0,018, é maior que a diferença entre algoritmos), a
+melhor configuração de cada algoritmo (exceto TabPFN, que já faz ensemble
+interno) é treinada com 5 sementes por partição e combinada pela média dos
+logits (`{alg}_busca_ampla_bagging5`). Os ensembles da etapa G passam a
+considerar esses modelos também.
+
 ### Análise — melhor de cada algoritmo
 
 `notebooks/08_analise_resultados.ipynb` (roda local, não treina): lê todas as

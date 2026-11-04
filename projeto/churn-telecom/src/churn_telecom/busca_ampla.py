@@ -237,6 +237,26 @@ def otimizar_cv(alg: r8.Algoritmo, cv: FoldsCV, device: str, journal: Path, n_tr
     return estudo
 
 
+def treinar_bagging(alg: r8.Algoritmo, hp: dict, part: r8.Particao, device: str, n_sementes: int = 5):
+    """Mesma configuracao treinada com `n_sementes` sementes de modelo na mesma
+    particao (cada uma com sua propria paciencia); devolve a media dos logits
+    em validacao e teste. Reduz a variancia de treino (inicializacao, ordem
+    dos lotes, subamostragem) — nao muda o vies do modelo."""
+    from .ensemble import media_logits
+    hp_modelo = {k: v for k, v in hp.items() if k not in r8.META_HP}
+    transf = hp.get("transformacao", "nenhuma")
+    X, chave = part.dados(alg.modo, transf), hp.get("treino", alg.treino)
+    ctx = {"device": device, "colunas": part.colunas[(alg.modo, transf)]}
+    pv, pt, iters = [], [], []
+    for s in range(n_sementes):
+        prever, info, _ = alg.treinar(hp_modelo, X[chave], part.y[chave], X["val"], part.y["val"],
+                                      1000 * part.seed + s, ctx)
+        pv.append(prever(X["val"]))
+        pt.append(prever(X["test"]))
+        iters.append(info.get("melhor_epoca", info.get("melhor_iteracao")))
+    return media_logits(pv), media_logits(pt), iters
+
+
 def importancias(estudo) -> dict:
     """fANOVA sobre os trials completos (quanto da variacao do objetivo cada
     hiperparametro explica). Vazio se houver trials de menos."""
