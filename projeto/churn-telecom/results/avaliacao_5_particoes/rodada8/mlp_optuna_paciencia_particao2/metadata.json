@@ -1,0 +1,51 @@
+{
+  "model_id": "mlp_optuna_paciencia_particao2",
+  "framework": "MLP",
+  "hyperparameters": {
+    "n_camadas": 1,
+    "largura": 208,
+    "activation": "tanh",
+    "alpha": 1.3636820339565106e-05,
+    "learning_rate_init": 0.0001435889151710775,
+    "batch_size": 128
+  },
+  "metrics": {
+    "ks": 0.540920538600353,
+    "mse": 0.16389589640205804,
+    "cross_entropy": 0.4887400711843008,
+    "auroc": 0.8446888571598549,
+    "threshold": 0.5,
+    "tp": 370,
+    "tn": 960,
+    "fp": 333,
+    "fn": 98,
+    "precision": 0.5263157894736842,
+    "recall": 0.7905982905982906,
+    "f1": 0.6319385140905209,
+    "acuracia_limiar_05": 0.7552526973310619,
+    "limiar_validacao": 0.73,
+    "acuracia_limiar_validacao": 0.7978421351504826
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "mlp_optuna_paciencia",
+    "particao": 2,
+    "algoritmo": "mlp",
+    "familia": "MLP",
+    "codificacao": "neural",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5437085676272303,
+      "auroc_validacao": 0.8468222631880298
+    },
+    "paciencia": {
+      "epocas_treinadas": 101,
+      "melhor_epoca": 71,
+      "teto_atingido": false,
+      "segundos": 6.1
+    },
+    "etapa": "B_optuna"
+  }
+}

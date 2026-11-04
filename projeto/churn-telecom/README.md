@@ -1,8 +1,8 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** rodadas 1–7 executadas (melhor KS médio em 5 partições: 0,539).
-Próxima: rodar `notebooks/07_rodada8_paciencia_kaggle.ipynb` no Kaggle
-(rodada 8 — paciência em todos os algoritmos, ver seção "Rodada 8"). A
+**Status:** rodadas 1–8 executadas (melhor KS médio em 5 partições: 0,541,
+empatado no ruído com 0,539 da rodada 6). Rodada 8 em
+`notebooks/07_rodada8_paciencia_kaggle.ipynb` (ver seção "Rodada 8"). A
 comparação do melhor de cada algoritmo fica em `notebooks/08_analise_resultados.ipynb`.
 
 ## Dataset
@@ -381,6 +381,26 @@ Resultados (branch `results/churn-tabpfn25-catboost-gb100`):
 - **Correção do KS:** `ks_statistic` passou a avaliar só os fins de grupos de
   scores empatados (antes, a ordem arbitrária dentro de um empate podia inflar
   o KS). Valores das rodadas antigas ficam como foram registrados.
+
+**Resultados** (branch `results/churn-rodada8-paciencia`, 41 configurações × 5
+partições, sem falhas, nenhum teto de épocas/árvores atingido):
+
+- **Paciência vs. épocas/árvores fixas (rodada 3): nenhuma diferença fora do
+  ruído** nos 6 algoritmos (Δ KS de −0,003 a +0,007). Os tetos antigos já não
+  limitavam: com paciência, as redes param cedo (MLP padrão ~10 épocas, KAN
+  ~6–8, STab ~11–37) e o boosting em 50–130 árvores (CatBoost ~430).
+- **Melhor KS médio do projeto: 0,5409** (MLP Optuna + `log1p(TotalCharges)`),
+  seguido de XGB Optuna + faixas (0,5397). Contra o melhor anterior
+  (XGB sem cópias, 0,5387): **+0,002, IC 95% [−0,008, +0,012] — ruído**. Com 41
+  configurações, o 1º lugar também é favorecido pela sorte de partição.
+- Efeitos dentro da rodada fora do ruído: log no MLP (+0,014 [+0,009, +0,019])
+  e no TabKAN (+0,005), faixas acrescentadas no TabKAN (+0,006), Optuna no
+  GB (+0,005) e no KAN (+0,007). Com 33 testes, ~1–2 falsos positivos são
+  esperados. Nas árvores as faixas não mudam nada (GB: idêntico — a faixa é
+  um corte da própria contínua).
+- Treino + validação (XGB/GB/TabPFN) e ensembles: ruído (±0,004).
+- Conclusão: o teto de KS ≈ 0,54 (AUROC ≈ 0,846) se mantém com treino
+  correto por paciência, busca, transformações, mais dados e ensembles.
 
 ### Análise — melhor de cada algoritmo
 

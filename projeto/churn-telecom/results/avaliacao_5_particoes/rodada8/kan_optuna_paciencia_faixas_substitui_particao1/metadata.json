@@ -1,0 +1,51 @@
+{
+  "model_id": "kan_optuna_paciencia_faixas_substitui_particao1",
+  "framework": "KAN",
+  "hyperparameters": {
+    "hidden_width": 5,
+    "grid": 3,
+    "k": 2,
+    "lr": 0.004002208639893903,
+    "weight_decay": 0.0009913773847646653,
+    "batch_size": 128
+  },
+  "metrics": {
+    "ks": 0.5371080968528764,
+    "mse": 0.18312655486995252,
+    "cross_entropy": 0.5395150836998158,
+    "auroc": 0.8412168415068647,
+    "threshold": 0.5,
+    "tp": 388,
+    "tn": 887,
+    "fp": 406,
+    "fn": 80,
+    "precision": 0.48866498740554154,
+    "recall": 0.8290598290598291,
+    "f1": 0.6148969889064977,
+    "acuracia_limiar_05": 0.7240204429301533,
+    "limiar_validacao": 0.8,
+    "acuracia_limiar_validacao": 0.7989778534923339
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "kan_optuna_paciencia_faixas_substitui",
+    "particao": 1,
+    "algoritmo": "kan",
+    "familia": "KAN",
+    "codificacao": "neural",
+    "transformacao": "faixas_substitui",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5393779228129169,
+      "auroc_validacao": 0.8452700488831669
+    },
+    "paciencia": {
+      "epocas_treinadas": 33,
+      "melhor_epoca": 3,
+      "teto_atingido": false,
+      "segundos": 270.2
+    },
+    "etapa": "C_transformacoes"
+  }
+}

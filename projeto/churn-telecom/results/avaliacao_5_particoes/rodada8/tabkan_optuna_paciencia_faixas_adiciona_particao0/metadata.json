@@ -1,0 +1,50 @@
+{
+  "model_id": "tabkan_optuna_paciencia_faixas_adiciona_particao0",
+  "framework": "TabKAN",
+  "hyperparameters": {
+    "hidden_width": 6,
+    "degree": 3,
+    "lr": 0.0036948650736883734,
+    "weight_decay": 3.7605249513625862e-06,
+    "batch_size": 128
+  },
+  "metrics": {
+    "ks": 0.511992583338291,
+    "mse": 0.16714598458537333,
+    "cross_entropy": 0.49850983823705797,
+    "auroc": 0.8374242304056689,
+    "threshold": 0.5,
+    "tp": 357,
+    "tn": 963,
+    "fp": 330,
+    "fn": 111,
+    "precision": 0.519650655021834,
+    "recall": 0.7628205128205128,
+    "f1": 0.6181818181818182,
+    "acuracia_limiar_05": 0.7495741056218058,
+    "limiar_validacao": 0.75,
+    "acuracia_limiar_validacao": 0.7989778534923339
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "tabkan_optuna_paciencia_faixas_adiciona",
+    "particao": 0,
+    "algoritmo": "tabkan",
+    "familia": "TabKAN",
+    "codificacao": "neural",
+    "transformacao": "faixas_adiciona",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5498429582755529,
+      "auroc_validacao": 0.8492647667210549
+    },
+    "paciencia": {
+      "epocas_treinadas": 32,
+      "melhor_epoca": 2,
+      "teto_atingido": false,
+      "segundos": 2.6
+    },
+    "etapa": "C_transformacoes"
+  }
+}

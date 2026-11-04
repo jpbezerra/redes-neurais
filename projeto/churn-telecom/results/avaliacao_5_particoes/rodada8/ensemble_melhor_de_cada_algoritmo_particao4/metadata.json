@@ -1,0 +1,51 @@
+{
+  "model_id": "ensemble_melhor_de_cada_algoritmo_particao4",
+  "framework": "Ensemble",
+  "hyperparameters": {
+    "combinacao": "media dos logits",
+    "membros": [
+      "tabpfn_padrao_paciencia_log",
+      "stab_optuna_paciencia_log",
+      "xgb_optuna_paciencia_faixas_adiciona",
+      "catboost_optuna_paciencia_faixas_adiciona",
+      "tabkan_optuna_paciencia_log",
+      "mlp_optuna_paciencia_log",
+      "kan_optuna_paciencia_log",
+      "gb_optuna_paciencia_faixas_adiciona"
+    ]
+  },
+  "metrics": {
+    "ks": 0.5303954230868384,
+    "mse": 0.15866273219103813,
+    "cross_entropy": 0.47392629248396984,
+    "auroc": 0.8471387682524574,
+    "threshold": 0.5,
+    "tp": 366,
+    "tn": 949,
+    "fp": 344,
+    "fn": 102,
+    "precision": 0.5154929577464789,
+    "recall": 0.782051282051282,
+    "f1": 0.6213921901528013,
+    "acuracia_limiar_05": 0.7467348097671778,
+    "limiar_validacao": 0.67,
+    "acuracia_limiar_validacao": 0.8012492901760363
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "ensemble_melhor_de_cada_algoritmo",
+    "particao": 4,
+    "algoritmo": "ensemble",
+    "familia": "Ensemble",
+    "codificacao": "-",
+    "transformacao": "-",
+    "treino": "-",
+    "n_linhas_treino": 0,
+    "metricas_validacao": {
+      "ks_validacao": 0.5511304025497354,
+      "auroc_validacao": 0.8497355609318581
+    },
+    "paciencia": {},
+    "etapa": "E_ensembles"
+  }
+}

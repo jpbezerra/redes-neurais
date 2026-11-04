@@ -1,0 +1,48 @@
+{
+  "model_id": "stab_padrao_paciencia_particao3",
+  "framework": "STab",
+  "hyperparameters": {
+    "dim": 32,
+    "depth": 2,
+    "heads": 4
+  },
+  "metrics": {
+    "ks": 0.5316943304182283,
+    "mse": 0.17069562379767986,
+    "cross_entropy": 0.5012071447290661,
+    "auroc": 0.8480989020432176,
+    "threshold": 0.5,
+    "tp": 383,
+    "tn": 915,
+    "fp": 378,
+    "fn": 85,
+    "precision": 0.5032851511169514,
+    "recall": 0.8183760683760684,
+    "f1": 0.6232709519934907,
+    "acuracia_limiar_05": 0.7370812038614424,
+    "limiar_validacao": 0.75,
+    "acuracia_limiar_validacao": 0.797274275979557
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "stab_padrao_paciencia",
+    "particao": 3,
+    "algoritmo": "stab",
+    "familia": "STab",
+    "codificacao": "neural",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5409069697400951,
+      "auroc_validacao": 0.8382834296985924
+    },
+    "paciencia": {
+      "epocas_treinadas": 43,
+      "melhor_epoca": 13,
+      "teto_atingido": false,
+      "segundos": 23.7
+    },
+    "etapa": "A_baseline"
+  }
+}

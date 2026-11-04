@@ -1,0 +1,47 @@
+{
+  "model_id": "catboost_optuna_paciencia_faixas_substitui_particao0",
+  "framework": "CatBoost",
+  "hyperparameters": {
+    "learning_rate": 0.02133114117915255,
+    "depth": 3,
+    "l2_leaf_reg": 3.656243621888283
+  },
+  "metrics": {
+    "ks": 0.5159636702560136,
+    "mse": 0.16167510778489066,
+    "cross_entropy": 0.48023261593963734,
+    "auroc": 0.8383290036422287,
+    "threshold": 0.5,
+    "tp": 356,
+    "tn": 966,
+    "fp": 327,
+    "fn": 112,
+    "precision": 0.5212298682284041,
+    "recall": 0.7606837606837606,
+    "f1": 0.6185925282363162,
+    "acuracia_limiar_05": 0.750709823963657,
+    "limiar_validacao": 0.73,
+    "acuracia_limiar_validacao": 0.7984099943214082
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "catboost_optuna_paciencia_faixas_substitui",
+    "particao": 0,
+    "algoritmo": "catboost",
+    "familia": "CatBoost",
+    "codificacao": "arvores",
+    "transformacao": "faixas_substitui",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5455437549023826,
+      "auroc_validacao": 0.8505050488335225
+    },
+    "paciencia": {
+      "melhor_iteracao": 452,
+      "teto_atingido": false,
+      "segundos": 4.2
+    },
+    "etapa": "C_transformacoes"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "model_id": "tabpfn_padrao_paciencia_faixas_adiciona_particao2",
+  "framework": "TabPFN v2",
+  "hyperparameters": {
+    "n_estimators": 8
+  },
+  "metrics": {
+    "ks": 0.552392567473774,
+    "mse": 0.13204115352165813,
+    "cross_entropy": 0.41027032304584615,
+    "auroc": 0.8504364394735624,
+    "threshold": 0.5,
+    "tp": 253,
+    "tn": 1167,
+    "fp": 126,
+    "fn": 215,
+    "precision": 0.6675461741424802,
+    "recall": 0.5405982905982906,
+    "f1": 0.5974025974025975,
+    "acuracia_limiar_05": 0.8063600227143668,
+    "limiar_validacao": 0.44,
+    "acuracia_limiar_validacao": 0.8057921635434412
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "tabpfn_padrao_paciencia_faixas_adiciona",
+    "particao": 2,
+    "algoritmo": "tabpfn",
+    "familia": "TabPFN v2",
+    "codificacao": "neural",
+    "transformacao": "faixas_adiciona",
+    "treino": "nat",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.548603503569431,
+      "auroc_validacao": 0.8527746244402596
+    },
+    "paciencia": {
+      "sem_epocas": "in-context learning",
+      "segundos": 23.0
+    },
+    "etapa": "C_transformacoes"
+  }
+}

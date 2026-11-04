@@ -1,0 +1,48 @@
+{
+  "model_id": "kan_padrao_paciencia_particao2",
+  "framework": "KAN",
+  "hyperparameters": {
+    "hidden_width": 8,
+    "grid": 3,
+    "k": 3
+  },
+  "metrics": {
+    "ks": 0.5365825847264362,
+    "mse": 0.1627623297926572,
+    "cross_entropy": 0.48766703945138656,
+    "auroc": 0.8468479187736728,
+    "threshold": 0.5,
+    "tp": 367,
+    "tn": 959,
+    "fp": 334,
+    "fn": 101,
+    "precision": 0.5235378031383737,
+    "recall": 0.7841880341880342,
+    "f1": 0.6278870829769033,
+    "acuracia_limiar_05": 0.7529812606473595,
+    "limiar_validacao": 0.73,
+    "acuracia_limiar_validacao": 0.80465644520159
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "kan_padrao_paciencia",
+    "particao": 2,
+    "algoritmo": "kan",
+    "familia": "KAN",
+    "codificacao": "neural",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5444019341450741,
+      "auroc_validacao": 0.8499134532962214
+    },
+    "paciencia": {
+      "epocas_treinadas": 43,
+      "melhor_epoca": 13,
+      "teto_atingido": false,
+      "segundos": 432.7
+    },
+    "etapa": "A_baseline"
+  }
+}

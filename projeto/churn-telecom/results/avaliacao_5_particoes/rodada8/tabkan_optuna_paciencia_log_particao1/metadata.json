@@ -1,0 +1,50 @@
+{
+  "model_id": "tabkan_optuna_paciencia_log_particao1",
+  "framework": "TabKAN",
+  "hyperparameters": {
+    "hidden_width": 6,
+    "degree": 3,
+    "lr": 0.0036948650736883734,
+    "weight_decay": 3.7605249513625862e-06,
+    "batch_size": 128
+  },
+  "metrics": {
+    "ks": 0.5496906419180201,
+    "mse": 0.16654504796162595,
+    "cross_entropy": 0.4952498339170057,
+    "auroc": 0.8477733489334417,
+    "threshold": 0.5,
+    "tp": 374,
+    "tn": 932,
+    "fp": 361,
+    "fn": 94,
+    "precision": 0.508843537414966,
+    "recall": 0.7991452991452992,
+    "f1": 0.6217788861180383,
+    "acuracia_limiar_05": 0.7416240772288473,
+    "limiar_validacao": 0.77,
+    "acuracia_limiar_validacao": 0.8120386144236229
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "tabkan_optuna_paciencia_log",
+    "particao": 1,
+    "algoritmo": "tabkan",
+    "familia": "TabKAN",
+    "codificacao": "neural",
+    "transformacao": "log",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5316648408566634,
+      "auroc_validacao": 0.8454909663775158
+    },
+    "paciencia": {
+      "epocas_treinadas": 79,
+      "melhor_epoca": 49,
+      "teto_atingido": false,
+      "segundos": 6.8
+    },
+    "etapa": "C_transformacoes"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "model_id": "mlp_optuna_paciencia_faixas_adiciona_particao2",
+  "framework": "MLP",
+  "hyperparameters": {
+    "n_camadas": 1,
+    "largura": 208,
+    "activation": "tanh",
+    "alpha": 1.3636820339565106e-05,
+    "learning_rate_init": 0.0001435889151710775,
+    "batch_size": 128
+  },
+  "metrics": {
+    "ks": 0.5439645428044501,
+    "mse": 0.1596841341021507,
+    "cross_entropy": 0.478732952833384,
+    "auroc": 0.8498894441469848,
+    "threshold": 0.5,
+    "tp": 368,
+    "tn": 977,
+    "fp": 316,
+    "fn": 100,
+    "precision": 0.5380116959064327,
+    "recall": 0.7863247863247863,
+    "f1": 0.6388888888888888,
+    "acuracia_limiar_05": 0.7637705848949461,
+    "limiar_validacao": 0.7000000000000001,
+    "acuracia_limiar_validacao": 0.8018171493469619
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "mlp_optuna_paciencia_faixas_adiciona",
+    "particao": 2,
+    "algoritmo": "mlp",
+    "familia": "MLP",
+    "codificacao": "neural",
+    "transformacao": "faixas_adiciona",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5341619532085163,
+      "auroc_validacao": 0.8484175026228781
+    },
+    "paciencia": {
+      "epocas_treinadas": 155,
+      "melhor_epoca": 125,
+      "teto_atingido": false,
+      "segundos": 10.2
+    },
+    "etapa": "C_transformacoes"
+  }
+}

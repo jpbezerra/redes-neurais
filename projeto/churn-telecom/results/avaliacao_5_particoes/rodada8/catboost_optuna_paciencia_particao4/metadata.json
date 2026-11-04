@@ -1,0 +1,47 @@
+{
+  "model_id": "catboost_optuna_paciencia_particao4",
+  "framework": "CatBoost",
+  "hyperparameters": {
+    "learning_rate": 0.02133114117915255,
+    "depth": 3,
+    "l2_leaf_reg": 3.656243621888283
+  },
+  "metrics": {
+    "ks": 0.5343665100045609,
+    "mse": 0.16740597491981724,
+    "cross_entropy": 0.4934641568721705,
+    "auroc": 0.8443707405424343,
+    "threshold": 0.5,
+    "tp": 379,
+    "tn": 901,
+    "fp": 392,
+    "fn": 89,
+    "precision": 0.4915693904020752,
+    "recall": 0.8098290598290598,
+    "f1": 0.6117836965294592,
+    "acuracia_limiar_05": 0.7268597387847814,
+    "limiar_validacao": 0.73,
+    "acuracia_limiar_validacao": 0.8001135718341851
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "catboost_optuna_paciencia",
+    "particao": 4,
+    "algoritmo": "catboost",
+    "familia": "CatBoost",
+    "codificacao": "arvores",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5512594779396921,
+      "auroc_validacao": 0.8461595107049833
+    },
+    "paciencia": {
+      "melhor_iteracao": 246,
+      "teto_atingido": false,
+      "segundos": 2.6
+    },
+    "etapa": "B_optuna"
+  }
+}

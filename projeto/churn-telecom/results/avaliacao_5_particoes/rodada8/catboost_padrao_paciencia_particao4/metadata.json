@@ -1,0 +1,46 @@
+{
+  "model_id": "catboost_padrao_paciencia_particao4",
+  "framework": "CatBoost",
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "depth": 6
+  },
+  "metrics": {
+    "ks": 0.5237224106133618,
+    "mse": 0.1653557113073195,
+    "cross_entropy": 0.48995183356494204,
+    "auroc": 0.844304638388165,
+    "threshold": 0.5,
+    "tp": 379,
+    "tn": 910,
+    "fp": 383,
+    "fn": 89,
+    "precision": 0.4973753280839895,
+    "recall": 0.8098290598290598,
+    "f1": 0.6162601626016261,
+    "acuracia_limiar_05": 0.7319704713231119,
+    "limiar_validacao": 0.7200000000000001,
+    "acuracia_limiar_validacao": 0.8018171493469619
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "catboost_padrao_paciencia",
+    "particao": 4,
+    "algoritmo": "catboost",
+    "familia": "CatBoost",
+    "codificacao": "arvores",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5544466471840052,
+      "auroc_validacao": 0.8447330621646936
+    },
+    "paciencia": {
+      "melhor_iteracao": 55,
+      "teto_atingido": false,
+      "segundos": 2.8
+    },
+    "etapa": "A_baseline"
+  }
+}

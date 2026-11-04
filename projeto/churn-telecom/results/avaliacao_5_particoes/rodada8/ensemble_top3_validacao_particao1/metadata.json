@@ -1,0 +1,46 @@
+{
+  "model_id": "ensemble_top3_validacao_particao1",
+  "framework": "Ensemble",
+  "hyperparameters": {
+    "combinacao": "media dos logits",
+    "membros": [
+      "tabpfn_padrao_paciencia_log",
+      "stab_optuna_paciencia_log",
+      "xgb_optuna_paciencia_faixas_adiciona"
+    ]
+  },
+  "metrics": {
+    "ks": 0.5483818192634898,
+    "mse": 0.15217815766510873,
+    "cross_entropy": 0.4571934264223894,
+    "auroc": 0.8466620064647907,
+    "threshold": 0.5,
+    "tp": 351,
+    "tn": 1002,
+    "fp": 291,
+    "fn": 117,
+    "precision": 0.5467289719626168,
+    "recall": 0.75,
+    "f1": 0.6324324324324323,
+    "acuracia_limiar_05": 0.768313458262351,
+    "limiar_validacao": 0.67,
+    "acuracia_limiar_validacao": 0.8052243043725156
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "ensemble_top3_validacao",
+    "particao": 1,
+    "algoritmo": "ensemble",
+    "familia": "Ensemble",
+    "codificacao": "-",
+    "transformacao": "-",
+    "treino": "-",
+    "n_linhas_treino": 0,
+    "metricas_validacao": {
+      "ks_validacao": 0.5362701845778077,
+      "auroc_validacao": 0.8461661299557504
+    },
+    "paciencia": {},
+    "etapa": "E_ensembles"
+  }
+}

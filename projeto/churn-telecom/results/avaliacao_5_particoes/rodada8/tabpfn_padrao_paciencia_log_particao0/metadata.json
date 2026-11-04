@@ -1,0 +1,44 @@
+{
+  "model_id": "tabpfn_padrao_paciencia_log_particao0",
+  "framework": "TabPFN v2",
+  "hyperparameters": {
+    "n_estimators": 8
+  },
+  "metrics": {
+    "ks": 0.5148234080948698,
+    "mse": 0.13852007938423916,
+    "cross_entropy": 0.4277436487134221,
+    "auroc": 0.8391131404472472,
+    "threshold": 0.5,
+    "tp": 243,
+    "tn": 1169,
+    "fp": 124,
+    "fn": 225,
+    "precision": 0.662125340599455,
+    "recall": 0.5192307692307693,
+    "f1": 0.5820359281437126,
+    "acuracia_limiar_05": 0.8018171493469619,
+    "limiar_validacao": 0.47000000000000003,
+    "acuracia_limiar_validacao": 0.797274275979557
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "tabpfn_padrao_paciencia_log",
+    "particao": 0,
+    "algoritmo": "tabpfn",
+    "familia": "TabPFN v2",
+    "codificacao": "neural",
+    "transformacao": "log",
+    "treino": "nat",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.5505181218537873,
+      "auroc_validacao": 0.8551327325260054
+    },
+    "paciencia": {
+      "sem_epocas": "in-context learning",
+      "segundos": 21.8
+    },
+    "etapa": "C_transformacoes"
+  }
+}

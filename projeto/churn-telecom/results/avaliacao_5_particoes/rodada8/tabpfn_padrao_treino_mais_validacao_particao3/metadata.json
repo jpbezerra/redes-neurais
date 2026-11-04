@@ -1,0 +1,44 @@
+{
+  "model_id": "tabpfn_padrao_treino_mais_validacao_particao3",
+  "framework": "TabPFN v2",
+  "hyperparameters": {
+    "n_estimators": 8
+  },
+  "metrics": {
+    "ks": 0.5460070993713685,
+    "mse": 0.1332740415362714,
+    "cross_entropy": 0.4057028973358109,
+    "auroc": 0.85388449309563,
+    "threshold": 0.5,
+    "tp": 247,
+    "tn": 1166,
+    "fp": 127,
+    "fn": 221,
+    "precision": 0.660427807486631,
+    "recall": 0.5277777777777778,
+    "f1": 0.5866983372921615,
+    "acuracia_limiar_05": 0.8023850085178875,
+    "limiar_validacao": 0.55,
+    "acuracia_limiar_validacao": 0.80465644520159
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "tabpfn_padrao_treino_mais_validacao",
+    "particao": 3,
+    "algoritmo": "tabpfn",
+    "familia": "TabPFN v2",
+    "codificacao": "neural",
+    "transformacao": "nenhuma",
+    "treino": "trval_nat",
+    "n_linhas_treino": 5282,
+    "metricas_validacao": {
+      "ks_validacao": 0.579771900618569,
+      "auroc_validacao": 0.8660098163488875
+    },
+    "paciencia": {
+      "sem_epocas": "in-context learning",
+      "segundos": 30.4
+    },
+    "etapa": "D_treino_mais_validacao"
+  }
+}

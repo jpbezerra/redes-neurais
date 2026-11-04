@@ -1,0 +1,50 @@
+{
+  "model_id": "xgb_optuna_paciencia_faixas_adiciona_particao3",
+  "framework": "XGBoost",
+  "hyperparameters": {
+    "learning_rate": 0.06317274452760183,
+    "max_depth": 3,
+    "subsample": 0.5378420299578994,
+    "colsample_bytree": 0.3088390889171572,
+    "min_child_weight": 6.772825577833086,
+    "reg_lambda": 0.004410687663442971
+  },
+  "metrics": {
+    "ks": 0.5552927994923355,
+    "mse": 0.15852981446931433,
+    "cross_entropy": 0.46997105051537136,
+    "auroc": 0.8554445039363833,
+    "threshold": 0.5,
+    "tp": 377,
+    "tn": 954,
+    "fp": 339,
+    "fn": 91,
+    "precision": 0.526536312849162,
+    "recall": 0.8055555555555556,
+    "f1": 0.6368243243243243,
+    "acuracia_limiar_05": 0.7558205565019875,
+    "limiar_validacao": 0.73,
+    "acuracia_limiar_validacao": 0.8029528676888131
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "xgb_optuna_paciencia_faixas_adiciona",
+    "particao": 3,
+    "algoritmo": "xgb",
+    "familia": "XGBoost",
+    "codificacao": "arvores",
+    "transformacao": "faixas_adiciona",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5282360689593545,
+      "auroc_validacao": 0.835510791033563
+    },
+    "paciencia": {
+      "melhor_iteracao": 103,
+      "teto_atingido": false,
+      "segundos": 0.3
+    },
+    "etapa": "C_transformacoes"
+  }
+}

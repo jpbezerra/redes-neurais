@@ -1,0 +1,47 @@
+{
+  "model_id": "tabkan_padrao_paciencia_particao2",
+  "framework": "TabKAN",
+  "hyperparameters": {
+    "hidden_width": 10,
+    "degree": 3
+  },
+  "metrics": {
+    "ks": 0.5487734745275348,
+    "mse": 0.18149458791641215,
+    "cross_entropy": 0.5370547131515618,
+    "auroc": 0.8495523231602118,
+    "threshold": 0.5,
+    "tp": 391,
+    "tn": 894,
+    "fp": 399,
+    "fn": 77,
+    "precision": 0.49493670886075947,
+    "recall": 0.8354700854700855,
+    "f1": 0.6216216216216215,
+    "acuracia_limiar_05": 0.7296990346394094,
+    "limiar_validacao": 0.8,
+    "acuracia_limiar_validacao": 0.8052243043725156
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "tabkan_padrao_paciencia",
+    "particao": 2,
+    "algoritmo": "tabkan",
+    "familia": "TabKAN",
+    "codificacao": "neural",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.546639240904322,
+      "auroc_validacao": 0.8475867866516189
+    },
+    "paciencia": {
+      "epocas_treinadas": 66,
+      "melhor_epoca": 36,
+      "teto_atingido": false,
+      "segundos": 10.7
+    },
+    "etapa": "A_baseline"
+  }
+}

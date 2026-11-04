@@ -1,0 +1,44 @@
+{
+  "model_id": "tabpfn_padrao_paciencia_faixas_substitui_particao1",
+  "framework": "TabPFN v2",
+  "hyperparameters": {
+    "n_estimators": 8
+  },
+  "metrics": {
+    "ks": 0.5390862038193824,
+    "mse": 0.13520632688098935,
+    "cross_entropy": 0.42402842590425255,
+    "auroc": 0.842029898004376,
+    "threshold": 0.5,
+    "tp": 267,
+    "tn": 1155,
+    "fp": 138,
+    "fn": 201,
+    "precision": 0.6592592592592592,
+    "recall": 0.5705128205128205,
+    "f1": 0.6116838487972508,
+    "acuracia_limiar_05": 0.807495741056218,
+    "limiar_validacao": 0.54,
+    "acuracia_limiar_validacao": 0.7984099943214082
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "tabpfn_padrao_paciencia_faixas_substitui",
+    "particao": 1,
+    "algoritmo": "tabpfn",
+    "familia": "TabPFN v2",
+    "codificacao": "neural",
+    "transformacao": "faixas_substitui",
+    "treino": "nat",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.5316648408566634,
+      "auroc_validacao": 0.8428341646009089
+    },
+    "paciencia": {
+      "sem_epocas": "in-context learning",
+      "segundos": 21.5
+    },
+    "etapa": "C_transformacoes"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "params": {
+    "n_camadas": 1,
+    "largura": 208,
+    "activation": "tanh",
+    "alpha": 1.3636820339565106e-05,
+    "learning_rate_init": 0.0001435889151710775,
+    "batch_size": 128
+  },
+  "auroc_validacao": 0.8470820687806347,
+  "n_trials": 40,
+  "importancias": {
+    "learning_rate_init": 0.38762407451508685,
+    "alpha": 0.3105352499040818,
+    "largura": 0.22315509061574926,
+    "n_camadas": 0.05195482518599038,
+    "batch_size": 0.022441762811574867,
+    "activation": 0.004288996967516753
+  },
+  "minutos": 2.7
+}

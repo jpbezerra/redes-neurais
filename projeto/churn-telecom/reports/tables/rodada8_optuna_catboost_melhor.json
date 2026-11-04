@@ -1,0 +1,15 @@
+{
+  "params": {
+    "learning_rate": 0.02133114117915255,
+    "depth": 3,
+    "l2_leaf_reg": 3.656243621888283
+  },
+  "auroc_validacao": 0.8535838278465261,
+  "n_trials": 60,
+  "importancias": {
+    "learning_rate": 0.798819966499695,
+    "depth": 0.18321895481961534,
+    "l2_leaf_reg": 0.017961078680689652
+  },
+  "minutos": 3.9
+}

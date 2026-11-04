@@ -1,0 +1,21 @@
+{
+  "params": {
+    "learning_rate": 0.06317274452760183,
+    "max_depth": 3,
+    "subsample": 0.5378420299578994,
+    "colsample_bytree": 0.3088390889171572,
+    "min_child_weight": 6.772825577833086,
+    "reg_lambda": 0.004410687663442971
+  },
+  "auroc_validacao": 0.8551352147450431,
+  "n_trials": 100,
+  "importancias": {
+    "colsample_bytree": 0.3862927042304733,
+    "reg_lambda": 0.1510953977764216,
+    "max_depth": 0.1408555748815444,
+    "learning_rate": 0.1335124069831209,
+    "subsample": 0.13227902257563579,
+    "min_child_weight": 0.055964893552803985
+  },
+  "minutos": 0.4
+}

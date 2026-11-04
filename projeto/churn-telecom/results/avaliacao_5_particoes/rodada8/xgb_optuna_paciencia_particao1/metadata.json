@@ -1,0 +1,50 @@
+{
+  "model_id": "xgb_optuna_paciencia_particao1",
+  "framework": "XGBoost",
+  "hyperparameters": {
+    "learning_rate": 0.06317274452760183,
+    "max_depth": 3,
+    "subsample": 0.5378420299578994,
+    "colsample_bytree": 0.3088390889171572,
+    "min_child_weight": 6.772825577833086,
+    "reg_lambda": 0.004410687663442971
+  },
+  "metrics": {
+    "ks": 0.5258740357348246,
+    "mse": 0.16223057854589265,
+    "cross_entropy": 0.4833594751542899,
+    "auroc": 0.8426363852697959,
+    "threshold": 0.5,
+    "tp": 367,
+    "tn": 953,
+    "fp": 340,
+    "fn": 101,
+    "precision": 0.5190947666195191,
+    "recall": 0.7841880341880342,
+    "f1": 0.6246808510638298,
+    "acuracia_limiar_05": 0.7495741056218058,
+    "limiar_validacao": 0.7200000000000001,
+    "acuracia_limiar_validacao": 0.8035207268597387
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "xgb_optuna_paciencia",
+    "particao": 1,
+    "algoritmo": "xgb",
+    "familia": "XGBoost",
+    "codificacao": "arvores",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.539602977338995,
+      "auroc_validacao": 0.8450185173540207
+    },
+    "paciencia": {
+      "melhor_iteracao": 113,
+      "teto_atingido": false,
+      "segundos": 0.3
+    },
+    "etapa": "B_optuna"
+  }
+}

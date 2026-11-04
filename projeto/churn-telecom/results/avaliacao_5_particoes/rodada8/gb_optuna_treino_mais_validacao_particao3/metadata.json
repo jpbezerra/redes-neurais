@@ -1,0 +1,48 @@
+{
+  "model_id": "gb_optuna_treino_mais_validacao_particao3",
+  "framework": "Gradient Boosting",
+  "hyperparameters": {
+    "learning_rate": 0.081609472566639,
+    "max_depth": 3,
+    "min_samples_leaf": 11,
+    "subsample": 0.6431564745543757
+  },
+  "metrics": {
+    "ks": 0.540975072877625,
+    "mse": 0.15885261203805795,
+    "cross_entropy": 0.4739642374369855,
+    "auroc": 0.8514816797879443,
+    "threshold": 0.5,
+    "tp": 374,
+    "tn": 948,
+    "fp": 345,
+    "fn": 94,
+    "precision": 0.5201668984700973,
+    "recall": 0.7991452991452992,
+    "f1": 0.6301600673967986,
+    "acuracia_limiar_05": 0.750709823963657,
+    "limiar_validacao": 0.74,
+    "acuracia_limiar_validacao": 0.8029528676888131
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "gb_optuna_treino_mais_validacao",
+    "particao": 3,
+    "algoritmo": "gb",
+    "familia": "Gradient Boosting",
+    "codificacao": "arvores",
+    "transformacao": "nenhuma",
+    "treino": "trval_dup",
+    "n_linhas_treino": 7762,
+    "metricas_validacao": {
+      "ks_validacao": 0.5814151296214781,
+      "auroc_validacao": 0.8630154327831633
+    },
+    "paciencia": {
+      "melhor_iteracao": 89,
+      "teto_atingido": false,
+      "segundos": 0.9
+    },
+    "etapa": "D_treino_mais_validacao"
+  }
+}

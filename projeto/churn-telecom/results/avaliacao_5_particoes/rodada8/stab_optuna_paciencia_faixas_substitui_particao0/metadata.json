@@ -1,0 +1,54 @@
+{
+  "model_id": "stab_optuna_paciencia_faixas_substitui_particao0",
+  "framework": "STab",
+  "hyperparameters": {
+    "dim": 64,
+    "depth": 4,
+    "heads": 4,
+    "attn_dropout": 0.003076116037505801,
+    "ff_dropout": 0.37486972146726033,
+    "lr": 0.00013919931231071118,
+    "weight_decay": 0.007454962524632493,
+    "batch_size": 64,
+    "embedding": "compartilhada"
+  },
+  "metrics": {
+    "ks": 0.5083338290994903,
+    "mse": 0.1587271929725131,
+    "cross_entropy": 0.4738414423711893,
+    "auroc": 0.8341893562311196,
+    "threshold": 0.5,
+    "tp": 334,
+    "tn": 1014,
+    "fp": 279,
+    "fn": 134,
+    "precision": 0.5448613376835236,
+    "recall": 0.7136752136752137,
+    "f1": 0.6179463459759482,
+    "acuracia_limiar_05": 0.7654741624077229,
+    "limiar_validacao": 0.7100000000000001,
+    "acuracia_limiar_validacao": 0.7984099943214082
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "stab_optuna_paciencia_faixas_substitui",
+    "particao": 0,
+    "algoritmo": "stab",
+    "familia": "STab",
+    "codificacao": "neural",
+    "transformacao": "faixas_substitui",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5524029535096923,
+      "auroc_validacao": 0.8486268364283847
+    },
+    "paciencia": {
+      "epocas_treinadas": 70,
+      "melhor_epoca": 40,
+      "teto_atingido": false,
+      "segundos": 68.4
+    },
+    "etapa": "C_transformacoes"
+  }
+}

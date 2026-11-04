@@ -1,0 +1,46 @@
+{
+  "model_id": "gb_padrao_paciencia_particao2",
+  "framework": "Gradient Boosting",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "max_depth": 3
+  },
+  "metrics": {
+    "ks": 0.5429383068594206,
+    "mse": 0.15822983326639825,
+    "cross_entropy": 0.47479783263410114,
+    "auroc": 0.8441137684177127,
+    "threshold": 0.5,
+    "tp": 363,
+    "tn": 975,
+    "fp": 318,
+    "fn": 105,
+    "precision": 0.5330396475770925,
+    "recall": 0.7756410256410257,
+    "f1": 0.6318537859007833,
+    "acuracia_limiar_05": 0.7597955706984668,
+    "limiar_validacao": 0.7000000000000001,
+    "acuracia_limiar_validacao": 0.8006814310051107
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "gb_padrao_paciencia",
+    "particao": 2,
+    "algoritmo": "gb",
+    "familia": "Gradient Boosting",
+    "codificacao": "arvores",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5403923229929604,
+      "auroc_validacao": 0.8488096932308232
+    },
+    "paciencia": {
+      "melhor_iteracao": 93,
+      "teto_atingido": false,
+      "segundos": 4.0
+    },
+    "etapa": "A_baseline"
+  }
+}

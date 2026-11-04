@@ -1,0 +1,19 @@
+{
+  "params": {
+    "hidden_width": 6,
+    "degree": 3,
+    "lr": 0.0036948650736883734,
+    "weight_decay": 3.7605249513625862e-06,
+    "batch_size": 128
+  },
+  "auroc_validacao": 0.8499482043627482,
+  "n_trials": 40,
+  "importancias": {
+    "weight_decay": 0.39026728377012443,
+    "degree": 0.2713703643874267,
+    "hidden_width": 0.2215446601402181,
+    "lr": 0.0688029960053922,
+    "batch_size": 0.04801469569683864
+  },
+  "minutos": 5.4
+}

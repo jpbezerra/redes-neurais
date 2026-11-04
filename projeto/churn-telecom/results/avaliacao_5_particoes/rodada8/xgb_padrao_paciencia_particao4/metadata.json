@@ -1,0 +1,46 @@
+{
+  "model_id": "xgb_padrao_paciencia_particao4",
+  "framework": "XGBoost",
+  "hyperparameters": {
+    "learning_rate": 0.1,
+    "max_depth": 3
+  },
+  "metrics": {
+    "ks": 0.5224135879588315,
+    "mse": 0.17049647907054183,
+    "cross_entropy": 0.5053181110861844,
+    "auroc": 0.8375209048062876,
+    "threshold": 0.5,
+    "tp": 376,
+    "tn": 896,
+    "fp": 397,
+    "fn": 92,
+    "precision": 0.48641655886157825,
+    "recall": 0.8034188034188035,
+    "f1": 0.6059629331184528,
+    "acuracia_limiar_05": 0.7223168654173765,
+    "limiar_validacao": 0.66,
+    "acuracia_limiar_validacao": 0.7950028392958546
+  },
+  "dataset": {
+    "rodada": "rodada8",
+    "nome_na_tabela": "xgb_padrao_paciencia",
+    "particao": 4,
+    "algoritmo": "xgb",
+    "familia": "XGBoost",
+    "codificacao": "arvores",
+    "transformacao": "nenhuma",
+    "treino": "dup",
+    "n_linhas_treino": 5174,
+    "metricas_validacao": {
+      "ks_validacao": 0.5448834846383739,
+      "auroc_validacao": 0.8425313338783184
+    },
+    "paciencia": {
+      "melhor_iteracao": 26,
+      "teto_atingido": false,
+      "segundos": 0.2
+    },
+    "etapa": "A_baseline"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "params": {
+    "learning_rate": 0.081609472566639,
+    "max_depth": 3,
+    "min_samples_leaf": 11,
+    "subsample": 0.6431564745543757
+  },
+  "auroc_validacao": 0.8530724907247749,
+  "n_trials": 50,
+  "importancias": {
+    "min_samples_leaf": 0.6005020569377527,
+    "learning_rate": 0.20728944784913161,
+    "subsample": 0.11590552203809161,
+    "max_depth": 0.07630297317502402
+  },
+  "minutos": 2.7
+}
