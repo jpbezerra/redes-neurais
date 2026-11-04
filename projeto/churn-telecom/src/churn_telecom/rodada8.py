@@ -81,21 +81,38 @@ def _hist_info(hist, teto):
     return {"epocas_treinadas": len(df), "melhor_epoca": melhor, "teto_atingido": len(df) >= teto}, df
 
 
+def _hp(cls, hp: dict, **base):
+    """Monta o dataclass `cls`: `base` (padrao da rodada) sobrescrito por `hp`;
+    chaves que o dataclass nao tem vao para `outros` (repassadas a biblioteca)."""
+    from dataclasses import fields
+    nomes = {f.name for f in fields(cls)}
+    kw = {**base, **{k: v for k, v in hp.items() if k in nomes}}
+    resto = {k: v for k, v in hp.items() if k not in nomes}
+    if resto:
+        if "outros" not in nomes:
+            raise TypeError(f"{cls.__name__} nao aceita {sorted(resto)}")
+        kw["outros"] = {**kw.get("outros", {}), **resto}
+    return cls(**kw)
+
+
 def _mlp(hp, Xtr, ytr, Xva, yva, seed, ctx):
     from .models.mlp import MLPHyperparams, treinar_mlp
     h = dict(hp)
     camadas = tuple([h.pop("largura")] * h.pop("n_camadas"))
-    p = MLPHyperparams(hidden_layer_sizes=camadas, max_epochs=TETO_EPOCAS, patience=PACIENCIA_REDES,
-                       early_stop_metric="val_auroc", seed=seed, **h)
+    p = _hp(MLPHyperparams, h, hidden_layer_sizes=camadas, max_epochs=TETO_EPOCAS, patience=PACIENCIA_REDES,
+            early_stop_metric="val_auroc", seed=seed)
     m, hist = treinar_mlp(Xtr, ytr, Xva, yva, p)
     info, dfh = _hist_info(hist, TETO_EPOCAS)
     return (lambda X: m.predict_proba(X)[:, 1]), {**info, "historico": dfh}, m
 
 
+_BASE_REDES = dict(max_epochs=TETO_EPOCAS, patience=PACIENCIA_REDES, early_stop_metric="val_auroc",
+                   scheduler="plateau")
+
+
 def _stab(hp, Xtr, ytr, Xva, yva, seed, ctx):
     from .models.stab import STabHyperparams, prever_stab, treinar_stab
-    p = STabHyperparams(max_epochs=TETO_EPOCAS, patience=PACIENCIA_REDES, early_stop_metric="val_auroc",
-                        scheduler="plateau", max_grad_norm=1.0, seed=seed, **hp)
+    p = _hp(STabHyperparams, hp, **_BASE_REDES, max_grad_norm=1.0, seed=seed)
     m, hist = treinar_stab(Xtr, ytr, Xva, yva, p, device=ctx["device"])
     info, dfh = _hist_info(hist, TETO_EPOCAS)
     return (lambda X: prever_stab(m, X, ctx["device"])), {**info, "historico": dfh}, m
@@ -103,8 +120,7 @@ def _stab(hp, Xtr, ytr, Xva, yva, seed, ctx):
 
 def _tabkan(hp, Xtr, ytr, Xva, yva, seed, ctx):
     from .models.tabkan import TabKANHyperparams, prever_tabkan, treinar_tabkan
-    p = TabKANHyperparams(max_epochs=TETO_EPOCAS, patience=PACIENCIA_REDES, early_stop_metric="val_auroc",
-                          scheduler="plateau", max_grad_norm=1.0, seed=seed, **hp)
+    p = _hp(TabKANHyperparams, hp, **_BASE_REDES, max_grad_norm=1.0, seed=seed)
     m, hist = treinar_tabkan(Xtr, ytr, Xva, yva, p, device=ctx["device"], verbose=False)
     info, dfh = _hist_info(hist, TETO_EPOCAS)
     return (lambda X: prever_tabkan(m, X, ctx["device"])), {**info, "historico": dfh}, m
@@ -112,8 +128,7 @@ def _tabkan(hp, Xtr, ytr, Xva, yva, seed, ctx):
 
 def _kan(hp, Xtr, ytr, Xva, yva, seed, ctx):
     from .models.kan import KANHyperparams, prever_kan, treinar_kan
-    p = KANHyperparams(max_epochs=TETO_EPOCAS, patience=PACIENCIA_REDES, early_stop_metric="val_auroc",
-                       scheduler="plateau", seed=seed, **hp)
+    p = _hp(KANHyperparams, hp, **_BASE_REDES, seed=seed)
     m, hist = treinar_kan(Xtr, ytr, Xva, yva, p, device=ctx["device"])
     info, dfh = _hist_info(hist, TETO_EPOCAS)
     return (lambda X: prever_kan(m, X, ctx["device"])), {**info, "historico": dfh}, m
@@ -122,8 +137,10 @@ def _kan(hp, Xtr, ytr, Xva, yva, seed, ctx):
 def _xgb(hp, Xtr, ytr, Xva, yva, seed, ctx):
     from .models.boosting import XGBoostHyperparams, treinar_xgboost
     n_fixo = ctx.get("n_iter_fixo")
-    p = XGBoostHyperparams(n_estimators=n_fixo or TETO_ARVORES, eval_metric="auc", seed=seed,
-                           early_stopping_rounds=None if n_fixo else PACIENCIA_ARVORES, **hp)
+    p = _hp(XGBoostHyperparams, hp, n_estimators=TETO_ARVORES, eval_metric="auc", seed=seed,
+            early_stopping_rounds=PACIENCIA_ARVORES)
+    if n_fixo:
+        p.n_estimators, p.early_stopping_rounds = n_fixo, None
     m = treinar_xgboost(Xtr, ytr, p, None if n_fixo else Xva, None if n_fixo else yva)
     n = n_fixo or int(m.best_iteration) + 1
     return (lambda X: m.predict_proba(X)[:, 1]), {"melhor_iteracao": n, "teto_atingido": n >= TETO_ARVORES}, m
@@ -132,8 +149,10 @@ def _xgb(hp, Xtr, ytr, Xva, yva, seed, ctx):
 def _gb(hp, Xtr, ytr, Xva, yva, seed, ctx):
     from .models.boosting import GradientBoostingHyperparams, treinar_gradient_boosting
     n_fixo = ctx.get("n_iter_fixo")
-    p = GradientBoostingHyperparams(n_estimators=n_fixo or TETO_ARVORES_GB, seed=seed,
-                                    early_stopping_rounds=None if n_fixo else PACIENCIA_ARVORES, **hp)
+    p = _hp(GradientBoostingHyperparams, hp, n_estimators=TETO_ARVORES_GB, seed=seed,
+            early_stopping_rounds=PACIENCIA_ARVORES)
+    if n_fixo:
+        p.n_estimators, p.early_stopping_rounds = n_fixo, None
     m = treinar_gradient_boosting(Xtr, ytr, p, Xva, yva)
     n = n_fixo or m.melhor_iteracao_
     return (lambda X: m.predict_proba(X)[:, 1]), {"melhor_iteracao": n, "teto_atingido": n >= TETO_ARVORES_GB}, m
@@ -142,8 +161,8 @@ def _gb(hp, Xtr, ytr, Xva, yva, seed, ctx):
 def _catboost(hp, Xtr, ytr, Xva, yva, seed, ctx):
     from .models.boosting import CatBoostHyperparams, prever_catboost, treinar_catboost
     cats = tuple(i for i, c in enumerate(ctx["colunas"]) if c.endswith(("__ord", "__faixa")))
-    p = CatBoostHyperparams(iterations=TETO_ARVORES, early_stopping_rounds=PACIENCIA_ARVORES,
-                            cat_features=cats, seed=seed, **hp)
+    p = _hp(CatBoostHyperparams, hp, iterations=TETO_ARVORES, early_stopping_rounds=PACIENCIA_ARVORES,
+            cat_features=cats, seed=seed)
     m = treinar_catboost(Xtr, ytr, p, Xva, yva)
     n = int(m.get_best_iteration()) + 1
     return (lambda X: prever_catboost(m, X, cats)), {"melhor_iteracao": n, "teto_atingido": n >= TETO_ARVORES}, m
@@ -151,7 +170,7 @@ def _catboost(hp, Xtr, ytr, Xva, yva, seed, ctx):
 
 def _tabpfn(hp, Xtr, ytr, Xva, yva, seed, ctx):
     from .models.tabpfn import TabPFNHyperparams, prever_tabpfn, treinar_tabpfn
-    m = treinar_tabpfn(Xtr, ytr, TabPFNHyperparams(device=ctx["device"], seed=seed, **hp))
+    m = treinar_tabpfn(Xtr, ytr, _hp(TabPFNHyperparams, hp, device=ctx["device"], seed=seed))
     return (lambda X: prever_tabpfn(m, X)), {"sem_epocas": "in-context learning"}, None
 
 
@@ -255,25 +274,32 @@ def _salvar_modelo(modelo, pasta: Path):
         joblib.dump(modelo, pasta / "model.joblib")
 
 
-def pasta_de(base: Path, nome: str, seed: int) -> Path:
-    return Path(base) / "avaliacao_5_particoes" / RODADA / f"{nome}_particao{seed}"
+def pasta_de(base: Path, nome: str, seed: int, rodada: str = RODADA) -> Path:
+    return Path(base) / "avaliacao_5_particoes" / rodada / f"{nome}_particao{seed}"
+
+
+META_HP = ("treino", "transformacao")   # escolhas de dados que a busca ampla trata como hiperparametro
 
 
 def treinar_e_avaliar(nome: str, alg: Algoritmo, hp: dict, part: Particao, *, results_dirs: list[Path],
                       device: str, transformacao: str = "nenhuma", treino_final_trval: bool = False,
-                      n_iter_fixo: int | None = None, extra: dict | None = None) -> dict:
+                      n_iter_fixo: int | None = None, extra: dict | None = None,
+                      rodada: str = RODADA) -> dict:
     """Treina uma configuracao numa particao e grava em results_dirs[0].
     Se a pasta ja existe em qualquer `results_dirs`, so le o metadata (retomada)."""
     for base in results_dirs:
-        meta = pasta_de(base, nome, part.seed) / "metadata.json"
+        meta = pasta_de(base, nome, part.seed, rodada) / "metadata.json"
         if meta.exists():
             return json.loads(meta.read_text(encoding="utf-8"))
 
+    hp_modelo = {k: v for k, v in hp.items() if k not in META_HP}
+    transformacao = hp.get("transformacao", transformacao)
     X = part.dados(alg.modo, transformacao)
-    chave_tr = ("trval_" if treino_final_trval else "") + alg.treino
+    chave_tr = ("trval_" if treino_final_trval else "") + hp.get("treino", alg.treino)
     ctx = {"device": device, "colunas": part.colunas[(alg.modo, transformacao)], "n_iter_fixo": n_iter_fixo}
     t0 = time.time()
-    prever, info, modelo = alg.treinar(hp, X[chave_tr], part.y[chave_tr], X["val"], part.y["val"], part.seed, ctx)
+    prever, info, modelo = alg.treinar(hp_modelo, X[chave_tr], part.y[chave_tr], X["val"], part.y["val"],
+                                       part.seed, ctx)
     pv, pt = prever(X["val"]), prever(X["test"])
     hist = info.pop("historico", None)
 
@@ -281,11 +307,11 @@ def treinar_e_avaliar(nome: str, alg: Algoritmo, hp: dict, part: Particao, *, re
     dataset = {"algoritmo": alg.nome, "familia": alg.familia, "codificacao": alg.modo,
                "transformacao": transformacao, "treino": chave_tr, "n_linhas_treino": int(len(part.y[chave_tr]))}
     return registrar(nome, part, pv, pt, results_dirs[0], hp=hp, dataset=dataset, paciencia=info,
-                     extra=extra, historico=hist, modelo=modelo)
+                     extra=extra, historico=hist, modelo=modelo, rodada=rodada)
 
 
 def registrar(nome: str, part: Particao, pv, pt, base: Path, *, hp: dict, dataset: dict, paciencia: dict,
-              extra: dict | None = None, historico=None, modelo=None) -> dict:
+              extra: dict | None = None, historico=None, modelo=None, rodada: str = RODADA) -> dict:
     """Grava metadata.json + predicoes.npz (+ history.csv, modelo) de uma
     configuracao numa particao. Usado tambem pelos ensembles."""
     limiar = _limiar_acuracia(part.y["val"], pv)
@@ -295,12 +321,12 @@ def registrar(nome: str, part: Particao, pv, pt, base: Path, *, hp: dict, datase
     meta = {
         "model_id": f"{nome}_particao{part.seed}", "framework": dataset["familia"], "hyperparameters": hp,
         "metrics": metr,
-        "dataset": {"rodada": RODADA, "nome_na_tabela": nome, "particao": part.seed, **dataset,
+        "dataset": {"rodada": rodada, "nome_na_tabela": nome, "particao": part.seed, **dataset,
                     "metricas_validacao": {"ks_validacao": full_report(part.y["val"], pv)["ks"],
                                            "auroc_validacao": auroc(part.y["val"], pv)},
                     "paciencia": paciencia, **(extra or {})},
     }
-    pasta = pasta_de(base, nome, part.seed)
+    pasta = pasta_de(base, nome, part.seed, rodada)
     pasta.mkdir(parents=True)
     (pasta / "metadata.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
     np.savez_compressed(pasta / "predicoes.npz", p_val=pv, p_test=pt)
@@ -336,11 +362,11 @@ def otimizar(alg: Algoritmo, part: Particao, device: str, seed_sampler: int = 0,
 
 
 # ---------------------------------------------------------------- resumo
-def carregar(results_dirs: list[Path]) -> pd.DataFrame:
+def carregar(results_dirs: list[Path], rodada: str = RODADA) -> pd.DataFrame:
     """Uma linha por (configuracao, particao) desta rodada, de todas as bases."""
     linhas, vistos = [], set()
     for base in results_dirs:
-        for meta in sorted((Path(base) / "avaliacao_5_particoes" / RODADA).glob("*/metadata.json")):
+        for meta in sorted((Path(base) / "avaliacao_5_particoes" / rodada).glob("*/metadata.json")):
             if meta.parent.name in vistos:
                 continue
             vistos.add(meta.parent.name)

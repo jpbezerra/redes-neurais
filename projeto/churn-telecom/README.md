@@ -402,6 +402,31 @@ partições, sem falhas, nenhum teto de épocas/árvores atingido):
 - Conclusão: o teto de KS ≈ 0,54 (AUROC ≈ 0,846) se mantém com treino
   correto por paciência, busca, transformações, mais dados e ensembles.
 
+### Rodada 9 — busca ampla de hiperparâmetros (etapas F–G do notebook 07)
+
+`src/churn_telecom/busca_ampla.py`. Para tentar passar do teto, a busca agora:
+
+- cobre **todos os hiperparâmetros relevantes de cada biblioteca** (ex.: XGBoost
+  `gamma`, `reg_alpha`, `colsample_bylevel/bynode`, `max_delta_step`,
+  `scale_pos_weight`, `max_bin`, `grow_policy`; CatBoost `random_strength`,
+  `bagging_temperature`, `border_count`, `auto_class_weights`, `grow_policy`;
+  redes com profundidade, dropout, scheduler, clipping; TabPFN
+  `softmax_temperature`, `average_before_softmax`, `balance_probabilities`);
+- trata **escolhas de dados como hiperparâmetro**: treino com duplicação vs. sem
+  cópias, transformação (nenhuma/log/faixas), a paciência e o critério de parada;
+- usa como objetivo o **AUROC médio em 3 folds** de treino+validação da partição 0
+  (a busca da rodada 8 olhava uma única validação — mais sujeita a sorte);
+- é **retomável trial a trial** (journal do Optuna em `reports/tables/rodada9_optuna_*.journal`).
+
+Saídas: melhor configuração de cada algoritmo em 5 partições
+(`results/avaliacao_5_particoes/rodada9/`), importância fANOVA de cada
+hiperparâmetro (`rodada9_importancia_hiperparametros.csv/.png`), qual valor de
+cada hiperparâmetro categórico aparece entre os 20% melhores trials
+(`rodada9_efeito_por_valor.csv`), ensembles com as rodadas 8–9 e comparações
+pareadas (`rodada9_comparacoes_pareadas.csv`). Branch de resultados:
+`results/churn-rodada9-busca-ampla`. A busca é longa (3 folds por trial): deve
+precisar de 2–3 execuções no Kaggle, cada uma continuando de onde a anterior parou.
+
 ### Análise — melhor de cada algoritmo
 
 `notebooks/08_analise_resultados.ipynb` (roda local, não treina): lê todas as
@@ -558,6 +583,7 @@ python3 scripts/make_smoke_test_notebook.py        # gera notebooks/05_modelos_a
 python3 scripts/make_kaggle_notebook.py # gera notebooks/05_modelos_avancados_kaggle.ipynb (subir no Kaggle, não rodar aqui)
 python3 src/churn_telecom/metrics.py          # self-test do KS
 PYTHONPATH=src python3 -m churn_telecom.rodada8  # self-check (GB com paciencia + transformacoes)
+PYTHONPATH=src python3 -m churn_telecom.busca_ampla  # self-check (busca ampla com CV + retomada)
 python3 scripts/make_rodada8_notebooks.py     # gera notebooks 07 (Kaggle) e 08 (analise)
 
 # No Kaggle (apos subir os datasets, ver secao acima):

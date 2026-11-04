@@ -3,7 +3,7 @@ exigido desde o inicio junto com o MLP (secao de modelos do enunciado).
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
@@ -22,6 +22,7 @@ class GradientBoostingHyperparams:
     # arvores e escolhido pelo AUROC de validacao — para quando passam
     # `early_stopping_rounds` arvores sem melhora. None = numero fixo (execucoes antigas).
     early_stopping_rounds: int | None = None
+    max_features: float | str | None = None   # fracao/'sqrt'/'log2' de colunas por divisao (None = todas)
 
 
 def treinar_gradient_boosting(X_train: np.ndarray, y_train: np.ndarray,
@@ -36,6 +37,7 @@ def treinar_gradient_boosting(X_train: np.ndarray, y_train: np.ndarray,
             subsample=hp.subsample,
             min_samples_leaf=hp.min_samples_leaf,
             max_depth=hp.max_depth,
+            max_features=hp.max_features,
             random_state=hp.seed,
         )
 
@@ -78,6 +80,7 @@ class XGBoostHyperparams:
     reg_lambda: float = 1.0
     eval_metric: str = "logloss"
     early_stopping_rounds: int | None = None  # exige X_val/y_val em treinar_xgboost
+    outros: dict = field(default_factory=dict)   # qualquer outro parametro do XGBClassifier (gamma, reg_alpha, ...)
 
 
 def treinar_xgboost(X_train: np.ndarray, y_train: np.ndarray, hp: XGBoostHyperparams,
@@ -97,6 +100,7 @@ def treinar_xgboost(X_train: np.ndarray, y_train: np.ndarray, hp: XGBoostHyperpa
         random_state=hp.seed,
         eval_metric=hp.eval_metric,
         early_stopping_rounds=hp.early_stopping_rounds,
+        **hp.outros,
     )
     if hp.early_stopping_rounds is None:
         modelo.fit(X_train, y_train)
@@ -120,6 +124,7 @@ class CatBoostHyperparams:
     eval_metric: str = "AUC"
     cat_features: tuple[int, ...] = ()   # indices das colunas categoricas (codigos ordinais)
     seed: int = 0
+    outros: dict = field(default_factory=dict)   # qualquer outro parametro do CatBoostClassifier
 
 
 def _catboost_entrada(X: np.ndarray, cat_features: tuple[int, ...]):
@@ -136,7 +141,7 @@ def treinar_catboost(X_train: np.ndarray, y_train: np.ndarray, hp: CatBoostHyper
     modelo = CatBoostClassifier(
         iterations=hp.iterations, learning_rate=hp.learning_rate, depth=hp.depth,
         l2_leaf_reg=hp.l2_leaf_reg, eval_metric=hp.eval_metric, random_seed=hp.seed,
-        cat_features=list(hp.cat_features), verbose=False, allow_writing_files=False,
+        cat_features=list(hp.cat_features), verbose=False, allow_writing_files=False, **hp.outros,
     )
     modelo.fit(_catboost_entrada(X_train, hp.cat_features), y_train,
                eval_set=(_catboost_entrada(X_val, hp.cat_features), y_val),

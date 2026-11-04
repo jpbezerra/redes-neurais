@@ -11,7 +11,7 @@ Imports lazy — modulo importavel sem `tabpfn`/torch instalados.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -22,6 +22,7 @@ class TabPFNHyperparams:
     n_estimators: int = 8  # ensemble interno do TabPFN
     versao: str = "v2"
     seed: int = 0
+    outros: dict = field(default_factory=dict)   # softmax_temperature, average_before_softmax, ...
 
 
 def treinar_tabpfn(X_train: np.ndarray, y_train: np.ndarray, hp: TabPFNHyperparams):
@@ -33,14 +34,14 @@ def treinar_tabpfn(X_train: np.ndarray, y_train: np.ndarray, hp: TabPFNHyperpara
         from tabpfn.constants import ModelVersion
         modelo = TabPFNClassifier.create_default_for_version(
             ModelVersion(hp.versao),
-            device=hp.device, n_estimators=hp.n_estimators, random_state=hp.seed,
+            device=hp.device, n_estimators=hp.n_estimators, random_state=hp.seed, **hp.outros,
         )
     except (ImportError, AttributeError):
         if hp.versao != "v2":   # o construtor direto usaria o checkpoint padrao, nao a versao pedida
             raise
         # versoes antigas do pacote (<2.x) so tem v2 — construtor direto
         modelo = TabPFNClassifier(device=hp.device, n_estimators=hp.n_estimators,
-                                  random_state=hp.seed)
+                                  random_state=hp.seed, **hp.outros)
     modelo.fit(X_train, y_train)
     return modelo
 
