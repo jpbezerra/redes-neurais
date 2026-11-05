@@ -44,6 +44,7 @@ def carregar_5_particoes(results_dir: str | Path = "results") -> pd.DataFrame:
         linhas.append({"rodada": rodada, "modelo": nome, "particao": d.get("particao"),
                        "familia": d.get("familia") or familia_de(nome),
                        "ks": m["metrics"]["ks"], "auroc": m["metrics"]["auroc"],
+                       "auroc_validacao": d.get("metricas_validacao", {}).get("auroc_validacao"),
                        "acuracia_limiar_validacao": m["metrics"].get("acuracia_limiar_validacao"),
                        "hiperparametros": m.get("hyperparameters", {}),
                        "paciencia": d.get("paciencia", {}),

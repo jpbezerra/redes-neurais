@@ -1,0 +1,12 @@
+familia,ks,auroc,particao,rodada,modelo,configuracoes_e_particoes_olhadas,hiperparametros
+MLP,0.5688173002558153,0.8514147513567467,2,rodada9,mlp_busca_ampla,55,"treino=nat, transformacao=log, n_camadas=2, largura=443, activation=tanh, alpha=0.00787, learning_rate_init=3.8e-05, batch_size=128"
+Ensemble,0.5639141729628969,0.8524409873017762,2,rodada9,ensemble_top3_validacao_r8r9,35,"combinacao=media dos logits, membros=stab_busca_ampla+tabpfn_busca_ampla+xgb_busca_ampla"
+STab,0.5631407777579471,0.8505967371976653,2,rodada8,stab_optuna_paciencia_log,55,"dim=64, depth=4, heads=4, attn_dropout=0.00308, ff_dropout=0.375, lr=0.000139, weight_decay=0.00745, batch_size=64, embedding=compartilhada"
+Gradient Boosting,0.5621839490749003,0.8521542692076335,2,rodada9,gb_busca_ampla,60,"treino=nat, transformacao=nenhuma, learning_rate=0.00725, max_depth=2, min_samples_leaf=1, subsample=0.577, max_features=sqrt"
+CatBoost,0.5618964047038293,0.8455523165499964,2,rodada7,catboost_duplicacao,35,"iterations=2000, learning_rate=0.05, depth=6, l2_leaf_reg=3"
+XGBoost,0.5618964047038293,0.850815700583682,2,rodada8,xgb_optuna_treino_mais_validacao,65,"learning_rate=0.0632, max_depth=3, subsample=0.538, colsample_bytree=0.309, min_child_weight=6.77, reg_lambda=0.00441"
+Regressão logística,0.5618170821187063,0.8511833938168045,2,rodada9,logistica_referencia,5,"C=1, transformacao=log, treino=nat"
+TabPFN v2,0.5585400678208102,0.8525318777638963,2,rodada8,tabpfn_padrao_treino_mais_validacao,55,n_estimators=8
+TabPFN 2.5,0.5540186804687965,0.850935510738295,2,rodada7,tabpfn_v25_8est_onehot,10,"n_estimators=8, contexto=sem_copias"
+KAN,0.5524619747357566,0.8531590219525255,3,rodada9,kan_busca_ampla,40,"treino=nat, transformacao=faixas_adiciona, hidden_width=6, grid=14, k=2, lr=0.000761, weight_decay=2.09e-06, batch_size=512, scheduler=plateau"
+TabKAN,0.5496906419180201,0.8477733489334417,1,rodada8,tabkan_optuna_paciencia_log,40,"hidden_width=6, degree=3, lr=0.00369, weight_decay=3.76e-06, batch_size=128"

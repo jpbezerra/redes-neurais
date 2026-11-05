@@ -1,0 +1,6 @@
+particao,familia,rodada,modelo,auroc_validacao,ks,auroc,ks_maximo_na_particao,modelo_do_maximo
+0,TabPFN v2,rodada6,tabpfn_v2_32est_onehot,0.8559930030171353,0.5140103515973586,0.8391875053708,0.5241834731393895,gb_padrao_onehot
+1,XGBoost,rodada6,xgb_optuna_sem_copias,0.8506613570181243,0.5445148432387412,0.8443492573422968,0.5555654708786959,stab_busca_ampla
+2,STab,rodada9,stab_busca_ampla,0.8553230359855568,0.5616336486406092,0.8515089469265803,0.5688173002558153,mlp_busca_ampla
+3,STab,rodada8,stab_optuna_paciencia_faixas_adiciona,0.8395857672870007,0.5262706486604398,0.8463538051705105,0.557806333908422,xgb_optuna_paciencia
+4,XGBoost,rodada6,xgb_optuna_sem_copias,0.8543799225530269,0.5338955321553929,0.8457803689822251,0.5465573998056596,xgb_optuna_paciencia_faixas_adiciona

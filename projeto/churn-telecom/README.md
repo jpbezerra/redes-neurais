@@ -477,6 +477,23 @@ considerar esses modelos também.
   próprio teste. Saídas: `reports/figures/sorte_divisao_unica.png` e
   `reports/tables/sorte_divisao_unica_logistica.csv` (notebook 08).
 
+### Relatório complementar — cada partição como divisão única
+
+`python -m churn_telecom.particao_unica` lê cada uma das 5 partições como se
+fosse a única divisão treino/teste, para comparar com resultados reportados numa
+divisão só. É complementar ao relatório principal e só acrescenta arquivos
+`reports/{tables,figures}/particao_unica_*` (seção no fim do notebook 08).
+
+- **Seleção pela validação** (o resultado honesto de uma divisão única): o
+  modelo de maior AUROC de validação em cada partição tem KS de teste 0,514,
+  0,545, **0,562**, 0,526 e 0,534 (média 0,536).
+- **Melhor de cada algoritmo, partição a partição:** a partição 2 é a mais
+  favorável para quase todos. MLP 0,569; GB, regressão logística e STab 0,562;
+  CatBoost e ensemble 0,560. Na partição 0, todos ficam entre 0,51 e 0,52.
+- **Maior KS de teste por algoritmo**, entre todas as configurações e partições
+  (escolhido olhando o teste, otimista): MLP 0,569, ensemble 0,564, STab
+  0,563, GB/CatBoost/XGB 0,562.
+
 ### Análise — melhor de cada algoritmo
 
 `notebooks/08_analise_resultados.ipynb` (roda local, não treina): lê todas as
@@ -608,6 +625,7 @@ churn-telecom/
 │   ├── rodada8.py         # rodada 8: paciencia, Optuna, transformacoes, retomada
 │   ├── relatorio.py       # melhor configuracao de cada algoritmo (tabela + figura)
 │   ├── referencia.py      # regressao logistica de referencia + simulacao da sorte da divisao
+│   ├── particao_unica.py  # relatorio complementar: cada particao como divisao unica
 │   └── models/            # mlp, boosting (GB/XGBoost/CatBoost), stab, tabkan, kan, tabpfn, mitra
 ├── scripts/                # geradores de notebook + runners (não versionado, ver .gitignore)
 ├── notebooks/
