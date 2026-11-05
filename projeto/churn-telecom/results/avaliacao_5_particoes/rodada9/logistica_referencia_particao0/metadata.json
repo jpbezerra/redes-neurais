@@ -1,0 +1,45 @@
+{
+  "model_id": "logistica_referencia_particao0",
+  "framework": "Regressão logística",
+  "hyperparameters": {
+    "C": 1.0,
+    "transformacao": "log",
+    "treino": "nat"
+  },
+  "metrics": {
+    "ks": 0.5162115533345232,
+    "mse": 0.13853954589531847,
+    "cross_entropy": 0.4251828252798271,
+    "auroc": 0.8375531296064939,
+    "threshold": 0.5,
+    "tp": 241,
+    "tn": 1170,
+    "fp": 123,
+    "fn": 227,
+    "precision": 0.6620879120879121,
+    "recall": 0.5149572649572649,
+    "f1": 0.5793269230769231,
+    "acuracia_limiar_05": 0.8012492901760363,
+    "limiar_validacao": 0.49000000000000005,
+    "acuracia_limiar_validacao": 0.8001135718341851
+  },
+  "dataset": {
+    "rodada": "rodada9",
+    "nome_na_tabela": "logistica_referencia",
+    "particao": 0,
+    "algoritmo": "logistica",
+    "familia": "Regressão logística",
+    "codificacao": "neural",
+    "transformacao": "log",
+    "treino": "nat",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.5479746747465655,
+      "auroc_validacao": 0.8539842925179298
+    },
+    "paciencia": {
+      "sem_epocas": "solver convexo (lbfgs)"
+    },
+    "etapa": "I_referencia_logistica"
+  }
+}

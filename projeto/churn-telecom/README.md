@@ -1,7 +1,7 @@
 # Projeto Final — Previsão de Churn em Telecom
 
-**Status:** rodadas 1–8 executadas e rodada 9 em andamento (melhor KS médio em
-5 partições: 0,544, MLP da busca ampla). Rodada 8 em
+**Status:** rodadas 1–9 executadas (falta a etapa H, bagging de sementes). Melhor
+KS médio em 5 partições: 0,544 (MLP da busca ampla); a regressão logística chega a 0,540. Rodada 8 em
 `notebooks/07_rodada8_paciencia_kaggle.ipynb` (ver seção "Rodada 8"). A
 comparação do melhor de cada algoritmo fica em `notebooks/08_analise_resultados.ipynb`.
 
@@ -427,16 +427,17 @@ pareadas (`rodada9_comparacoes_pareadas.csv`). Branch de resultados:
 `results/churn-rodada9-busca-ampla`. A busca é longa (3 folds por trial): deve
 precisar de 2–3 execuções no Kaggle, cada uma continuando de onde a anterior parou.
 
-**Resultados — 1ª execução** (6 de 8 buscas completas; KAN parou em 21/25
-trials e TabPFN não começou — a próxima execução do notebook 07 continua do
-journal e recalcula os ensembles da etapa G com todos os algoritmos):
+**Resultados** (as 8 buscas completas, em 2 execuções):
 
 - **Novo melhor KS médio do projeto: 0,5436** (MLP da busca ampla: 2 camadas de
   443, `tanh`, `alpha` 0,008, treino sem cópias, `log1p(TotalCharges)`). Contra o
   MLP Optuna da rodada 8: +0,017, IC 95% [+0,007, +0,026] — **efeito real**.
   Contra o recorde anterior (MLP + log, 0,5409): +0,003, IC [−0,004, +0,009] — ruído.
-- STab 0,5396, CatBoost 0,5372, GB 0,5349, XGB 0,5346, TabKAN 0,5343: nenhum
-  difere da rodada 8 fora do ruído.
+- STab 0,5396, CatBoost 0,5372, KAN 0,5367, TabPFN 0,5360, GB 0,5349, XGB 0,5346,
+  TabKAN 0,5343: nenhum difere da rodada 8 fora do ruído.
+- Ensembles da etapa G (melhor de cada algoritmo 0,5387; top-3 pela validação
+  0,5376): ruído contra o melhor modelo individual. Os membros erram nos mesmos
+  clientes.
 - **Treinar sem as cópias do oversampling** foi escolhido pelas 6 buscas e é o
   achado mais consistente: 100% dos 20% melhores trials de cada algoritmo usam
   treino sem cópias, 0% a duplicação. Parada pelo AUROC de validação venceu a
@@ -454,6 +455,27 @@ melhor configuração de cada algoritmo (exceto TabPFN, que já faz ensemble
 interno) é treinada com 5 sementes por partição e combinada pela média dos
 logits (`{alg}_busca_ampla_bagging5`). Os ensembles da etapa G passam a
 considerar esses modelos também.
+
+### Referências: regressão logística e sorte da divisão
+
+`python -m churn_telecom.referencia` (local, CPU, poucos minutos):
+
+- **Regressão logística** nas mesmas 5 partições (C e `log1p` escolhidos pela
+  validação, treino sem cópias): **KS 0,540**. É o 2º lugar, à frente de STab,
+  XGBoost, CatBoost, TabPFN, KAN e GB (todos ruído contra ela). Só o MLP da
+  busca ampla a supera: +0,004, IC 95% [+0,00004, +0,007]. O problema é quase
+  linear, e o teto está na informação das variáveis.
+- **Sorte da divisão:** o ranking do semestre anterior (0,541 a 0,586) vem de
+  uma única divisão treino/teste aleatória por grupo. Com a mesma regressão
+  logística em 300 divisões 80/20 diferentes, o KS de teste tem média 0,541,
+  desvio 0,021, p90 0,567 e máximo 0,613. Em 18% das divisões ele passa de
+  0,56, e em 1,7% chega a 0,586. Ou seja, o 1º lugar é compatível com um
+  modelo do nosso nível numa divisão favorável. O repositório que fez 0,586
+  (TabPFN, AutoTabPFN) teve, na mesma divisão, Random Forest 0,582, CatBoost
+  0,573 e KAN 0,573: sinal de divisão favorável, não de modelo melhor. Ele
+  também usa divisão sem semente fixa e calcula as faixas por quantil no
+  próprio teste. Saídas: `reports/figures/sorte_divisao_unica.png` e
+  `reports/tables/sorte_divisao_unica_logistica.csv` (notebook 08).
 
 ### Análise — melhor de cada algoritmo
 
@@ -585,6 +607,7 @@ churn-telecom/
 │   ├── checkpointing.py   # salvamento no padrão results/{model_id}/
 │   ├── rodada8.py         # rodada 8: paciencia, Optuna, transformacoes, retomada
 │   ├── relatorio.py       # melhor configuracao de cada algoritmo (tabela + figura)
+│   ├── referencia.py      # regressao logistica de referencia + simulacao da sorte da divisao
 │   └── models/            # mlp, boosting (GB/XGBoost/CatBoost), stab, tabkan, kan, tabpfn, mitra
 ├── scripts/                # geradores de notebook + runners (não versionado, ver .gitignore)
 ├── notebooks/

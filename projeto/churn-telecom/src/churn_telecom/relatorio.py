@@ -20,7 +20,7 @@ import pandas as pd
 # ordem importa: prefixos mais especificos primeiro
 FAMILIAS = [("tabpfn_v25", "TabPFN 2.5"), ("tabpfn", "TabPFN v2"), ("tabkan", "TabKAN"), ("kan", "KAN"),
             ("catboost", "CatBoost"), ("xgb", "XGBoost"), ("gb", "Gradient Boosting"), ("mlp", "MLP"),
-            ("stab", "STab"), ("ensemble", "Ensemble"), ("stacking", "Ensemble")]
+            ("stab", "STab"), ("ensemble", "Ensemble"), ("stacking", "Ensemble"), ("logistica", "Regressão logística")]
 EXCLUIR_RODADAS = {"vazamento"}
 # hiperparametros que nao descrevem o modelo (mostrados a parte ou irrelevantes)
 HP_OMITIR = {"seed", "device", "eval_metric", "max_epochs", "patience", "early_stopping_rounds",
