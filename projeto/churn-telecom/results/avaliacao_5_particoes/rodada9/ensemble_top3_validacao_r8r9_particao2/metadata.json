@@ -1,0 +1,46 @@
+{
+  "model_id": "ensemble_top3_validacao_r8r9_particao2",
+  "framework": "Ensemble",
+  "hyperparameters": {
+    "combinacao": "media dos logits",
+    "membros": [
+      "stab_busca_ampla",
+      "tabpfn_busca_ampla",
+      "xgb_busca_ampla"
+    ]
+  },
+  "metrics": {
+    "ks": 0.5639141729628969,
+    "mse": 0.13366825991421352,
+    "cross_entropy": 0.4125181954471473,
+    "auroc": 0.8524409873017762,
+    "threshold": 0.5,
+    "tp": 289,
+    "tn": 1129,
+    "fp": 164,
+    "fn": 179,
+    "precision": 0.6379690949227373,
+    "recall": 0.6175213675213675,
+    "f1": 0.6275787187839307,
+    "acuracia_limiar_05": 0.8052243043725156,
+    "limiar_validacao": 0.5,
+    "acuracia_limiar_validacao": 0.8052243043725156
+  },
+  "dataset": {
+    "rodada": "rodada9",
+    "nome_na_tabela": "ensemble_top3_validacao_r8r9",
+    "particao": 2,
+    "algoritmo": "ensemble",
+    "familia": "Ensemble",
+    "codificacao": "-",
+    "transformacao": "-",
+    "treino": "-",
+    "n_linhas_treino": 0,
+    "metricas_validacao": {
+      "ks_validacao": 0.5518552105087224,
+      "auroc_validacao": 0.854742196730752
+    },
+    "paciencia": {},
+    "etapa": "G_ensembles_rodada9"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "model_id": "tabpfn_busca_ampla_particao4",
+  "framework": "TabPFN v2",
+  "hyperparameters": {
+    "transformacao": "log",
+    "n_estimators": 32,
+    "softmax_temperature": 1.2618157185520407,
+    "average_before_softmax": true,
+    "balance_probabilities": false
+  },
+  "metrics": {
+    "ks": 0.5222152814960239,
+    "mse": 0.1363762065208701,
+    "cross_entropy": 0.4197778524647589,
+    "auroc": 0.8449276511921524,
+    "threshold": 0.5,
+    "tp": 243,
+    "tn": 1169,
+    "fp": 124,
+    "fn": 225,
+    "precision": 0.662125340599455,
+    "recall": 0.5192307692307693,
+    "f1": 0.5820359281437126,
+    "acuracia_limiar_05": 0.8018171493469619,
+    "limiar_validacao": 0.48000000000000004,
+    "acuracia_limiar_validacao": 0.8018171493469619
+  },
+  "dataset": {
+    "rodada": "rodada9",
+    "nome_na_tabela": "tabpfn_busca_ampla",
+    "particao": 4,
+    "algoritmo": "tabpfn",
+    "familia": "TabPFN v2",
+    "codificacao": "neural",
+    "transformacao": "log",
+    "treino": "nat",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.5543490132351918,
+      "auroc_validacao": 0.8489329767763587
+    },
+    "paciencia": {
+      "sem_epocas": "in-context learning",
+      "segundos": 67.0
+    },
+    "etapa": "F_busca_ampla"
+  }
+}

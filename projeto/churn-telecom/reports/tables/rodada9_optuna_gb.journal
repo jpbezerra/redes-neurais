@@ -951,3 +951,4 @@
 {"op_code":8,"worker_id":"a39bcc34-2e67-415a-911e-05f660ba0c28-132572548481344","trial_id":59,"user_attr":{"auroc_folds":[0.8560370876620476,0.8528457813860049,0.8514758268455909]}}
 {"op_code":8,"worker_id":"a39bcc34-2e67-415a-911e-05f660ba0c28-132572548481344","trial_id":59,"user_attr":{"iteracoes_folds":[1697,1385,1154]}}
 {"op_code":6,"worker_id":"a39bcc34-2e67-415a-911e-05f660ba0c28-132572548481344","trial_id":59,"state":1,"values":[0.8534528986312143],"datetime_complete":"2026-11-04T04:40:55.977689+00:00"}
+{"op_code":0,"worker_id":"ac130235-7df6-4120-9153-55bf3250a552-137435509854528","study_name":"gb","directions":[2]}

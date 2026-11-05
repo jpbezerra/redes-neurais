@@ -1,0 +1,57 @@
+{
+  "model_id": "kan_busca_ampla_particao4",
+  "framework": "KAN",
+  "hyperparameters": {
+    "treino": "nat",
+    "transformacao": "faixas_adiciona",
+    "hidden_width": 6,
+    "grid": 14,
+    "k": 2,
+    "lr": 0.000761458509364085,
+    "weight_decay": 2.0867080719488095e-06,
+    "batch_size": 512,
+    "scheduler": "plateau",
+    "max_grad_norm": 5.0,
+    "patience": 30,
+    "early_stop_metric": "val_auroc"
+  },
+  "metrics": {
+    "ks": 0.544460308961469,
+    "mse": 0.13504727223756743,
+    "cross_entropy": 0.41715336185470003,
+    "auroc": 0.846191854892551,
+    "threshold": 0.5,
+    "tp": 233,
+    "tn": 1176,
+    "fp": 117,
+    "fn": 235,
+    "precision": 0.6657142857142857,
+    "recall": 0.49786324786324787,
+    "f1": 0.5696821515892421,
+    "acuracia_limiar_05": 0.8001135718341851,
+    "limiar_validacao": 0.53,
+    "acuracia_limiar_validacao": 0.8001135718341851
+  },
+  "dataset": {
+    "rodada": "rodada9",
+    "nome_na_tabela": "kan_busca_ampla",
+    "particao": 4,
+    "algoritmo": "kan",
+    "familia": "KAN",
+    "codificacao": "neural",
+    "transformacao": "faixas_adiciona",
+    "treino": "nat",
+    "n_linhas_treino": 3521,
+    "metricas_validacao": {
+      "ks_validacao": 0.5479266851785046,
+      "auroc_validacao": 0.8475296956137535
+    },
+    "paciencia": {
+      "epocas_treinadas": 70,
+      "melhor_epoca": 40,
+      "teto_atingido": false,
+      "segundos": 129.3
+    },
+    "etapa": "F_busca_ampla"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "params": {
+    "transformacao": "log",
+    "n_estimators": 32,
+    "softmax_temperature": 1.2618157185520407,
+    "average_before_softmax": true,
+    "balance_probabilities": false
+  },
+  "auroc_cv": 0.8543747291268077,
+  "auroc_folds": [
+    0.8578275949945225,
+    0.8534332398915767,
+    0.8518633524943238
+  ],
+  "n_trials": 25,
+  "importancias": {
+    "softmax_temperature": 0.7882069006509971,
+    "average_before_softmax": 0.09434947945260187,
+    "n_estimators": 0.07085964935641327,
+    "balance_probabilities": 0.03717225136739446,
+    "transformacao": 0.009411719172593338
+  }
+}

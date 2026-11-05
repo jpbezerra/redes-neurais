@@ -1,0 +1,51 @@
+{
+  "model_id": "ensemble_melhor_de_cada_algoritmo_r8r9_particao2",
+  "framework": "Ensemble",
+  "hyperparameters": {
+    "combinacao": "media dos logits",
+    "membros": [
+      "stab_busca_ampla",
+      "tabpfn_busca_ampla",
+      "xgb_busca_ampla",
+      "gb_busca_ampla",
+      "catboost_busca_ampla",
+      "mlp_busca_ampla",
+      "tabkan_busca_ampla",
+      "kan_optuna_paciencia_log"
+    ]
+  },
+  "metrics": {
+    "ks": 0.5598241021674897,
+    "mse": 0.13281729848723522,
+    "cross_entropy": 0.4104509916621554,
+    "auroc": 0.8521650108077022,
+    "threshold": 0.5,
+    "tp": 288,
+    "tn": 1132,
+    "fp": 161,
+    "fn": 180,
+    "precision": 0.6414253897550112,
+    "recall": 0.6153846153846154,
+    "f1": 0.6281352235550709,
+    "acuracia_limiar_05": 0.8063600227143668,
+    "limiar_validacao": 0.53,
+    "acuracia_limiar_validacao": 0.8035207268597387
+  },
+  "dataset": {
+    "rodada": "rodada9",
+    "nome_na_tabela": "ensemble_melhor_de_cada_algoritmo_r8r9",
+    "particao": 2,
+    "algoritmo": "ensemble",
+    "familia": "Ensemble",
+    "codificacao": "-",
+    "transformacao": "-",
+    "treino": "-",
+    "n_linhas_treino": 0,
+    "metricas_validacao": {
+      "ks_validacao": 0.5510989611085921,
+      "auroc_validacao": 0.8537129032364826
+    },
+    "paciencia": {},
+    "etapa": "G_ensembles_rodada9"
+  }
+}

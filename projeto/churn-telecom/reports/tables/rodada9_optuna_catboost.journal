@@ -1606,3 +1606,4 @@
 {"op_code":8,"worker_id":"fe542889-d800-4c03-afb7-150efee749dd-132572548481344","trial_id":79,"user_attr":{"auroc_folds":[0.8570638989372793,0.8524502811526763,0.8515379303149391]}}
 {"op_code":8,"worker_id":"fe542889-d800-4c03-afb7-150efee749dd-132572548481344","trial_id":79,"user_attr":{"iteracoes_folds":[113,165,65]}}
 {"op_code":6,"worker_id":"fe542889-d800-4c03-afb7-150efee749dd-132572548481344","trial_id":79,"state":1,"values":[0.8536840368016315],"datetime_complete":"2026-11-04T04:59:48.665373+00:00"}
+{"op_code":0,"worker_id":"957e9179-f770-4bd6-807f-771d19f0b580-137435509854528","study_name":"catboost","directions":[2]}

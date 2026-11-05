@@ -911,3 +911,4 @@
 {"op_code":8,"worker_id":"a5ec2fbe-9ab9-4226-bafb-c89eeb029306-132572548481344","trial_id":39,"user_attr":{"auroc_folds":[0.8583654091193418,0.851799939764818,0.8514634061517212]}}
 {"op_code":8,"worker_id":"a5ec2fbe-9ab9-4226-bafb-c89eeb029306-132572548481344","trial_id":39,"user_attr":{"iteracoes_folds":[42,70,15]}}
 {"op_code":6,"worker_id":"a5ec2fbe-9ab9-4226-bafb-c89eeb029306-132572548481344","trial_id":39,"state":1,"values":[0.8538762516786269],"datetime_complete":"2026-11-04T08:22:33.248551+00:00"}
+{"op_code":0,"worker_id":"071238f4-c855-43f6-8aaf-87063195fc5c-137435509854528","study_name":"stab","directions":[2]}

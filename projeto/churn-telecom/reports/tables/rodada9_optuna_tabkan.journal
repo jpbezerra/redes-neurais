@@ -941,3 +941,4 @@
 {"op_code":8,"worker_id":"ed68c029-ae26-4252-9fba-76231a30fc01-132572548481344","trial_id":49,"user_attr":{"auroc_folds":[0.856892625823683,0.8494252835521547,0.8489643625451492]}}
 {"op_code":8,"worker_id":"ed68c029-ae26-4252-9fba-76231a30fc01-132572548481344","trial_id":49,"user_attr":{"iteracoes_folds":[90,58,104]}}
 {"op_code":6,"worker_id":"ed68c029-ae26-4252-9fba-76231a30fc01-132572548481344","trial_id":49,"state":1,"values":[0.8517607573069955],"datetime_complete":"2026-11-04T08:50:53.517150+00:00"}
+{"op_code":0,"worker_id":"7275dee5-74ff-4030-aed6-f553243924d3-137435509854528","study_name":"tabkan","directions":[2]}

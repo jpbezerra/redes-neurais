@@ -3773,3 +3773,4 @@
 {"op_code":8,"worker_id":"4fea3046-be62-4250-ab00-243d26a461b2-132572548481344","trial_id":149,"user_attr":{"auroc_folds":[0.8567254897418162,0.8516551436542897,0.8521125944179746]}}
 {"op_code":8,"worker_id":"4fea3046-be62-4250-ab00-243d26a461b2-132572548481344","trial_id":149,"user_attr":{"iteracoes_folds":[609,1994,440]}}
 {"op_code":6,"worker_id":"4fea3046-be62-4250-ab00-243d26a461b2-132572548481344","trial_id":149,"state":1,"values":[0.8534977426046936],"datetime_complete":"2026-11-04T04:52:45.006636+00:00"}
+{"op_code":0,"worker_id":"c19da40a-3018-4a6f-988f-fd915b9802ff-137435509854528","study_name":"xgb","directions":[2]}
